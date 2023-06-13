@@ -8,11 +8,10 @@ import React, { useState, useEffect, useContext } from 'react';
 import jwt_decode from 'jwt-decode';
 
 function Navbar() {
-    
   const { authenticated, setAuthenticated } = useContext(AuthContext);
   const navigate = useNavigate();
   const [gestor, setGestor] = useState(false);
-  
+
   const handleLogout = () => {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
@@ -26,19 +25,15 @@ function Navbar() {
       setAuthenticated(true);
       // Decode the token
       const decodedToken = jwt_decode(access_token2);
-      const decode = JSON.stringify(decodedToken)
+      const decode = JSON.stringify(decodedToken);
       console.log(`decode: ${decode}`);
       // Check if the user is a gestor
       const isGestor = decodedToken.is_gestor;
       setGestor(isGestor);
-
     } else {
       setAuthenticated(false);
     }
-    console.log(`authenticated: ${authenticated}`);
-    console.log(`gestor: ${gestor}`);
-
-  }, []);
+  }, [authenticated]); // Observa alterações no estado authenticated
 
   return (
     <div className={styles.navbar}>
@@ -48,11 +43,11 @@ function Navbar() {
             <Link to="/">Home</Link>
           </li>
           {authenticated ? (
-            <>       
+            <>
               <li className={styles.item}><Link to="/avaliacao">Avaliação</Link></li>
               {gestor && <li className={styles.item}><Link to="/acordo-desempenho">Acordo Desempenho</Link></li>}
               <li className={styles.item} onClick={handleLogout}>Logout</li>
-            </>     
+            </>
           ) : (
             <>
               <li className={styles.item}><Link to="/login">Login</Link></li>
