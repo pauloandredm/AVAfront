@@ -24,7 +24,7 @@ function Register() {
           .catch(error => {
               console.log(error)
           })
-  }, [])
+    }, [])
 
 /* -------- Formik --------- */
 

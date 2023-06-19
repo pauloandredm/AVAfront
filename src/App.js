@@ -6,6 +6,7 @@ import Login from './components/pages/Login'
 import Avaliacao from './components/pages/Avaliacao'
 import Register from './components/pages/Register'
 import AcordoDesempenho from './components/projects/AcordoDesempenho'
+import Perfil from './components/pages/Perfil'
 
 import Container from './components/layout/Container'
 import Navbar from './components/layout/Navbar'
@@ -26,6 +27,7 @@ function App() {
             <Route element={<PrivateRoute />}>  
               <Route exact path="/avaliacao" element={<Avaliacao />}/>
               <Route exact path="/acordo-desempenho" element={<AcordoDesempenho />}/>
+              <Route exact path="/perfil" element={<Perfil />}/>
             </Route>
 
           </Routes>
