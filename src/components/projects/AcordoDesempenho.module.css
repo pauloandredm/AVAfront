@@ -12,6 +12,7 @@
   #checkbox {
     display: flex;
     justify-content: flex-start !important;
+    margin-left: 30px;
   }
 
   #meuInput {
@@ -86,3 +87,22 @@
   .error {
     color: red;
   }
+
+  .periodocontainer {
+    display: flex;
+    gap: 20px; /* Espaçamento entre os campos */
+    margin-bottom: 10px;
+  }
+  
+  .periodoitem {
+    flex: 1;
+  }
+
+  .label_input_container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    margin-top: 10px;
+  }
+  
+  

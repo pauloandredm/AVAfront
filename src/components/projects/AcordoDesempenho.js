@@ -5,6 +5,9 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
 import styles from './AcordoDesempenho.module.css'
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import moment from 'moment';
 
 import { useState, useEffect } from 'react'
 import { useNavigate } from "react-router-dom";
@@ -85,6 +88,8 @@ function AcordoDesempenho(){
           avaliado: '',
           chefia_imediata: '',
           funcao_confianca: false,
+          periodo_inicio: '', // Novo campo para o início do período
+          periodo_fim: '', // Novo campo para o fim do período
           atividades: [{ descricao_atividade: "", desempenho_esperado: "" }],
         },
         validationSchema: Yup.object({
@@ -94,6 +99,11 @@ function AcordoDesempenho(){
             .required('Required'),
           funcao_confianca: Yup.string()
             .required('Required'),
+          periodo_inicio: Yup.date()
+            .required('Required'), // Validação para o início do período
+          periodo_fim: Yup.date()
+            .required('Required'), // Validação para o fim do período
+
         }),
         onSubmit: async (values, { setSubmitting, resetForm }) => {      
             try {
@@ -102,6 +112,8 @@ function AcordoDesempenho(){
                 avaliado: values.avaliado,
                 chefia_imediata: values.chefia_imediata,
                 funcao_confianca: values.funcao_confianca,
+                periodo_inicio: moment(values.periodo_inicio).format('YYYY-MM-DD'),
+                periodo_fim: moment(values.periodo_fim).format('YYYY-MM-DD'),
                 atividades: values.atividades.map((atividade) => ({
                   descricao_atividade: atividade.descricao_atividade,
                   desempenho_esperado: atividade.desempenho_esperado,
@@ -169,14 +181,46 @@ function AcordoDesempenho(){
                         <div className={styles.error}>{formik.errors.chefia_imediata}</div>
                     ) : null}
 
-                    <label htmlFor="funcao_confianca" id={styles.checkboxLabel}>Função de Confiança:</label>
-                    <input
-                    id={styles.checkbox}
-                    type="checkbox"
-                    name="funcao_confianca"
-                    checked={formik.values.funcao_confianca}
-                    onChange={formik.handleChange}
-                    />
+                    <div className={styles.label_input_container}>
+                        <label htmlFor="funcao_confianca" id={styles.checkboxLabel}>Função de Confiança:</label>
+                        <input
+                        id={styles.checkbox}
+                        type="checkbox"
+                        name="funcao_confianca"
+                        checked={formik.values.funcao_confianca}
+                        onChange={formik.handleChange}
+                        />
+                    </div>
+
+                    <div className={styles.periodocontainer}>
+                    <div className={styles.periodoitem}>
+                        <label htmlFor="periodo_inicio">Início do Período:</label>
+                        <DatePicker
+                        id="periodo_inicio"
+                        name="periodo_inicio"
+                        selected={formik.values.periodo_inicio}
+                        onChange={(date) => formik.setFieldValue('periodo_inicio', date)}
+                        dateFormat="dd/MM/yyyy" // Definindo o formato de exibição da data
+                        />
+                        {formik.touched.periodo_inicio && formik.errors.periodo_inicio ? (
+                        <div className={styles.error}>{formik.errors.periodo_inicio}</div>
+                        ) : null}
+                    </div>
+                    <div className={styles.periodoitem}>
+                        <label htmlFor="periodo_fim">Fim do Período:</label>
+                        <DatePicker
+                        id="periodo_fim"
+                        name="periodo_fim"
+                        selected={formik.values.periodo_fim}
+                        onChange={(date) => formik.setFieldValue('periodo_fim', date)}
+                        dateFormat="dd/MM/yyyy" // Definindo o formato de exibição da data
+                        />
+                        {formik.touched.periodo_fim && formik.errors.periodo_fim ? (
+                        <div className={styles.error}>{formik.errors.periodo_fim}</div>
+                        ) : null}
+                    </div>
+                    </div>
+
 
                     {/* Campos de atividades dinâmicos */}
                     {formik.values.atividades.map((atividade, index) => (
