@@ -92,6 +92,7 @@
     display: flex;
     gap: 20px; /* Espaçamento entre os campos */
     margin-bottom: 10px;
+    margin-top: 15px;
   }
   
   .periodoitem {

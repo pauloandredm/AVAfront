@@ -86,18 +86,12 @@ function AcordoDesempenho(){
     const formik = useFormik({
         initialValues: {
           avaliado: '',
-          chefia_imediata: '',
-          funcao_confianca: false,
           periodo_inicio: '', // Novo campo para o início do período
           periodo_fim: '', // Novo campo para o fim do período
           atividades: [{ descricao_atividade: "", desempenho_esperado: "" }],
         },
         validationSchema: Yup.object({
           avaliado: Yup.string()
-            .required('Required'),
-          chefia_imediata: Yup.string()
-            .required('Required'),
-          funcao_confianca: Yup.string()
             .required('Required'),
           periodo_inicio: Yup.date()
             .required('Required'), // Validação para o início do período
@@ -110,8 +104,6 @@ function AcordoDesempenho(){
               // Atualizando a serialização dos dados
               const serializedData = {
                 avaliado: values.avaliado,
-                chefia_imediata: values.chefia_imediata,
-                funcao_confianca: values.funcao_confianca,
                 periodo_inicio: moment(values.periodo_inicio).format('YYYY-MM-DD'),
                 periodo_fim: moment(values.periodo_fim).format('YYYY-MM-DD'),
                 atividades: values.atividades.map((atividade) => ({
@@ -160,37 +152,6 @@ function AcordoDesempenho(){
                     {formik.touched.avaliado && formik.errors.avaliado ? (
                         <div className={styles.error}>{formik.errors.avaliado}</div>
                     ) : null}
-
-
-                    <label htmlFor="chefia_imediata">Chefia imediata:</label>
-                    <select
-                        id="chefia_imediata"
-                        name="chefia_imediata"
-                        onChange={formik.handleChange}
-                        value={formik.values.chefia_imediata}
-                    >
-                        <option value="">Selecione um servidor</option>
-                        {chefia.map((user) => (
-                            <option key={user.id} value={user.id}>
-                            {user.nome}
-                            </option>
-                        ))}
-                    </select>
-
-                    {formik.touched.chefia_imediata && formik.errors.chefia_imediata ? (
-                        <div className={styles.error}>{formik.errors.chefia_imediata}</div>
-                    ) : null}
-
-                    <div className={styles.label_input_container}>
-                        <label htmlFor="funcao_confianca" id={styles.checkboxLabel}>Função de Confiança:</label>
-                        <input
-                        id={styles.checkbox}
-                        type="checkbox"
-                        name="funcao_confianca"
-                        checked={formik.values.funcao_confianca}
-                        onChange={formik.handleChange}
-                        />
-                    </div>
 
                     <div className={styles.periodocontainer}>
                     <div className={styles.periodoitem}>
