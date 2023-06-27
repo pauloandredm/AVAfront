@@ -63,3 +63,91 @@
   .error {
     color: red;
   }
+
+  /* -------- tooltip ---------- */
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+/* Tooltip text */
+.tooltip .tooltiptext {
+  visibility: hidden;
+  background-color: black;
+  color: white;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+ 
+  /* Position the tooltip text - see examples below! */
+  position: absolute;
+  z-index: 1;
+  width: 320px;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -160px;
+}
+.tooltip .tooltiptext p {
+  color: #bab6b6;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
+.tooltip .tooltiptext::after {
+  content: " ";
+  position: absolute;
+  top: 100%; /* At the bottom of the tooltip */
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: black transparent transparent transparent;
+}
+
+/* senha cadastro*/
+
+
+.password_input{
+  position: relative;
+}
+
+.show_password_icon {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+.input_container{
+  width: 100%;
+}
+
+/* senha login*/
+.label_login {
+  font-weight: bold;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.input_login {
+  padding: 0.7em;
+  border-radius: 0;
+  border: none;
+  width: 100%;
+}
+
+.password_input_login{
+  position: relative;
+}
+
+.show_password_icon2 {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  cursor: pointer;
+}

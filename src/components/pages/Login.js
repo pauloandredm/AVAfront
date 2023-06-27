@@ -6,6 +6,7 @@ import API_BASE_URL from '../ApiConfig';
 import styles from './Avaliacao.module.css';
 import { Navigate } from 'react-router-dom';
 import { AuthContext } from '../../AuthContext';
+import { BiShowAlt, BiHide } from 'react-icons/bi';
 
 function Login() {
   
@@ -16,6 +17,7 @@ function Login() {
   const { authenticated, setAuthenticated } = useContext(AuthContext);
   const [errorMessage, setErrorMessage] = useState('');
   const [showErrorMessage, setShowErrorMessage] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
 
   /* ------ timeout mensagem ------ */
@@ -87,14 +89,30 @@ function Login() {
         value={cpf}
         handleOnChange={(event) => setCpf(event.target.value)}
       />
-      <Input
-        type="password"
-        text="Senha"
-        name="password"
-        placeholder="Insira sua senha"
-        value={password}
-        handleOnChange={(event) => setPassword(event.target.value)}
-      />
+      <label className={styles.label_login} htmlFor="password">Senha:</label>
+      <div className={styles.password_input_login}>
+        <input
+            className={styles.input_login}
+            type={showPassword ? 'text' : 'password'}
+            id="password"
+            name="password"
+            placeholder="Insira sua senha"
+            onChange={(event) => setPassword(event.target.value)}
+            value={password}
+        />
+        {showPassword ? (
+          <BiHide
+            className={styles.show_password_icon2}
+            onClick={() => setShowPassword(!showPassword)}
+          />
+        ) : (
+          <BiShowAlt
+            className={styles.show_password_icon2}
+            onClick={() => setShowPassword(!showPassword)}
+          />
+        )}
+      </div>
+
       <SubmitButton text="Entrar" />
       {showErrorMessage && <div className={styles.error_message}>{errorMessage}</div>}
       {authenticated && <Navigate to="/" />}

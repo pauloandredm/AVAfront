@@ -4,7 +4,6 @@ function Input({ type, text, text2, name, placeholder, handleOnChange, value }) 
   return (
     <div className={styles.form_control}>
       <label htmlFor={name}>{text}:</label>
-      <p htmlFor={name}>{text2}</p>
       <input
         type={type}
         name={name}

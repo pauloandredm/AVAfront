@@ -8,9 +8,13 @@ import { useNavigate } from "react-router-dom";
 import * as Yup from 'yup';
 import { cpf } from "cpf-cnpj-validator";
 import qs from 'qs';
+import { BiHelpCircle } from "react-icons/bi";
+import { BiShowAlt, BiHide } from 'react-icons/bi';
+
 
 function Register() {
     const navigate = useNavigate();
+    const [showPassword, setShowPassword] = useState(false);
 
     /*------------------ get lista de lotacoes------------------ */
 
@@ -28,18 +32,26 @@ function Register() {
 
 // Função para verificar a matrícula e exibir os campos adicionais se não existir
 
-const [cadastroAdicional, setCadastroAdicional] = useState({ nome: '', cargo: '' });
+const [cadastroAdicional, setCadastroAdicional] = useState({ nome: '', lotacoes: '' });
 
 const verificarMatricula = async (matricula) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/verificar-matricula/${matricula}`);
-    // Matrícula encontrada, não exibir campos adicionais
-    setCadastroAdicional({ nome: '', cargo: '' });
+    const response = await axios.get(`${API_BASE_URL}/matricula/`);
+    const matriculas = response.data.map((item) => item.matricula); // Extrai apenas as matrículas da lista
+    if (matriculas.includes(String(matricula))) {
+      // Matrícula encontrada, não exibir campos adicionais
+      setCadastroAdicional(null);
+    } else {
+      // Matrícula não encontrada, exibir campos adicionais
+      setCadastroAdicional({ nome: '', lotacoes: '' });
+    }
   } catch (error) {
-    // Matrícula não encontrada, exibir campos adicionais
-    setCadastroAdicional({ nome: '', cargo: '' });
+    // Lidar com erros de requisição, exibir mensagem de erro, etc.
   }
 };
+
+
+
 
 
 /* -------- Formik --------- */
@@ -87,7 +99,13 @@ const verificarMatricula = async (matricula) => {
     <form className={styles.avaliacao_container} onSubmit={formik.handleSubmit}>
       <div className={styles.form_control}>
 
-        <label htmlFor="cpf">CPF:</label>
+        <label htmlFor="cpf">CPF
+          <div className={styles.tooltip}><BiHelpCircle/>
+            <span className={styles.tooltiptext}>
+              Somente os números
+            </span>
+          </div>
+        :</label>
         <input
           text="cpf"
           id="cpf"
@@ -102,44 +120,110 @@ const verificarMatricula = async (matricula) => {
          <div className={styles.error}>{formik.errors.cpf}</div>
         ) : null}
 
-        <label htmlFor="matricula">Matricula:</label>
+        <label htmlFor="matricula">Matricula
+          <div className={styles.tooltip}><BiHelpCircle/>
+            <span className={styles.tooltiptext}>
+              Somente os números
+            </span>
+          </div>
+        :</label>
         <input
           text="matricula"
           id="matricula"
           name="matricula"
           type="number"
+          onBlur={(event) => {
+            verificarMatricula(event.target.value);
+          }}
           onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
           value={formik.values.matricula}
         />
 
         {formik.touched.matricula && formik.errors.matricula ? (
          <div className={styles.error}>{formik.errors.matricula}</div>
-        ) : null}   
+        ) : null}
+
+        {cadastroAdicional !== null && (
+        <>
+          <label htmlFor="nome">Nome:</label>
+          <input
+            type="text"
+            id="nome"
+            name="nome"
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.nome}
+          />
+
+          <label htmlFor="lotacoes">Lotação:</label>
+          <select
+            id="lotacoes"
+            name="lotacoes"
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.lotacoes}
+          >
+            <option value="">Selecione uma opção</option>
+            {lotacoes.map((lotacao) => (
+              <option key={lotacao.id} value={lotacao.id}>
+                {lotacao.nome}
+              </option>
+            ))}
+          </select>
+        </>
+        )}   
 
         <label htmlFor="password">Senha:</label>
-        <input
-          text="password"
-          id="password"
-          name="password"
-          type="password"
-          onChange={formik.handleChange}
-          value={formik.values.password}
-        />
+        <div className={styles.password_input}>
+          <input
+            className={styles.input_container}
+            id="password"
+            name="password"
+            type={showPassword ? 'text' : 'password'}
+            onChange={formik.handleChange}
+            value={formik.values.password}
+          />
+          {showPassword ? (
+            <BiHide
+              className={styles.show_password_icon}
+              onClick={() => setShowPassword(!showPassword)}
+            />
+          ) : (
+            <BiShowAlt
+              className={styles.show_password_icon}
+              onClick={() => setShowPassword(!showPassword)}
+            />
+          )}
+        </div>
         
         {formik.touched.password && formik.errors.password ? (
          <div className={styles.error}>{formik.errors.password}</div>
         ) : null}
 
+        
         <label htmlFor="passwordConfirm">Repita a senha:</label>
-        <input
-          text="password"
-          id="passwordConfirm"
-          name="passwordConfirm"
-          type="password"
-          onChange={formik.handleChange}
-          value={formik.values.passwordConfirm}
-        />
+        <div className={styles.password_input}>
+          <input
+            className={styles.input_container}
+            text="password"
+            id="passwordConfirm"
+            name="passwordConfirm"
+            type={showPassword ? 'text' : 'password'}
+            onChange={formik.handleChange}
+            value={formik.values.passwordConfirm}
+          />
+          {showPassword ? (
+            <BiHide
+              className={styles.show_password_icon}
+              onClick={() => setShowPassword(!showPassword)}
+            />
+          ) : (
+            <BiShowAlt
+              className={styles.show_password_icon}
+              onClick={() => setShowPassword(!showPassword)}
+            />
+          )}
+        </div>
         
         {formik.touched.passwordConfirm && formik.errors.passwordConfirm ? (
           <div className={styles.error}>{formik.errors.passwordConfirm}</div>
