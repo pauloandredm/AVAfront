@@ -50,10 +50,6 @@ const verificarMatricula = async (matricula) => {
   }
 };
 
-
-
-
-
 /* -------- Formik --------- */
 
     const formik = useFormik({
@@ -61,6 +57,8 @@ const verificarMatricula = async (matricula) => {
         matricula: '',
         cpf: '',
         password: '',
+        nome: '',
+        lotacoes: [10],
       },
       validationSchema: Yup.object({
         cpf: Yup
@@ -77,6 +75,10 @@ const verificarMatricula = async (matricula) => {
           .required('Required'),
       }),
       onSubmit: async (values, { setSubmitting, resetForm }) => {   
+        if (values.nome === '') {
+          values.nome = 'aaaa'; // Definir 'aaaa' caso o campo nome esteja em branco
+        }
+    
         try {
           const serializedData = qs.stringify(values, { encode: false });
           const response = await axios.post(`${API_BASE_URL}/register/`, serializedData, {

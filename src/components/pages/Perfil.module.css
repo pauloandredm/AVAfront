@@ -105,3 +105,11 @@
 .h2div{
     margin-bottom: 20px;
 }
+
+.userdiv2{
+    color: black;
+    margin-bottom: 10px;
+}
+.userdiv2 p{
+    color: rgba(0, 0, 0, 0.76);
+}

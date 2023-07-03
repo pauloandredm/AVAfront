@@ -28,6 +28,45 @@ function Perfil() {
         }
     }, []);
 
+/*------------------ get lista de autoavaliacoes------------------ */
+const [autoavaliacao, setAutoavaliacao] = useState([]);
+
+  useEffect(() => {
+    axios.get(`${API_BASE_URL}/notasauto/`)
+      .then(response => {
+        setAutoavaliacao(response.data);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }, []);
+
+/*------------------ get lista de chefiaavaliacoes------------------ */
+const [chefiaavaliacao, setChefiaavaliacao] = useState([]);
+
+  useEffect(() => {
+    axios.get(`${API_BASE_URL}/notaschefia/`)
+      .then(response => {
+        setChefiaavaliacao(response.data);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }, []);
+
+/*------------------ get lista de avaliacoes geral------------------ */
+const [notasavaliacao, setNotasavaliacao] = useState([]);
+
+  useEffect(() => {
+    axios.get(`${API_BASE_URL}/notas/`)
+      .then(response => {
+        setNotasavaliacao(response.data);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }, []);
+
 /*------------------ get lista de lotacoes------------------ */
 
     const [lotacoes, setLotacoes] = useState([]);
@@ -145,7 +184,7 @@ const formik = useFormik({
         })}
     </div>
 
-    <form className={styles.form_control} onSubmit={formik.handleSubmit}>
+    
     <h2 className={styles.h2}>Servidores da sua lotação:</h2>
         <table className={styles.table}>
             <thead>
@@ -172,6 +211,56 @@ const formik = useFormik({
                 ))}
             </tbody>
         </table>
+
+
+
+    
+
+    <h2 className={styles.h22}>Avaliações:</h2>
+
+    <h3 className={styles.h22}>Auto avaliações:</h3>
+    <div className={styles.h2div}>
+
+        <div className={styles.h2div}>
+            {autoavaliacao.map(usuario => (
+                <div className={styles.userdiv2} key={usuario.id}>
+                <p>Avaliador: {usuario.avaliador}</p>
+                <p>Avaliado: {usuario.avaliado}</p>
+                <p>Média: {usuario.media}</p>
+                </div>
+            ))}
+        </div>
+    </div>
+
+    <h3 className={styles.h22}>Avaliações da chefia imediata:</h3>
+    
+    <div className={styles.h2div}>
+            {chefiaavaliacao.map(usuario => (
+                <div className={styles.userdiv2} key={usuario.id}>
+                <p>Avaliador: {usuario.avaliador}</p>
+                <p>Avaliado: {usuario.avaliado}</p>
+                <p>Média: {usuario.media}</p>
+                </div>
+            ))}
+    </div>
+
+    <h3 className={styles.h22}>Outras avaliações:</h3>
+    <div className={styles.h2div}>
+            {notasavaliacao.map(usuario => (
+                <div className={styles.userdiv2} key={usuario.id}>
+                <p>Avaliador: {usuario.avaliador}</p>
+                <p>Avaliado: {usuario.avaliado}</p>
+                <p>Média: {usuario.media}</p>
+                </div>
+            ))}
+    </div>
+
+
+
+
+
+
+    <form className={styles.form_control} onSubmit={formik.handleSubmit}>
     <h2 className={styles.h2}>Adicionar/Mudar lotação:</h2>
     <div className={styles.form_control}>
         <label htmlFor="id">Servidor:</label>
