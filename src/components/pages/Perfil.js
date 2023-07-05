@@ -16,6 +16,7 @@ function Perfil() {
     const { authenticated, setAuthenticated } = useContext(AuthContext);
     const [UserId, setUserId] = useState(false);
     const [usuarios, setUsuarios] = useState([])
+    const [usuarios2, setUsuarios2] = useState([])
     const [submitted, setSubmitted] = useState(false);
 
     useEffect(() => {
@@ -32,7 +33,7 @@ function Perfil() {
 const [autoavaliacao, setAutoavaliacao] = useState([]);
 
   useEffect(() => {
-    axios.get(`${API_BASE_URL}/notasauto/`)
+    axios.get(`${API_BASE_URL}/notasauto2/`)
       .then(response => {
         setAutoavaliacao(response.data);
       })
@@ -45,7 +46,7 @@ const [autoavaliacao, setAutoavaliacao] = useState([]);
 const [chefiaavaliacao, setChefiaavaliacao] = useState([]);
 
   useEffect(() => {
-    axios.get(`${API_BASE_URL}/notaschefia/`)
+    axios.get(`${API_BASE_URL}/notaschefia2/`)
       .then(response => {
         setChefiaavaliacao(response.data);
       })
@@ -58,7 +59,7 @@ const [chefiaavaliacao, setChefiaavaliacao] = useState([]);
 const [notasavaliacao, setNotasavaliacao] = useState([]);
 
   useEffect(() => {
-    axios.get(`${API_BASE_URL}/notas/`)
+    axios.get(`${API_BASE_URL}/notas2/`)
       .then(response => {
         setNotasavaliacao(response.data);
       })
@@ -90,8 +91,18 @@ const [notasavaliacao, setNotasavaliacao] = useState([]);
             .catch(error => {
                 console.log(error)
             })
-        console.log(usuarios)
     }, [])
+
+/*----------- get lista de usuarios do back -------------*/
+useEffect(() => {
+    axios.get(`${API_BASE_URL}/user_detail2`)
+        .then(response => {
+            setUsuarios2(response.data)
+        })
+        .catch(error => {
+            console.log(error)
+        })
+}, [])
 
 /*----------- atualizar lista de usuarios do back -------------*/
     useEffect(() => {
@@ -196,17 +207,12 @@ const formik = useFormik({
                 </tr>
             </thead>
             <tbody className={styles.tbody}>
-                {usuarios.map((usuario) => (
+                {usuarios2.map((usuario) => (
                     <tr className={styles.tr} key={usuario.id}>
                         <td>{usuario.nome}</td>
                         <td>{usuario.matricula}</td>
-                        <td>{usuario.Cargo}</td>
-                        <td>
-                            {usuario.nome_lotacao &&
-                            usuario.nome_lotacao.map((lotacao) => (
-                                <div key={lotacao}>{lotacao}</div>
-                            ))}
-                        </td>
+                        <td>{usuario.cargo}</td>
+                        <td>{usuario.lotacao}</td>
                     </tr>
                 ))}
             </tbody>

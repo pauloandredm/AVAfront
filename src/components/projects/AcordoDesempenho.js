@@ -23,13 +23,42 @@ function AcordoDesempenho(){
       }, []);
 
     const [avaliado, setAvaliado] = useState([]);
-    const [chefia, setChefia] = useState([]);
+    const [avaliado2, setAvaliado2] = useState([]);
 
     const [submitted, setSubmitted] = useState(false);
     const navigate = useNavigate();
 
-    /*----------- get lista de servidores para acordo do back -------------*/
+
+    /*----------- get lista de servidores para acordo do back /acordo-desempenho2-------------*/
     useEffect(() => {
+        axios.get(`${API_BASE_URL}/acordo-desempenho2/`)
+            .then(response => {
+                setAvaliado2(response.data)
+            })
+            .catch(error => {
+                console.log(error)
+            })
+    }, [])
+
+/*----------- atualizar lista de servidores para acordo do back /acordo-desempenho2-------------*/
+    
+    useEffect(() => {
+    if (submitted) {
+        const getUsers = async () => {
+        const response = await axios.get(`${API_BASE_URL}/acordo-desempenho2/`);
+        setAvaliado2(response.data);
+        setSubmitted(false);
+        };
+
+        getUsers();
+    }
+    }, [submitted]);
+
+
+
+
+    /* ----------- get lista de servidores para acordo do back -------------
+     useEffect(() => {
         axios.get(`${API_BASE_URL}/acordo-desempenho/`)
             .then(response => {
                 setAvaliado(response.data)
@@ -39,7 +68,7 @@ function AcordoDesempenho(){
             })
     }, [])
 
-/*----------- atualizar lista de servidores para acordo do back -------------*/
+----------- atualizar lista de servidores para acordo do back -------------
     
     useEffect(() => {
     if (submitted) {
@@ -51,19 +80,7 @@ function AcordoDesempenho(){
 
         getUsers();
     }
-    }, [submitted]);
-
-    /*----------- get lista de usuarios chefia imediata do back -------------*/
-    
-    useEffect(() => {
-        axios.get(`${API_BASE_URL}/acordo-desempenho2/`)
-            .then(response => {
-                setChefia(response.data)
-            })
-            .catch(error => {
-                console.log(error)
-            })
-    }, [])
+    }, [submitted]); */
 
     /* -------- mensagem --------- */
     const [showMessage, setShowMessage] = useState(false);
@@ -112,7 +129,7 @@ function AcordoDesempenho(){
                 })),
               };
         
-              const response = await axios.post(`${API_BASE_URL}/acordo-desempenho/`, serializedData);
+              const response = await axios.post(`${API_BASE_URL}/acordo-desempenho2/`, serializedData);
               /* navigate('/acordo-desempenho'); */
               // Processar a resposta, exibir mensagem de sucesso para o usuário
               resetForm();
@@ -142,7 +159,7 @@ function AcordoDesempenho(){
                         value={formik.values.avaliado}
                     >
                         <option value="">Selecione um servidor</option>
-                        {avaliado.map((user) => (
+                        {avaliado2.map((user) => (
                             <option key={user.id} value={user.id}>
                             {user.nome}
                             </option>
@@ -222,17 +239,19 @@ function AcordoDesempenho(){
                     ))}
 
                     {/* Botão para adicionar uma nova atividade */}
+                    {formik.values.atividades.length < 3 && (
                     <button
-                    type="button"
-                    id={styles.botao_adicionar}
-                    onClick={() => {
+                        type="button"
+                        id={styles.botao_adicionar}
+                        onClick={() => {
                         const atividades = [...formik.values.atividades];
                         atividades.push({ descricao_atividade: "", desempenho_esperado: "" });
                         formik.setFieldValue("atividades", atividades);
-                    }}
+                        }}
                     >
-                    Adicionar Atividade
+                        Adicionar Atividade
                     </button>
+                    )}
                 </div>
                 {/* <button type="submit">Submit</button> */}
                 <SubmitButton text="Enviar" />

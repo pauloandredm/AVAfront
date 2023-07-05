@@ -26,8 +26,41 @@ function ProjectForm(){
   const [avaliacoes, setAvaliacoes] = useState([])
   const [servidorId, setServidorId] = useState('');
 
+
+
+
+/*----------- get lista de usuarios do back /avaliacao2 -------------*/
+const [avaliacoes2, setAvaliacoes2] = useState([])
+
+useEffect(() => {
+  axios.get(`${API_BASE_URL}/avaliacao2`)
+      .then(response => {
+          setAvaliacoes2(response.data)
+      })
+      .catch(error => {
+          console.log(error)
+      })
+}, [])
+
+/*----------- atualizar lista de usuarios do back /avaliacao2 -------------*/
+useEffect(() => {
+  if (submitted) {
+    const getUsers = async () => {
+      const response = await axios.get(`${API_BASE_URL}/avaliacao2`);
+      setAvaliacoes2(response.data);
+      setSubmitted(false);
+    };
+
+    getUsers();
+  }
+}, [submitted]);
+
+
+
+
+
 /*----------- get lista de usuarios do back -------------*/
-  useEffect(() => {
+  /* useEffect(() => {
       axios.get(`${API_BASE_URL}/avaliacao`)
           .then(response => {
               setAvaliacoes(response.data)
@@ -35,10 +68,10 @@ function ProjectForm(){
           .catch(error => {
               console.log(error)
           })
-  }, [])
+  }, []) */
 
 /*----------- atualizar lista de usuarios do back -------------*/
-  useEffect(() => {
+  /* useEffect(() => {
     if (submitted) {
       const getUsers = async () => {
         const response = await axios.get(`${API_BASE_URL}/avaliacao`);
@@ -49,10 +82,11 @@ function ProjectForm(){
       getUsers();
     }
   }, [submitted]);
-
+ */
 /* ---------- get dados do usuario logado, para poder enviar o post ------------ */
   function handleSelectChange(event) {
     setServidorId(event.target.value);
+    console.log(setServidorId)
   }
 
 /* -------- mensagem --------- */
@@ -77,7 +111,7 @@ useEffect(() => {
 
 const handleSubmit = (event) => {
   event.preventDefault();
-  axios.post(`${API_BASE_URL}/avaliacao/`, {
+  axios.post(`${API_BASE_URL}/avaliacao2/`, {
     avaliado: servidorId,
     coop: document.querySelector('input[name=Cooperacao]:checked').value,
     iniciativa: document.querySelector('input[name=Iniciativa]:checked').value,
@@ -103,7 +137,7 @@ const handleSubmit = (event) => {
           <Select 
             text='Servidor' 
             name='Servidor_id'
-            options={avaliacoes}
+            options={avaliacoes2}
             value={servidorId}
             handleOnChange={handleSelectChange}
           />
