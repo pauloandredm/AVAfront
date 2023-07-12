@@ -159,7 +159,7 @@ function AcordoDesempenho(){
                         value={formik.values.avaliado}
                     >
                         <option value="">Selecione um servidor</option>
-                        {avaliado2.map((user) => (
+                        {avaliado2.sort((a, b) => a.nome.localeCompare(b.nome)).map((user) => (
                             <option key={user.id} value={user.id}>
                             {user.nome}
                             </option>

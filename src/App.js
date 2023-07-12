@@ -7,6 +7,7 @@ import Avaliacao from './components/pages/Avaliacao'
 import Register from './components/pages/Register'
 import AcordoDesempenho from './components/projects/AcordoDesempenho'
 import Perfil from './components/pages/Perfil'
+import Grupos from './components/pages/Grupos'
 
 import Container from './components/layout/Container'
 import Navbar from './components/layout/Navbar'
@@ -28,6 +29,7 @@ function App() {
               <Route exact path="/avaliacao" element={<Avaliacao />}/>
               <Route exact path="/acordo-desempenho" element={<AcordoDesempenho />}/>
               <Route exact path="/perfil" element={<Perfil />}/>
+              <Route exact path="/grupos" element={<Grupos />}/>
             </Route>
 
           </Routes>

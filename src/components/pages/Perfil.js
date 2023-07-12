@@ -218,10 +218,6 @@ const formik = useFormik({
             </tbody>
         </table>
 
-
-
-    
-
     <h2 className={styles.h22}>Avaliações:</h2>
 
     <h3 className={styles.h22}>Auto avaliações:</h3>
@@ -261,52 +257,47 @@ const formik = useFormik({
             ))}
     </div>
 
-
-
-
-
-
     <form className={styles.form_control} onSubmit={formik.handleSubmit}>
-    <h2 className={styles.h2}>Adicionar/Mudar lotação:</h2>
-    <div className={styles.form_control}>
-        <label htmlFor="id">Servidor:</label>
-            <select
-                id="id"
-                name="id"
-                onChange={formik.handleChange}
-                value={formik.values.id}
-            >
-                <option value="">Selecione um servidor</option>
-                    {usuarios.map((user) => (
-                <option key={user.id} value={user.id}>
-                    {user.nome}
-                </option>
-                    ))}
-            </select>
-
-            {formik.touched.id && formik.errors.id ? (
-                <div className={styles.error}>{formik.errors.id}</div>
-            ) : null}
-
-            <label htmlFor="lotacoes">Lotação:</label>
-            <select
-                id="lotacoes"
-                name="lotacoes"
-                onChange={formik.handleChange}
-                value={formik.values.lotacoes}
-                multiple  // Permite a seleção de várias opções
-            >
-                <option value="">Selecione uma lotação</option>
-                {lotacoes.map((user) => (
+        <h2 className={styles.h2}>Adicionar/Mudar lotação:</h2>
+        <div className={styles.form_control}>
+            <label htmlFor="id">Servidor:</label>
+                <select
+                    id="id"
+                    name="id"
+                    onChange={formik.handleChange}
+                    value={formik.values.id}
+                >
+                    <option value="">Selecione um servidor</option>
+                        {usuarios.sort((a, b) => a.nome.localeCompare(b.nome)).map((user) => (
                     <option key={user.id} value={user.id}>
                         {user.nome}
                     </option>
-                ))}
-            </select>
+                        ))}
+                </select>
 
-        
-    </div>
-    <SubmitButton text="Enviar" />
+                {formik.touched.id && formik.errors.id ? (
+                    <div className={styles.error}>{formik.errors.id}</div>
+                ) : null}
+
+                <label htmlFor="lotacoes">Lotação:</label>
+                <select
+                    id="lotacoes"
+                    name="lotacoes"
+                    onChange={formik.handleChange}
+                    value={formik.values.lotacoes}
+                    multiple  // Permite a seleção de várias opções
+                >
+                    <option value="">Selecione uma lotação</option>
+                    {lotacoes.map((user) => (
+                        <option key={user.id} value={user.id}>
+                            {user.nome}
+                        </option>
+                    ))}
+                </select>
+
+            
+        </div>
+        <SubmitButton text="Enviar" />
     </form>
 
     </div>

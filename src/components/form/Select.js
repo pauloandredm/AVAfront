@@ -11,7 +11,7 @@ function Select({ text, name, options, handleOnChange, value }) {
         value={value || ''}
       >
         <option>Selecione uma opção</option>
-        {options.map(option => (
+        {options.sort((a, b) => a.nome.localeCompare(b.nome)).map(option => (
           <option key={option.id} value={option.id}>
             {option.nome}
           </option>

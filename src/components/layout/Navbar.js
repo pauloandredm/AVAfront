@@ -47,6 +47,7 @@ function Navbar() {
               <li className={styles.item}><Link to="/avaliacao">Avaliação</Link></li>
               {gestor && <li className={styles.item}><Link to="/acordo-desempenho">Acordo Desempenho</Link></li>}
               {gestor && <li className={styles.item}><Link to="/perfil">Perfil</Link></li>}
+              {gestor && <li className={styles.item}><Link to="/grupos">Grupos</Link></li>}
               <li className={styles.item} onClick={handleLogout}>Logout</li>
             </>
           ) : (
