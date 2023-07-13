@@ -11,7 +11,8 @@ function Navbar() {
   const { authenticated, setAuthenticated } = useContext(AuthContext);
   const navigate = useNavigate();
   const [gestor, setGestor] = useState(false);
-
+  const [lotacoes, setLotacoes] = useState([]);
+  
   const handleLogout = () => {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
@@ -29,7 +30,9 @@ function Navbar() {
       console.log(`decode: ${decode}`);
       // Check if the user is a gestor
       const isGestor = decodedToken.is_gestor;
+      const lotacoes = decodedToken.lotacoes;
       setGestor(isGestor);
+      setLotacoes(lotacoes);
     } else {
       setAuthenticated(false);
     }
@@ -47,6 +50,7 @@ function Navbar() {
               <li className={styles.item}><Link to="/avaliacao">Avaliação</Link></li>
               {gestor && <li className={styles.item}><Link to="/acordo-desempenho">Acordo Desempenho</Link></li>}
               {gestor && <li className={styles.item}><Link to="/perfil">Perfil</Link></li>}
+              {/* {gestor && <li className={styles.item}><Link to="/perfil">{lotacoes.length > 0 ? lotacoes[0] : "Perfil"}</Link></li>} */}
               {gestor && <li className={styles.item}><Link to="/grupos">Grupos</Link></li>}
               <li className={styles.item} onClick={handleLogout}>Logout</li>
             </>

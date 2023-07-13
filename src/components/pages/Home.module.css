@@ -1,4 +1,14 @@
 .h1{
-    text-align: center;
+    text-align: left;
+    margin-top: 50px;
+}
+
+.explicacao{
+    text-align: left;
+    margin-top: 50px;
+    margin-left: 30px;
+}
+
+.explicacao h2{
     margin-top: 50px;
 }
