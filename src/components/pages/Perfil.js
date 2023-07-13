@@ -257,7 +257,7 @@ const formik = useFormik({
             ))}
     </div>
 
-    <form className={styles.form_control} onSubmit={formik.handleSubmit}>
+    {/* <form className={styles.form_control} onSubmit={formik.handleSubmit}>
         <h2 className={styles.h2}>Adicionar/Mudar lotação:</h2>
         <div className={styles.form_control}>
             <label htmlFor="id">Servidor:</label>
@@ -298,7 +298,7 @@ const formik = useFormik({
             
         </div>
         <SubmitButton text="Enviar" />
-    </form>
+    </form> */}
 
     </div>
     </div>
