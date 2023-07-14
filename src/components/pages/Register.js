@@ -15,6 +15,22 @@ import { BiShowAlt, BiHide } from 'react-icons/bi';
 function Register() {
     const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+    const [showErrorMessage, setShowErrorMessage] = useState(false);
+
+    /* ------ timeout mensagem ------ */
+    useEffect(() => {
+      let timer;
+      if (showErrorMessage) {
+        timer = setTimeout(() => {
+          setShowErrorMessage(false);
+          setErrorMessage('');
+        }, 3000);
+      }
+      return () => {
+        clearTimeout(timer);
+      };
+    }, [showErrorMessage]);
 
     /*------------------ get lista de lotacoes------------------ */
 
@@ -90,7 +106,13 @@ const verificarMatricula = async (matricula) => {
           // process the response, e.g. show success message to user
           resetForm();
         } catch (error) {
-          // handle error, e.g. show error message to user
+          if (error.response && error.response.status === 400) {
+            // Backend returned a 400 Bad Request
+            setErrorMessage('CPF ou Matricula já existentes');
+            setShowErrorMessage(true);
+          } else {
+            // Other types of errors, handle them accordingly
+          }
         } finally {
           setSubmitting(false);
         }
@@ -233,6 +255,7 @@ const verificarMatricula = async (matricula) => {
 
       </div>
       <SubmitButton text="Cadastrar" />
+      {showErrorMessage && <div className={styles.error_message}>{errorMessage}</div>}
     </form>
     )
 }   

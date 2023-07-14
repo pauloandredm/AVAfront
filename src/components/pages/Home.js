@@ -2,12 +2,10 @@ import styles from './Home.module.css'
 import React, { useState, useEffect, useContext } from 'react';
 import jwt_decode from 'jwt-decode';
 import { AuthContext } from '../../AuthContext';
-import { Link, useNavigate } from "react-router-dom";
 
 function Home() {
   const [gestor, setGestor] = useState(false);
   const { authenticated, setAuthenticated } = useContext(AuthContext);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const access_token2 = localStorage.getItem("access_token");
@@ -33,12 +31,12 @@ function Home() {
             <p>divida os servidores da sua lotação em grupos para que cada servidor só avalie os servidores seu grupo</p>
           </>
         )}
-        {/* {authenticated && gestor && (
+        {authenticated && gestor && (
           <>
             <h2>Perfil:</h2>
             <p>Mostra os servidores da sua lotação e todas as avaliações já feitas</p>
           </>
-        )} */}
+        )}
       </div>
     </div>
   );
