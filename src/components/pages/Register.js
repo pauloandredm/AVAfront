@@ -49,25 +49,78 @@ function Register() {
 // Função para verificar a matrícula e exibir os campos adicionais se não existir
 
 const [cadastroAdicional, setCadastroAdicional] = useState({ nome: '', lotacoes: '' });
+const [matriculaCompleta, setMatriculaCompleta] = useState('');
+const [matriculaGestor, setMatriculaGestor] = useState(false);
 
-const verificarMatricula = async (matricula) => {
-  try {
-    const response = await axios.get(`${API_BASE_URL}/matricula/`);
-    const matriculas = response.data.map((item) => item.matricula); // Extrai apenas as matrículas da lista
-    if (matriculas.includes(String(matricula))) {
-      // Matrícula encontrada, não exibir campos adicionais
-      setCadastroAdicional(null);
-    } else {
-      // Matrícula não encontrada, exibir campos adicionais
-      setCadastroAdicional({ nome: '', lotacoes: '' });
-    }
-  } catch (error) {
-    // Lidar com erros de requisição, exibir mensagem de erro, etc.
-  }
-};
+
+
 
 /* -------- Formik --------- */
 
+    const handleMatriculaChange = (event) => {
+      let matricula = event.target.value;
+      // Remover caracteres especiais
+      matricula = matricula.replace(/[.-]/g, '');
+      
+      formik.setFieldValue('matricula', matricula);
+      setMatriculaCompleta(matricula);
+    };
+
+    const verificarMatricula = async (matricula) => {
+      try {
+        // Remover o último dígito da matrícula
+        const matriculaNAOtruncada = matricula
+        const matriculaTruncada = matricula.slice(0, -1);
+        matricula = matricula.replace(/[.-]/g, '');
+        
+        const response = await axios.get(`${API_BASE_URL}/matricula/`);
+        const response2 = await axios.get(`${API_BASE_URL}/matriculaGestor/`);
+
+        const matriculas = response.data.map((item) => item.matricula); // Extrai apenas as matrículas da lista
+        const matriculas2 = response2.data.map((item) => item.matricula2);
+
+
+        if(matriculas2.includes(String(matriculaNAOtruncada))){
+          formik.setFieldValue('matricula', matriculaNAOtruncada);
+          setCadastroAdicional(null);
+          setMatriculaGestor(true);
+          console.log("else if (matriculas.includes(String(matriculaTruncada)))")
+          console.log(matriculaTruncada)
+        }
+        else if (matriculas.includes(String(matriculaTruncada))) {
+          // Matrícula encontrada, não exibir campos adicionais
+          formik.setFieldValue('matricula', matriculaTruncada);
+          setCadastroAdicional(null);
+          console.log("if(matriculas2.includes(String(matriculaTruncada)))")
+          console.log(matriculaTruncada)
+        } 
+        else {
+          // Matrícula não encontrada, exibir campos adicionais
+          setCadastroAdicional({ nome: '', lotacoes: '' });
+        }
+      } catch (error) {
+        // Lidar com erros de requisição, exibir mensagem de erro, etc.
+      }
+    };
+
+    const handleMatriculaKeyPress = (event) => {
+      const keyCode = event.which || event.keyCode;
+      // Permitir apenas dígitos (0-9) e teclas de controle (backspace, delete, etc.)
+      const isDigit = (keyCode >= 48 && keyCode <= 57) || keyCode === 8 || keyCode === 46;
+      if (!isDigit) {
+        event.preventDefault();
+      }
+    };
+
+    const handleMatriculaPaste = (event) => {
+      const clipboardData = event.clipboardData || window.clipboardData;
+      const pastedText = clipboardData.getData('text');
+      // Remover caracteres especiais do texto colado
+      const sanitizedText = pastedText.replace(/[.-]/g, '');
+      // Atualizar o valor do campo de matrícula
+      formik.setFieldValue('matricula', sanitizedText);
+    };
+  
     const formik = useFormik({
       initialValues: {
         matricula: '',
@@ -90,9 +143,16 @@ const verificarMatricula = async (matricula) => {
           .oneOf([Yup.ref('password'), null], 'Passwords must match')
           .required('Required'),
       }),
+
+      
+
       onSubmit: async (values, { setSubmitting, resetForm }) => {   
         if (values.nome === '') {
           values.nome = 'aaaa'; // Definir 'aaaa' caso o campo nome esteja em branco
+        }
+
+        if (matriculaGestor) {
+          values.matricula = matriculaCompleta; // Enviar a matriculaCompleta
         }
     
         try {
@@ -156,11 +216,13 @@ const verificarMatricula = async (matricula) => {
           id="matricula"
           name="matricula"
           type="number"
+          onKeyPress={handleMatriculaKeyPress}
+          onPaste={handleMatriculaPaste}
+          onChange={handleMatriculaChange}
           onBlur={(event) => {
             verificarMatricula(event.target.value);
           }}
-          onChange={formik.handleChange}
-          value={formik.values.matricula}
+          value={matriculaCompleta}
         />
 
         {formik.touched.matricula && formik.errors.matricula ? (
