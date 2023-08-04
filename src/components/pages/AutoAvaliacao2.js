@@ -252,7 +252,7 @@ return(
       <p>Hoje, você desempenha com dificuldade alguma(s) tarefa(s) que já executou bem no passado? Se sim, qual(is)?</p>
       <textarea
           type="text"
-          id={styles.meuInput2}
+          id={styles.meuInput}
           name="letra_E"
           value={formik.values.letra_E}
           onChange={formik.handleChange}

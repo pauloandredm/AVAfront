@@ -7,6 +7,8 @@ import SubmitButton from '../form/SubmitButton'
 import API_BASE_URL from '../ApiConfig';
 import axios from '../../axiosConfig';
 
+import moment from 'moment';
+
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
@@ -34,19 +36,7 @@ function AutoAvaliacao4() {
                 console.log(error)
             })
     }, [])
-    
-    /* ----------- validacao data ------------ */
-    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
 
-    // Função de validação personalizada para verificar se a data está no formato correto
-    function isValidDate(value) {
-    return dateRegex.test(value);
-    }
-
-    // Função de validação personalizada para transformar a data em objeto Date
-    function parseDate(value) {
-    return isValidDate(value) ? new Date(value) : null;
-    }
     /* -------- post -------- */
 
     const navigate = useNavigate();
@@ -108,10 +98,8 @@ function AutoAvaliacao4() {
             BNum_12: 'N',
         },
         validationSchema: Yup.object({
-            periodo_inicio: Yup.string()
-                .required('Campo obrigatório'),
-            periodo_fim: Yup.string()
-                .required('Campo obrigatório'),
+            periodo_inicio: Yup.string().required('Campo obrigatório'),
+            periodo_fim: Yup.string().required('Campo obrigatório'),
             assiduidade: Yup.string().required('Campo obrigatório'),
             disciplina: Yup.string().required('Campo obrigatório'),
             produtividade: Yup.string().required('Campo obrigatório'),
@@ -169,6 +157,24 @@ function AutoAvaliacao4() {
                     ...progresso.find(item => item.pagina_atual === 1).dados_progresso,
                     ...progresso.find(item => item.pagina_atual === 2).dados_progresso,
                     ...progresso.find(item => item.pagina_atual === 3).dados_progresso,
+                    periodo_inicio: moment(values.periodo_inicio).format('YYYY-MM-DD'),
+                    periodo_fim: moment(values.periodo_fim).format('YYYY-MM-DD'),
+                    BNum_1: values.BNum_1,
+                    BNum_2: values.BNum_2,
+                    BNum_3: values.BNum_3,
+                    BNum_4: values.BNum_4,
+                    BNum_5: values.BNum_5,
+                    BNum_6: values.BNum_6,
+                    BNum_7: values.BNum_7,
+                    BNum_8: values.BNum_8,
+                    BNum_9: values.BNum_9,
+                    BNum_10: values.BNum_10,
+                    BNum_11: values.BNum_11,
+                    BNum_12: values.BNum_12,
+                    avaliado: avaliado
+                  };
+
+                  const serializedData2 = {
                     BNum_1: values.BNum_1,
                     BNum_2: values.BNum_2,
                     BNum_3: values.BNum_3,
@@ -182,25 +188,21 @@ function AutoAvaliacao4() {
                     BNum_11: values.BNum_11,
                     BNum_12: values.BNum_12,
                   };
-            
-                  // Send the complete form data to the server
+
                   const response = await axios.post(`${API_BASE_URL}/avaliacao-auto-avaliacao/`, serializedData);
                   
-                  /* const response1 = await axios.post(`${API_BASE_URL}/progresso_formulario/`, {
+                  const response1 = await axios.post(`${API_BASE_URL}/progresso_formulario/`, {
                     avaliado: avaliado,
                     pagina_atual: 4,
-                    dados_progresso: serializedData,
-                }); */
+                    dados_progresso: serializedData2,
+                  });
                 navigate('/');
-
-                /* const response = await axios.post(`${API_BASE_URL}/avaliacao-auto-avaliacao/`, values);
-                navigate('/'); */
 
             } catch (error) {
             console.error(error);
             }
-},
-});
+        },
+    });
 
 useEffect(() => {
     const objetoPagina4 = progresso.find(item => item.pagina_atual === 4);
