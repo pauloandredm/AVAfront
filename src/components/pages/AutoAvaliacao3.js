@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from "react-router-dom";
+import { useLocation } from 'react-router-dom';
 
-import { BiHelpCircle } from "react-icons/bi";
 import styles from './AutoAvaliacao.module.css'
-import Select from '../form/Select'
+
 import SubmitButton from '../form/SubmitButton'
 import API_BASE_URL from '../ApiConfig';
 import axios from '../../axiosConfig';
@@ -11,9 +11,6 @@ import axios from '../../axiosConfig';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-import moment from 'moment';
 
 function AutoAvaliacao3() {
 
@@ -22,67 +19,60 @@ function AutoAvaliacao3() {
         if (access_token) {
           axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
         }
-      }, []);
-    
-      const [submitted, setSubmitted] = useState(false);
-      const navigate = useNavigate();
-    
-    /* ---------- get ------------ */
-    
-      const [avaliacoes, setAvaliacoes] = useState([])
-      const [servidorId, setServidorId] = useState('');
+    }, []);
 
-    /* ---------- get dados do usuario logado, para poder enviar o post ------------ */
-      function handleSelectChange(event) {
-        setServidorId(event.target.value);
-        console.log(setServidorId)
-      }
+    const navigate = useNavigate();
     
-    /* -------- mensagem --------- */
-    const [showMessage, setShowMessage] = useState(false);
-    
+
+    const location = useLocation();
+    const avaliado = location.state && location.state.avaliado ? location.state.avaliado : null;
+    console.log("avaliado:");
+    console.log(avaliado);
+
+    /* -------- get/progresso_formulario -------- */
+    const [progresso, setProgresso] = useState([]);
+
     useEffect(() => {
-      let timer;
-      if (showMessage) {
-        timer = setTimeout(() => {
-          setShowMessage(false);
-          setShowMessage('');
-        }, 3000);
-      }
-      return () => {
-        clearTimeout(timer);
-      };
-    }, [showMessage]);
-    
+        axios
+        .get(`${API_BASE_URL}/progresso_formulario/?avaliado=${avaliado}`)
+        .then(response => {
+            setProgresso(response.data);
+        })
+        .catch(error => {
+            console.log(error);
+        });
+    }, [avaliado]);
+
     /* -------- post -------- */
     
     /* const navigate = useNavigate(); */
     
     const formik = useFormik({
         initialValues: {
-          Num_1: '',
-          Num_2: '',
-          Num_3: '',
-          Num_4: '',
-          Num_5: '',
-          Num_6: '',
-          Num_7: '',
-          Num_8: '',
-          Num_9: '',
-          Num_10: '',
-          Num_11: '',
-          Num_12: '',
-          Num_13: '',
-          Num_14: '',
-          Num_15: '',
-          Num_16: '',
-          Num_17: '',
-          Num_18: '',
-          Num_19: '',
-          Num_20: '',
-          Num_21: '',
-          Num_22: '',
-          Num_23: '',
+            avaliado: avaliado,
+            Num_1: 'X',
+            Num_2: 'X',
+            Num_3: 'X',
+            Num_4: 'X',
+            Num_5: 'X',
+            Num_6: 'X',
+            Num_7: 'X',
+            Num_8: 'X',
+            Num_9: 'X',
+            Num_10: 'X',
+            Num_11: 'X',
+            Num_12: 'X',
+            Num_13: 'X',
+            Num_14: 'X',
+            Num_15: 'X',
+            Num_16: 'X',
+            Num_17: 'X',
+            Num_18: 'X',
+            Num_19: 'X',
+            Num_20: 'X',
+            Num_21: 'X',
+            Num_22: 'X',
+            Num_23: 'X',
         },
         validationSchema: Yup.object({
           Num_1: Yup.string().required('Campo obrigatório'),
@@ -111,19 +101,58 @@ function AutoAvaliacao3() {
         }),
         onSubmit: async (values) => {
             try {
-              // Fazer a requisição POST para o backend
-              const response = await axios.post('/avaliacao-auto-avaliacao/', values);
-              // Aqui você pode tratar a resposta do servidor, por exemplo, exibir uma mensagem de sucesso, etc.
+                const serializedData = {
+                    Num_1: values.Num_1,
+                    Num_2: values.Num_2,
+                    Num_3: values.Num_3,
+                    Num_4: values.Num_4,
+                    Num_5: values.Num_5,
+                    Num_6: values.Num_6,
+                    Num_7: values.Num_7,
+                    Num_8: values.Num_8,
+                    Num_9: values.Num_9,
+                    Num_10: values.Num_10,
+                    Num_11: values.Num_11,
+                    Num_12: values.Num_12,
+                    Num_13: values.Num_13,
+                    Num_14: values.Num_14,
+                    Num_15: values.Num_15,
+                    Num_16: values.Num_16,
+                    Num_17: values.Num_17,
+                    Num_18: values.Num_18,
+                    Num_19: values.Num_19,
+                    Num_20: values.Num_20,
+                    Num_21: values.Num_21,
+                    Num_22: values.Num_22,
+                    Num_23: values.Num_23,
+                }
+              const response = await axios.post(`${API_BASE_URL}/progresso_formulario/`, {
+                avaliado: avaliado,
+                pagina_atual: 3,
+                dados_progresso: serializedData,
+              });
+              navigate('/auto-avaliacao4', { state: { avaliado: avaliado } });
               console.log(response.data);
             } catch (error) {
-              // Caso ocorra um erro na requisição, você pode tratá-lo aqui
               console.error(error);
             }
         },
     });
+
+    useEffect(() => {
+        const objetoPagina3 = progresso.find(item => item.pagina_atual === 3);
+        if (objetoPagina3) {
+          formik.setValues(objetoPagina3.dados_progresso);
+        }
+    }, [progresso]);
+
 return(
-    <div>
-        <h3 className={styles.aspectos}>Avalie seu desempenho conforme indicadores abaixo, a partir da estrita observância da ética profissional:</h3>
+<div className={styles.avaliacao_container}>
+<div className={styles.form_control}>
+
+    <form onSubmit={formik.handleSubmit}>
+
+        <h2 className={styles.aspectos}>Avalie seu desempenho conforme indicadores abaixo, a partir da estrita observância da ética profissional:</h2>
         <label htmlFor="Num_1" className={styles.block}>1)</label>
         <p>Informa tempestivamente situações que provoquem ausências, atrasos ou saídas antecipadas, permitindo organização das atividades do setor.</p>
 
@@ -629,7 +658,10 @@ return(
         {formik.touched.Num_23 && formik.errors.Num_23 ? (
         <div className={styles.error}>{formik.errors.Num_23}</div>
         ) : null}
+    <SubmitButton text="Enviar" />
+    </form>
     </div>
+</div>
     )
 }
 

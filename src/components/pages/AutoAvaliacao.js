@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from "react-router-dom";
 
-import { BiHelpCircle } from "react-icons/bi";
 import styles from './AutoAvaliacao.module.css'
-import Select from '../form/Select'
 import SubmitButton from '../form/SubmitButton'
 import API_BASE_URL from '../ApiConfig';
 import axios from '../../axiosConfig';
@@ -13,7 +11,7 @@ import * as Yup from 'yup';
 
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import moment from 'moment';
+
 
 function AutoAvaliacao() {
 
@@ -24,35 +22,79 @@ function AutoAvaliacao() {
         }
       }, []);
     
-      const [submitted, setSubmitted] = useState(false);
       const navigate = useNavigate();
     
     /* ---------- get ------------ */
-    
-      const [avaliacoes, setAvaliacoes] = useState([])
-      const [servidorId, setServidorId] = useState('');
 
-    /* ---------- get dados do usuario logado, para poder enviar o post ------------ */
-      function handleSelectChange(event) {
-        setServidorId(event.target.value);
-        console.log(setServidorId)
-      }
-    
-    /* -------- mensagem --------- */
-    const [showMessage, setShowMessage] = useState(false);
-    
+    const [avaliado2, setAvaliado2] = useState([]);
+
     useEffect(() => {
-      let timer;
-      if (showMessage) {
-        timer = setTimeout(() => {
-          setShowMessage(false);
-          setShowMessage('');
-        }, 3000);
+        axios.get(`${API_BASE_URL}/acordo-desempenho2/`)
+            .then(response => {
+                setAvaliado2(response.data)
+            })
+            .catch(error => {
+                console.log(error)
+            })
+    }, [])
+
+    /* -------- get/progresso_formulario -------- */
+    /* const [progresso, setProgresso] = useState([]);
+
+    useEffect(() => {
+        axios.get(`${API_BASE_URL}/progresso_formulario/?avaliado=${avaliado}`)
+            .then(response => {
+                setProgresso(response.data)
+            })
+            .catch(error => {
+                console.log(error)
+            })
+    }, [])  */ 
+    
+
+    /* -------- verificar progresso -------- */
+
+    const verificarProgresso = async (avaliadoId) => {
+      try {
+        // Fetch progress data for the selected server (avaliadoId)
+        const response = await axios.get(
+          `${API_BASE_URL}/progresso_formulario/?avaliado=${avaliadoId}`
+        );
+    
+        // Find the object with pagina_atual === 1
+        const progressData = response.data.find((item) => item.pagina_atual === 1);
+    
+        if (progressData) {
+
+          const periodoInicio = new Date(progressData.dados_progresso.periodo_inicio);
+          const periodoFim = new Date(progressData.dados_progresso.periodo_fim);
+
+
+          formik.setValues({
+            ...formik.values,
+            avaliado: avaliadoId, // Update the selected server (avaliado) value
+            periodo_inicio: periodoInicio,
+            periodo_fim: periodoFim,
+            assiduidade: progressData.dados_progresso.assiduidade,
+            disciplina: progressData.dados_progresso.disciplina,
+            produtividade: progressData.dados_progresso.produtividade,
+            iniciativa: progressData.dados_progresso.iniciativa,
+            responsabilidade: progressData.dados_progresso.responsabilidade,
+          });
+        } else {
+          // Handle the case when there is no progress data for pagina_atual === 1
+          // You can reset the form values or display a message to the user, for example.
+          console.log('No progress data found for pagina_atual === 1');
+        }
+      } catch (error) {
+        // Handle the error if needed
+        console.error(error);
       }
-      return () => {
-        clearTimeout(timer);
-      };
-    }, [showMessage]);
+    };
+    
+    
+    
+    
     
     /* -------- post -------- */
     
@@ -62,6 +104,7 @@ function AutoAvaliacao() {
         initialValues: {
           periodo_inicio: '',
           periodo_fim: '',
+          avaliado: '',
           assiduidade: '',
           disciplina: '',
           produtividade: '',
@@ -71,6 +114,7 @@ function AutoAvaliacao() {
         validationSchema: Yup.object({
           periodo_inicio: Yup.date().required('Campo obrigatório'),
           periodo_fim: Yup.date().required('Campo obrigatório'),
+          avaliado: Yup.string().required('Required'),
           assiduidade: Yup.string().required('Campo obrigatório'),
           disciplina: Yup.string().required('Campo obrigatório'),
           produtividade: Yup.string().required('Campo obrigatório'),
@@ -79,10 +123,23 @@ function AutoAvaliacao() {
         }),
         onSubmit: async (values) => {
             try {
-              // Fazer a requisição POST para o backend
-              const response = await axios.post(`${API_BASE_URL}/progresso_formulario/`, values);
-              // Aqui você pode tratar a resposta do servidor, por exemplo, exibir uma mensagem de sucesso, etc.
-              console.log(response.data);
+              const serializedData = {
+                periodo_inicio: values.periodo_inicio,
+                periodo_fim: values.periodo_fim,
+                assiduidade: values.assiduidade,
+                disciplina: values.disciplina,
+                produtividade: values.produtividade,
+                iniciativa: values.iniciativa,
+                responsabilidade: values.responsabilidade,
+              }
+
+              const response = await axios.post(`${API_BASE_URL}/progresso_formulario/`, {
+                avaliado: values.avaliado,
+                pagina_atual: 1,
+                dados_progresso: serializedData,
+            });
+              navigate('/auto-avaliacao2', { state: { avaliado: values.avaliado } });
+              console.log(values.avaliado);
             } catch (error) {
               // Caso ocorra um erro na requisição, você pode tratá-lo aqui
               console.error(error);
@@ -90,7 +147,7 @@ function AutoAvaliacao() {
         },
     });
     
-      return(
+return(
 <div className={styles.avaliacao_container}>
     <form onSubmit={formik.handleSubmit}>
 
@@ -98,42 +155,72 @@ function AutoAvaliacao() {
     <p>Faça sua auto avaliação</p>
     <div className={styles.form_control}>
 
+    <div>
+      <label className={styles.servidor2} htmlFor="avaliado">Servidor:</label>
+      <select
+          className={styles.servidor}
+          id="avaliado"
+          name="avaliado"
+          onChange={formik.handleChange}
+          value={formik.values.avaliado}
+          onBlur={(event) => {
+            verificarProgresso(event.target.value);
+          }}
+      >
+          <option value="">Selecione um servidor</option>
+          {avaliado2.sort((a, b) => a.nome.localeCompare(b.nome)).map((user) => (
+              <option key={user.id} value={user.id}>
+              {user.nome}
+              </option>
+          ))}
+      </select>
+    
+
+      {formik.touched.avaliado && formik.errors.avaliado ? (
+          <div className={styles.error}>{formik.errors.avaliado}</div>
+      ) : null}
+    </div>
+
 <div className={styles.periodocontainer}>
-    <div className={styles.periodoitem}>
-        <label htmlFor="periodo_inicio">Início do Período:</label>
-        <DatePicker
-        id="periodo_inicio"
-        name="periodo_inicio"
-        selected={formik.values.periodo_inicio}
-        onChange={(date) => formik.setFieldValue('periodo_inicio', date)}
-        dateFormat="dd/MM/yyyy" // Definindo o formato de exibição da data
-        />
+  
 
-        {formik.touched.periodo_inicio && formik.errors.periodo_inicio ? (
-        <div className={styles.error}>{formik.errors.periodo_inicio}</div>
-        ) : null}
+    {/* <div className={styles.periodoitem2}> */}
+      <div className={styles.periodoitem}>
+          <label htmlFor="periodo_inicio">Início do Período:</label>
+          <DatePicker
+          id="periodo_inicio"
+          name="periodo_inicio"
+          selected={formik.values.periodo_inicio}
+          onChange={(date) => formik.setFieldValue('periodo_inicio', date)}
+          dateFormat="dd/MM/yyyy" // Definindo o formato de exibição da data
+          />
 
-    </div>
-    <div className={styles.periodoitem}>
-        <label htmlFor="periodo_fim">Fim do Período:</label>
-        <DatePicker
-        id="periodo_fim"
-        name="periodo_fim"
-        selected={formik.values.periodo_fim}
-        onChange={(date) => formik.setFieldValue('periodo_fim', date)}
-        dateFormat="dd/MM/yyyy" // Definindo o formato de exibição da data
-        />
+          {formik.touched.periodo_inicio && formik.errors.periodo_inicio ? (
+          <div className={styles.error}>{formik.errors.periodo_inicio}</div>
+          ) : null}
 
-        {formik.touched.periodo_fim && formik.errors.periodo_fim ? (
-        <div className={styles.error}>{formik.errors.periodo_fim}</div>
-        ) : null}
-    </div>
+      </div>
+      <div className={styles.periodoitem}>
+          <label htmlFor="periodo_fim">Fim do Período:</label>
+          <DatePicker
+          id="periodo_fim"
+          name="periodo_fim"
+          selected={formik.values.periodo_fim}
+          onChange={(date) => formik.setFieldValue('periodo_fim', date)}
+          dateFormat="dd/MM/yyyy" // Definindo o formato de exibição da data
+          />
+
+          {formik.touched.periodo_fim && formik.errors.periodo_fim ? (
+          <div className={styles.error}>{formik.errors.periodo_fim}</div>
+          ) : null}
+      </div>
+    {/* </div> */}
 </div>
 
 <div className={styles.form_control}>
         <label htmlFor="assiduidade">Assiduidade:</label>
         <p>Cumprimento da carga horária de trabalho estabelecida; pontualidade; comparecimento às reuniões e aos compromissos assumidos; aviso tempestivo de ausências, atrasos ou saídas antecipadas, permitindo organização do setor</p>
-        <input
+        <textarea
             type="text"
             id={styles.meuInput}
             name="assiduidade"
@@ -147,7 +234,7 @@ function AutoAvaliacao() {
 
         <label htmlFor="disciplina">Disciplina:</label>
         <p>Conhecimento e cumprimento das leis, regulamentos e procedimentos internos; reserva sobre assuntos de interesse exclusivamente interno ou particular; cooperação e participação efetiva nos trabalhos da equipe; demonstração de respeito e atenção, assim como tratar com urbanidade (independente de nível hierárquico, profissional ou social).</p>
-        <input
+        <textarea
             type="text"
             id={styles.meuInput}
             name="disciplina"
@@ -161,7 +248,7 @@ function AutoAvaliacao() {
 
         <label htmlFor="produtividade">Produtividade:</label>
         <p>Cumprimento dos prazos exigidos sem precisar ser cobrado e sem acúmulo de demandas; volume de trabalho produzido coerente com tempo, recursos e complexidade das atividades; tarefas desenvolvidas corretamente, com qualidade e boa apresentação.</p>
-        <input
+        <textarea
             type="text"
             id={styles.meuInput}
             name="produtividade"
@@ -175,7 +262,7 @@ function AutoAvaliacao() {
 
         <label htmlFor="iniciativa">Iniciativa:</label>
         <p>Desenvolvimento de melhorias no trabalho que realiza; disposição espontânea para aprender outras tarefas e auxiliar o setor/colegiado; busca por orientação e por ações de desenvolvimento profissional, visando solucionar situações e/ou eliminar lacunas de desempenho; sugestões e críticas construtivas para retroalimentação, a partir de sua experiência e observações.</p>
-        <input
+        <textarea
             type="text"
             id={styles.meuInput}
             name="iniciativa"
@@ -189,7 +276,7 @@ function AutoAvaliacao() {
 
         <label htmlFor="responsabilidade">Responsabilidade:</label>
         <p>Cumprimento de atribuições e tarefas que assume; organização de atividades de modo a garantir a continuidade do trabalho em suas ausências (previstas ou não); responsabilidade pelos resultados de suas ações ou, parcialmente, de sua equipe; exercício de funções sem usufruir de poderes/facilidades delas decorrentes em favorecimento próprio ou a terceiros; zelo pelo patrimônio público, uso adequado de materiais e otimização de gastos.</p>
-        <input
+        <textarea
             type="text"
             id={styles.meuInput}
             name="responsabilidade"
@@ -202,7 +289,7 @@ function AutoAvaliacao() {
         ) : null}
 </div>
     </div>
-    <button type="submit">Enviar</button>
+    <SubmitButton text="Enviar" />
     </form>
 
 </div>
