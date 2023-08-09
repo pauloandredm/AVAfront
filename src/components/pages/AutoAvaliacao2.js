@@ -33,7 +33,7 @@ function AutoAvaliacao2() {
 
     useEffect(() => {
         axios
-        .get(`${API_BASE_URL}/progresso_formulario/?avaliado=${avaliado}`)
+        .get(`${API_BASE_URL}/progresso_formulario/?avaliado=${avaliado}&tipo_avaliacao=AA`)
         .then(response => {
             setProgresso(response.data);
         })
@@ -50,12 +50,12 @@ function AutoAvaliacao2() {
         initialValues: {
           letra_A: '',
           letra_B: '',
-          letra_C: 'T',
+          letra_C: '',
           comentario_letra_C: '',
-          Fatores_intervenientes_A: 'S',
-          Fatores_intervenientes_B: 'S',
-          Fatores_intervenientes_C: 'S',
-          letra_D: 'T',
+          Fatores_intervenientes_A: '',
+          Fatores_intervenientes_B: '',
+          Fatores_intervenientes_C: '',
+          letra_D: '',
           letra_E: '',
           letra_F: '',
         },
@@ -90,6 +90,7 @@ function AutoAvaliacao2() {
                 avaliado: avaliado,
                 pagina_atual: 2,
                 dados_progresso: serializedData,
+                tipo_avaliacao: 'AA',
             });
               navigate('/auto-avaliacao3', { state: { avaliado: avaliado } });
               console.log(response.data);
@@ -240,8 +241,8 @@ return(
           onChange={formik.handleChange}
           value={formik.values.letra_D}
       >
-          <option value="S">Totalmente</option>
-          <option value="N">Às vezes</option>
+          <option value="S">Sim</option>
+          <option value="N">Não</option>
       </select>
 
       {formik.touched.letra_D && formik.errors.letra_D ? (

@@ -194,10 +194,11 @@ const [matriculaGestor, setMatriculaGestor] = useState(false);
           text="cpf"
           id="cpf"
           name="cpf"
-          type="number"
+          type="text"
+          value={formik.values.cpf}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
-          value={formik.values.cpf}
+          
         />
 
         {formik.touched.cpf && formik.errors.cpf ? (

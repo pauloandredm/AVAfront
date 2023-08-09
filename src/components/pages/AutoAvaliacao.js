@@ -38,30 +38,12 @@ function AutoAvaliacao() {
             })
     }, [])
 
-    /* -------- get/progresso_formulario -------- */
-    /* const [progresso, setProgresso] = useState([]);
-
-    useEffect(() => {
-        axios.get(`${API_BASE_URL}/progresso_formulario/?avaliado=${avaliado}`)
-            .then(response => {
-                setProgresso(response.data)
-            })
-            .catch(error => {
-                console.log(error)
-            })
-    }, [])  */ 
-    
-
     /* -------- verificar progresso -------- */
 
     const verificarProgresso = async (avaliadoId) => {
       try {
-        // Fetch progress data for the selected server (avaliadoId)
-        const response = await axios.get(
-          `${API_BASE_URL}/progresso_formulario/?avaliado=${avaliadoId}`
-        );
+        const response = await axios.get(`${API_BASE_URL}/progresso_formulario/?avaliado=${avaliadoId}&tipo_avaliacao=AA`);
     
-        // Find the object with pagina_atual === 1
         const progressData = response.data.find((item) => item.pagina_atual === 1);
     
         if (progressData) {
@@ -72,7 +54,7 @@ function AutoAvaliacao() {
 
           formik.setValues({
             ...formik.values,
-            avaliado: avaliadoId, // Update the selected server (avaliado) value
+            avaliado: avaliadoId,
             periodo_inicio: periodoInicio,
             periodo_fim: periodoFim,
             assiduidade: progressData.dados_progresso.assiduidade,
@@ -82,23 +64,14 @@ function AutoAvaliacao() {
             responsabilidade: progressData.dados_progresso.responsabilidade,
           });
         } else {
-          // Handle the case when there is no progress data for pagina_atual === 1
-          // You can reset the form values or display a message to the user, for example.
-          console.log('No progress data found for pagina_atual === 1');
         }
       } catch (error) {
         // Handle the error if needed
         console.error(error);
       }
     };
-    
-    
-    
-    
-    
+
     /* -------- post -------- */
-    
-    /* const navigate = useNavigate(); */
     
     const formik = useFormik({
         initialValues: {
@@ -137,6 +110,7 @@ function AutoAvaliacao() {
                 avaliado: values.avaliado,
                 pagina_atual: 1,
                 dados_progresso: serializedData,
+                tipo_avaliacao: 'AA',
             });
               navigate('/auto-avaliacao2', { state: { avaliado: values.avaliado } });
               console.log(values.avaliado);

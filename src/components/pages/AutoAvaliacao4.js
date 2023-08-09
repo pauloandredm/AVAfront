@@ -28,7 +28,7 @@ function AutoAvaliacao4() {
     const [progresso, setProgresso] = useState([]);
 
     useEffect(() => {
-        axios.get(`${API_BASE_URL}/progresso_formulario/?avaliado=${avaliado}`)
+        axios.get(`${API_BASE_URL}/progresso_formulario/?avaliado=${avaliado}&tipo_avaliacao=AA`)
             .then(response => {
                 setProgresso(response.data)
             })
@@ -43,7 +43,6 @@ function AutoAvaliacao4() {
     
     const formik = useFormik({
         initialValues: {
-            avaliado: avaliado,
             periodo_inicio: '',
             periodo_fim: '',
             assiduidade: '',
@@ -171,7 +170,6 @@ function AutoAvaliacao4() {
                     BNum_10: values.BNum_10,
                     BNum_11: values.BNum_11,
                     BNum_12: values.BNum_12,
-                    avaliado: avaliado
                   };
 
                   const serializedData2 = {
@@ -195,6 +193,7 @@ function AutoAvaliacao4() {
                     avaliado: avaliado,
                     pagina_atual: 4,
                     dados_progresso: serializedData2,
+                    tipo_avaliacao: 'AA',
                   });
                 navigate('/');
 

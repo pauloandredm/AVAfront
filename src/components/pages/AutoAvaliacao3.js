@@ -34,7 +34,7 @@ function AutoAvaliacao3() {
 
     useEffect(() => {
         axios
-        .get(`${API_BASE_URL}/progresso_formulario/?avaliado=${avaliado}`)
+        .get(`${API_BASE_URL}/progresso_formulario/?avaliado=${avaliado}&tipo_avaliacao=AA`)
         .then(response => {
             setProgresso(response.data);
         })
@@ -130,6 +130,7 @@ function AutoAvaliacao3() {
                 avaliado: avaliado,
                 pagina_atual: 3,
                 dados_progresso: serializedData,
+                tipo_avaliacao: 'AA',
               });
               navigate('/auto-avaliacao4', { state: { avaliado: avaliado } });
               console.log(response.data);
