@@ -106,4 +106,8 @@
     margin-top: 10px;
   }
   
+  .acordod{
+    border-style: solid;
+    border-color: black transparent transparent transparent;
+  }
   
