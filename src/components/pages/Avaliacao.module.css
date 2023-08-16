@@ -46,14 +46,12 @@
   
   .form_control input {
     padding: 0.7em;
-    border-radius: 0;
-    border: none;
   }
 
   .form_control select {
     padding: 0.7em;
-    border-radius: 0;
-    border: none;
+    border-radius: 6px; 
+    border: 1px solid black;
   }
   
   .form_control input::placeholder {
@@ -124,6 +122,8 @@
 
 .input_container{
   width: 100%;
+  border-radius: 6px; 
+  border: 1px solid black;
 }
 
 /* senha login*/
@@ -135,9 +135,11 @@
 
 .input_login {
   padding: 0.7em;
-  border-radius: 0;
-  border: none;
+  border-radius: 6px;
+  border: 1px solid black;
   width: 100%;
+  margin-top: 5px;
+  margin-bottom: 10px;
 }
 
 .password_input_login{
@@ -150,4 +152,9 @@
   right: 10px;
   transform: translateY(-50%);
   cursor: pointer;
+}
+
+.input_register{
+  border-radius: 6px; 
+  border: 1px solid black;
 }

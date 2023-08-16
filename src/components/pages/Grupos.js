@@ -228,6 +228,7 @@ const formik = useFormik({
                 name="nome"
                 onChange={formik.handleChange}
                 value={formik.values.nome}
+                className={styles.select_servidor}
             >
                 <option value="">Selecione um servidor</option>
                     {usuarios.sort((a, b) => a.nome.localeCompare(b.nome)).map((user) => (

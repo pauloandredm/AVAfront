@@ -1,4 +1,5 @@
 import { React, useState, useEffect } from 'react'
+import InputMask from 'react-input-mask';
 import { useFormik } from 'formik';
 import axios from '../../axiosConfig';
 import SubmitButton from '../form/SubmitButton';
@@ -55,13 +56,14 @@ const [matriculaGestor, setMatriculaGestor] = useState(false);
 
 
 
+
 /* -------- Formik --------- */
 
     const handleMatriculaChange = (event) => {
       let matricula = event.target.value;
       // Remover caracteres especiais
       matricula = matricula.replace(/[.-]/g, '');
-      
+
       formik.setFieldValue('matricula', matricula);
       setMatriculaCompleta(matricula);
     };
@@ -127,7 +129,7 @@ const [matriculaGestor, setMatriculaGestor] = useState(false);
         cpf: '',
         password: '',
         nome: '',
-        lotacoes: [10],
+        lotacoes: '',
       },
       validationSchema: Yup.object({
         cpf: Yup
@@ -143,8 +145,6 @@ const [matriculaGestor, setMatriculaGestor] = useState(false);
           .oneOf([Yup.ref('password'), null], 'Passwords must match')
           .required('Required'),
       }),
-
-      
 
       onSubmit: async (values, { setSubmitting, resetForm }) => {   
         if (values.nome === '') {
@@ -190,15 +190,15 @@ const [matriculaGestor, setMatriculaGestor] = useState(false);
             </span>
           </div>
         :</label>
-        <input
-          text="cpf"
+        <InputMask
+          mask="999.999.999-99"
+          className={styles.input_register}
           id="cpf"
           name="cpf"
           type="text"
           value={formik.values.cpf}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
-          
         />
 
         {formik.touched.cpf && formik.errors.cpf ? (
@@ -214,9 +214,10 @@ const [matriculaGestor, setMatriculaGestor] = useState(false);
         :</label>
         <input
           text="matricula"
+          className={styles.input_register}
           id="matricula"
           name="matricula"
-          type="number"
+          type="text"
           onKeyPress={handleMatriculaKeyPress}
           onPaste={handleMatriculaPaste}
           onChange={handleMatriculaChange}
@@ -235,6 +236,7 @@ const [matriculaGestor, setMatriculaGestor] = useState(false);
           <label htmlFor="nome">Nome:</label>
           <input
             type="text"
+            className={styles.input_register}
             id="nome"
             name="nome"
             onChange={formik.handleChange}
@@ -245,6 +247,7 @@ const [matriculaGestor, setMatriculaGestor] = useState(false);
           <label htmlFor="lotacoes">Lotação:</label>
           <select
             id="lotacoes"
+            className={styles.input_register}
             name="lotacoes"
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}

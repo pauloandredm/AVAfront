@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import InputMask from 'react-input-mask';
 import axios from 'axios';
 import Input from '../form/Input';
 import SubmitButton from '../form/SubmitButton';
@@ -81,14 +82,18 @@ function Login() {
 
   return (
     <form className={styles.avaliacao_container} onSubmit={handleSubmit}>
-      <Input
-        type="text"
-        text="CPF"
-        name="cpf"
-        placeholder="Insira seu CPF"
-        value={cpf}
-        handleOnChange={(event) => setCpf(event.target.value)}
-      />
+
+      <label className={styles.label_login} htmlFor="CPF">CPF:</label>
+        <InputMask
+          mask="999.999.999-99"
+          className={styles.input_login}
+          type="text"
+          name="cpf"
+          placeholder="Insira seu CPF"
+          value={cpf}
+          onChange={(event) => setCpf(event.target.value)}
+        />
+
       <label className={styles.label_login} htmlFor="password">Senha:</label>
       <div className={styles.password_input_login}>
         <input

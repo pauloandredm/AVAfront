@@ -74,8 +74,8 @@
 
 .form_control select {
     padding: 0.7em;
-    border-radius: 0;
-    border: none;
+    border-radius: 6px;
+    border: 1px solid black;
 }
   
 .form_control input::placeholder {
@@ -114,6 +114,7 @@
     color: rgba(0, 0, 0, 0.76);
 }
 
-/* .select_grupo{
-    height: 130px;
-} */
+.select_grupo{
+    border-radius: 6px;
+    border: 1px solid black;
+}

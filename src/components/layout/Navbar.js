@@ -6,6 +6,7 @@ import styles from "./Navbar.module.css";
 
 import React, { useState, useEffect, useContext } from 'react';
 import jwt_decode from 'jwt-decode';
+import logo from './Assembleia-logo-negativo.png'
 
 function Navbar() {
   const { authenticated, setAuthenticated } = useContext(AuthContext);
@@ -43,11 +44,24 @@ function Navbar() {
 
   return (
     <div className={styles.navbar}>
-      <Container>
+
+        <li style={{ listStyle: 'none', paddingLeft: "40px" }}> 
+          <Link to="/">
+            <img src={logo} alt="Logo" style={{ height: '80px', width: 'auto'}} />
+          </Link>
+        </li>
+      
+      {/* <Container> */}
         <ul className={styles.list}>
-          <li className={styles.item}>
+
+          {/* <li className={styles.item}>
+            <img src={logo} alt="Logo" style={{ height: '80px', width: 'auto' }} />
+          </li> */}
+
+          <li className={styles.item2}>
             <Link to="/">Home</Link>
           </li>
+
           {authenticated ? (
             <>
               {inAvaliacao && <li className={styles.item}><Link to="/avaliacao">Avaliação</Link></li>}
@@ -59,7 +73,6 @@ function Navbar() {
                 <li className={styles.item}><Link to="/perfil">Perfil</Link></li>
               ) : null}
 
-              {/* {gestor && <li className={styles.item}><Link to="/perfil">{lotacoes.length > 0 ? lotacoes[0] : "Perfil"}</Link></li>} */}
               {gestor && <li className={styles.item}><Link to="/grupos">Grupos</Link></li>}
               <li className={styles.item} onClick={handleLogout}>Logout</li>
             </>
@@ -70,7 +83,7 @@ function Navbar() {
             </>
           )}
         </ul>
-      </Container>
+      {/* </Container> */}
     </div>
   );
 }
