@@ -122,6 +122,10 @@ const handleSubmit = (event) => {
   })
   .then(response => {
     console.log(response);
+    setServidorId('');
+    document.querySelectorAll('input[type="radio"]').forEach(radio => {
+      radio.checked = false;
+    });
     setSubmitted(true);
     /* navigate('/acordo-desempenho'); */
   })
