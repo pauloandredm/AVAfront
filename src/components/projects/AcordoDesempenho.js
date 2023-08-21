@@ -114,7 +114,12 @@ function AcordoDesempenho(){
             .required('Required'), // Validação para o início do período
           periodo_fim: Yup.date()
             .required('Required'), // Validação para o fim do período
-
+          atividades: Yup.array().of(
+            Yup.object().shape({
+                descricao_atividade: Yup.string().required('Required'),
+                desempenho_esperado: Yup.string().required('Required'),
+            })
+          ),
         }),
         onSubmit: async (values, { setSubmitting, resetForm }) => {      
             try {
