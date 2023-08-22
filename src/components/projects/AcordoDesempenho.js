@@ -135,8 +135,6 @@ function AcordoDesempenho(){
               };
         
               const response = await axios.post(`${API_BASE_URL}/acordo-desempenho2/`, serializedData);
-              /* navigate('/acordo-desempenho'); */
-              // Processar a resposta, exibir mensagem de sucesso para o usuário
               resetForm();
             } catch (error) {
               // Lidar com o erro, exibir mensagem de erro para o usuário
@@ -216,6 +214,10 @@ function AcordoDesempenho(){
                             value={atividade.descricao_atividade}
                             onChange={formik.handleChange}
                         />
+                        {formik.touched.atividades && formik.errors.atividades && formik.errors.atividades[index] && (
+                        <div className={styles.error}>{formik.errors.atividades[index].descricao_atividade}</div>
+                        )}
+
 
                         <label htmlFor={`desempenho_esperado_${index}`}>Desempenho esperado:</label>
                         <textarea 
@@ -225,6 +227,10 @@ function AcordoDesempenho(){
                             value={atividade.desempenho_esperado}
                             onChange={formik.handleChange}
                         />
+                        {formik.touched.atividades && formik.errors.atividades && formik.errors.atividades[index] && (
+                        <div className={styles.error}>{formik.errors.atividades[index].desempenho_esperado}</div>
+                        )}
+
 
                         {/* Botão para remover a atividade */}
                         {index > 0 && (
