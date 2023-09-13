@@ -33,8 +33,8 @@ function Home() {
         )}
         {authenticated && gestor && (
           <>
-            <h2>Perfil:</h2>
-            <p>Mostra os servidores da sua lotação e todas as avaliações já feitas</p>
+            <h2>Sua Lotação:</h2>
+            <p>Mostra os dados da sua lotação</p>
           </>
         )}
       </div>

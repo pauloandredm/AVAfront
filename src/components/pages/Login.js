@@ -48,13 +48,19 @@ function Login() {
     );
   }
 
+  const removeMask = (maskedCPF) => {
+    return maskedCPF.replace(/[.-]/g, "");
+  };
+  
+
   /* -------- form login -------- */
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     const formData = new FormData();
-    formData.append('cpf', cpf);
+    const unmaskedCPF = removeMask(cpf); // Remover a máscara
+    formData.append('cpf', unmaskedCPF); 
     formData.append('password', password);
 
     try {

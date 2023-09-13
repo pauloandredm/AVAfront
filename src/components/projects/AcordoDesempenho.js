@@ -82,6 +82,23 @@ function AcordoDesempenho(){
     }
     }, [submitted]); */
 
+    /* -------- editar data --------- */
+
+    const [periodoInicio, setPeriodoInicio] = useState(null);
+    const [periodoFim, setPeriodoFim] = useState(null);
+
+    const handlePeriodoInicioChange = (date) => {
+        setPeriodoInicio(date);
+        const newPeriodoFim = new Date(date);
+        newPeriodoFim.setFullYear(newPeriodoFim.getFullYear() + 1);
+        setPeriodoFim(newPeriodoFim);
+      
+        // Atualize o valor no Formik
+        formik.setFieldValue('periodo_inicio', date);
+        formik.setFieldValue('periodo_fim', newPeriodoFim);
+      };
+      
+
     /* -------- mensagem --------- */
     const [showMessage, setShowMessage] = useState(false);
 
@@ -135,6 +152,7 @@ function AcordoDesempenho(){
               };
         
               const response = await axios.post(`${API_BASE_URL}/acordo-desempenho2/`, serializedData);
+
               resetForm();
             } catch (error) {
               // Lidar com o erro, exibir mensagem de erro para o usuário
@@ -174,32 +192,38 @@ function AcordoDesempenho(){
                     ) : null}
 
                     <div className={styles.periodocontainer}>
-                    <div className={styles.periodoitem}>
-                        <label htmlFor="periodo_inicio">Início do Período:</label>
-                        <DatePicker
-                        id="periodo_inicio"
-                        name="periodo_inicio"
-                        selected={formik.values.periodo_inicio}
-                        onChange={(date) => formik.setFieldValue('periodo_inicio', date)}
-                        dateFormat="dd/MM/yyyy" // Definindo o formato de exibição da data
-                        />
-                        {formik.touched.periodo_inicio && formik.errors.periodo_inicio ? (
-                        <div className={styles.error}>{formik.errors.periodo_inicio}</div>
-                        ) : null}
-                    </div>
-                    <div className={styles.periodoitem}>
-                        <label htmlFor="periodo_fim">Fim do Período:</label>
-                        <DatePicker
-                        id="periodo_fim"
-                        name="periodo_fim"
-                        selected={formik.values.periodo_fim}
-                        onChange={(date) => formik.setFieldValue('periodo_fim', date)}
-                        dateFormat="dd/MM/yyyy" // Definindo o formato de exibição da data
-                        />
-                        {formik.touched.periodo_fim && formik.errors.periodo_fim ? (
-                        <div className={styles.error}>{formik.errors.periodo_fim}</div>
-                        ) : null}
-                    </div>
+                        <div className={styles.periodoitem}>
+                            <label htmlFor="periodo_inicio">Início do Período:</label>
+                            <DatePicker
+                                id="periodo_inicio"
+                                name="periodo_inicio"
+                                selected={periodoInicio}
+                                onChange={handlePeriodoInicioChange}
+                                dateFormat="dd/MM/yyyy"
+                                isClearable
+                            />
+                            {formik.touched.periodo_inicio && formik.errors.periodo_inicio ? (
+                            <div className={styles.error}>{formik.errors.periodo_inicio}</div>
+                            ) : null}
+                        </div>
+                        <div className={styles.periodoitem}>
+                            <label htmlFor="periodo_fim">Fim do Período:</label>
+                            <DatePicker
+                                id="periodo_fim"
+                                name="periodo_fim"
+                                selected={periodoFim}
+                                onChange={(date) => {
+                                    setPeriodoFim(date);
+                                    formik.setFieldValue('periodo_fim', date);
+                                }}
+                                dateFormat="dd/MM/yyyy"
+                                isClearable
+                            />
+
+                            {formik.touched.periodo_fim && formik.errors.periodo_fim ? (
+                            <div className={styles.error}>{formik.errors.periodo_fim}</div>
+                            ) : null}
+                        </div>
                     </div>
 
 

@@ -47,7 +47,7 @@ useEffect(() => {
 
 /*----------- get lista de usuarios do back -------------*/
 useEffect(() => {
-    axios.get(`${API_BASE_URL}/GrupoAvaliacao`)
+    axios.get(`${API_BASE_URL}/servidores`)
         .then(response => {
             setUsuarios(response.data)
         })

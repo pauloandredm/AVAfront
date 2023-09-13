@@ -49,43 +49,80 @@ function Register() {
 
 // Função para verificar a matrícula e exibir os campos adicionais se não existir
 
+const [cadastroAdicional, setCadastroAdicional] = useState({ nome: '', lotacoes: '' });
+const [matriculaCompleta, setMatriculaCompleta] = useState('');
+const [matriculaGestor, setMatriculaGestor] = useState(false);
+
+
+
+
 
 /* -------- Formik --------- */
 
-    /* verificar a matricula no backend */
-    const handleMatriculaBlur = async (event) => {
-      const matricula = event.target.value;
-    
+    const handleMatriculaChange = (event) => {
+      let matricula = event.target.value;
+      // Remover caracteres especiais
+      matricula = matricula.replace(/[.-]/g, '');
+
+      formik.setFieldValue('matricula', matricula);
+      setMatriculaCompleta(matricula);
+    };
+
+    const verificarMatricula = async (matricula) => {
       try {
-        const response = await axios.post(`${API_BASE_URL}/verificar_matricula/`, { matricula: matricula });
-        const data = response.data;
-    
-        if (data.length > 0) {
-          // Verifica se é um gestor
-          if (data[0].Gestor_Nome) {
-            formik.setFieldValue('nome', data[0].Gestor_Nome);
-            formik.setFieldValue('lotacoes', data[0].G_Lotacao);
-          }
-    
-          // Verifica se é um servidor
-          if (data[0].Servidor_Nome) {
-            formik.setFieldValue('nome', data[0].Servidor_Nome);
-            // Aqui estou assumindo que o campo do CPF também existe no seu Formik form
-            formik.setFieldValue('cpf', data[0].S_CPF);
-            formik.setFieldValue('lotacoes', data[0]['G_Lotação']);
-          }
+        // Remover o último dígito da matrícula
+        const matriculaNAOtruncada = matricula
+        const matriculaTruncada = matricula.slice(0, -1);
+        matricula = matricula.replace(/[.-]/g, '');
+        
+        const response = await axios.get(`${API_BASE_URL}/matricula/`);
+        const response2 = await axios.get(`${API_BASE_URL}/matriculaGestor/`);
+
+        const matriculas = response.data.map((item) => item.matricula); // Extrai apenas as matrículas da lista
+        const matriculas2 = response2.data.map((item) => item.matricula2);
+
+
+        if(matriculas2.includes(String(matriculaNAOtruncada))){
+          formik.setFieldValue('matricula', matriculaNAOtruncada);
+          setCadastroAdicional(null);
+          setMatriculaGestor(true);
+          console.log("else if (matriculas.includes(String(matriculaTruncada)))")
+          console.log(matriculaTruncada)
+        }
+        else if (matriculas.includes(String(matriculaTruncada))) {
+          // Matrícula encontrada, não exibir campos adicionais
+          formik.setFieldValue('matricula', matriculaTruncada);
+          setCadastroAdicional(null);
+          console.log("if(matriculas2.includes(String(matriculaTruncada)))")
+          console.log(matriculaTruncada)
+        } 
+        else {
+          // Matrícula não encontrada, exibir campos adicionais
+          setCadastroAdicional({ nome: '', lotacoes: '' });
         }
       } catch (error) {
-          // Tratar erros ou lidar com a matrícula não encontrada
-          if (error.response && error.response.data.message === "Matrícula não encontrada") {
-            formik.setFieldError('matricula', 'Matrícula não encontrada');
-          } else {
-            console.log(error);
-          }
+        // Lidar com erros de requisição, exibir mensagem de erro, etc.
       }
     };
-    
 
+    const handleMatriculaKeyPress = (event) => {
+      const keyCode = event.which || event.keyCode;
+      // Permitir apenas dígitos (0-9) e teclas de controle (backspace, delete, etc.)
+      const isDigit = (keyCode >= 48 && keyCode <= 57) || keyCode === 8 || keyCode === 46;
+      if (!isDigit) {
+        event.preventDefault();
+      }
+    };
+
+    const handleMatriculaPaste = (event) => {
+      const clipboardData = event.clipboardData || window.clipboardData;
+      const pastedText = clipboardData.getData('text');
+      // Remover caracteres especiais do texto colado
+      const sanitizedText = pastedText.replace(/[.-]/g, '');
+      // Atualizar o valor do campo de matrícula
+      formik.setFieldValue('matricula', sanitizedText);
+    };
+  
     const formik = useFormik({
       initialValues: {
         matricula: '',
@@ -111,7 +148,15 @@ function Register() {
           .required('Required'),
       }),
 
-      onSubmit: async (values, { setSubmitting, resetForm }) => {    
+      onSubmit: async (values, { setSubmitting, resetForm }) => {   
+        if (values.nome === '') {
+          values.nome = 'nome'; // Definir 'aaaa' caso o campo nome esteja em branco
+        }
+
+        if (matriculaGestor) {
+          values.matricula = matriculaCompleta; // Enviar a matriculaCompleta
+        }
+    
         try {
           const serializedData = qs.stringify(values, { encode: false });
           const response = await axios.post(`${API_BASE_URL}/register/`, serializedData, {
@@ -124,6 +169,7 @@ function Register() {
           resetForm();
         } catch (error) {
           if (error.response && error.response.status === 400) {
+            // Backend returned a 400 Bad Request
             setErrorMessage('CPF ou Matricula já existentes');
             setShowErrorMessage(true);
           } else {
@@ -135,36 +181,17 @@ function Register() {
       },
     });
 
-    const handleMatriculaChange = (event) => {
-      const inputValue = event.target.value.replace(/\D/g, ''); // Remove caracteres não numéricos
-      let formattedValue = inputValue;
-  
-      if (inputValue.length > 1) {
-        formattedValue = inputValue.slice(0, -1) + '-' + inputValue.slice(-1);
-      }
-      formik.setFieldValue('matricula', formattedValue);
-    };
-
     return (
     <form className={styles.avaliacao_container} onSubmit={formik.handleSubmit}>
       <div className={styles.form_control}>
 
-        <label htmlFor="matricula">Matricula:</label>
-        <input
-          className={styles.input_register}
-          id="matricula"
-          name="matricula"
-          type="text"
-          value={formik.values.matricula}
-          onChange={handleMatriculaChange}
-          onBlur={handleMatriculaBlur}
-        />
-
-        {formik.touched.matricula && formik.errors.matricula ? (
-         <div className={styles.error}>{formik.errors.matricula}</div>
-        ) : null}
-
-        <label htmlFor="cpf">CPF:</label>
+        <label htmlFor="cpf">CPF
+          <div className={styles.tooltip}><BiHelpCircle/>
+            <span className={styles.tooltiptext}>
+              Somente os números
+            </span>
+          </div>
+        :</label>
         <InputMask
           mask="999.999.999-99"
           className={styles.input_register}
@@ -180,6 +207,34 @@ function Register() {
          <div className={styles.error}>{formik.errors.cpf}</div>
         ) : null}
 
+        <label htmlFor="matricula">Matricula
+          <div className={styles.tooltip}><BiHelpCircle/>
+            <span className={styles.tooltiptext}>
+              Somente os números
+            </span>
+          </div>
+        :</label>
+        <input
+          text="matricula"
+          className={styles.input_register}
+          id="matricula"
+          name="matricula"
+          type="text"
+          onKeyPress={handleMatriculaKeyPress}
+          onPaste={handleMatriculaPaste}
+          onChange={handleMatriculaChange}
+          onBlur={(event) => {
+            verificarMatricula(event.target.value);
+          }}
+          value={matriculaCompleta}
+        />
+
+        {formik.touched.matricula && formik.errors.matricula ? (
+         <div className={styles.error}>{formik.errors.matricula}</div>
+        ) : null}
+
+        {cadastroAdicional !== null && (
+        <>
           <label htmlFor="nome">Nome:</label>
           <input
             type="text"
@@ -207,6 +262,8 @@ function Register() {
               </option>
             ))}
           </select>
+        </>
+        )}   
 
         <label htmlFor="password">Senha:</label>
         <div className={styles.password_input}>

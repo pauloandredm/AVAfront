@@ -17,6 +17,8 @@ import ColegasAvaliacao2 from './components/pages/ColegasAvaliacao2'
 import ColegasAvaliacao3 from './components/pages/ColegasAvaliacao3'
 import ColegasAvaliacao4 from './components/pages/ColegasAvaliacao4'
 import ColegasAvaliacao5 from './components/pages/ColegasAvaliacao5'
+import AcordoAceitoDesempenho from './components/projects/AcordoAceitoDesempenho'
+
 
 import Container from './components/layout/Container'
 import Navbar from './components/layout/Navbar'
@@ -48,6 +50,7 @@ function App() {
               <Route exact path="/colegas-avaliacao3" element={<ColegasAvaliacao3 />}/>
               <Route exact path="/colegas-avaliacao4" element={<ColegasAvaliacao4 />}/>
               <Route exact path="/colegas-avaliacao5" element={<ColegasAvaliacao5 />}/>
+              <Route exact path="/AcordoAceitoDesempenho" element={<AcordoAceitoDesempenho />}/>
             </Route>
 
           </Routes>

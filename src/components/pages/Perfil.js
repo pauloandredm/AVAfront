@@ -12,7 +12,6 @@ import qs from 'qs';
 
 function Perfil() {
 
-    const [avaliado, setAvaliado] = useState([]);
     const { authenticated, setAuthenticated } = useContext(AuthContext);
     const [UserId, setUserId] = useState(false);
     const [usuarios, setUsuarios] = useState([])
@@ -29,6 +28,21 @@ function Perfil() {
         }
     }, []);
 
+/*------------------ get lista de acordo desempenho ------------------ */
+const [acordoRecusado, setAcordoRecusado] = useState([]);
+
+  useEffect(() => {
+    axios.get(`${API_BASE_URL}/acordos-nao-aceitos/`)
+      .then(response => {
+        setAcordoRecusado(response.data);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }, []);
+
+  console.log(acordoRecusado)
+
 /*------------------ get lista de autoavaliacoes------------------ */
 const [autoavaliacao, setAutoavaliacao] = useState([]);
 
@@ -41,6 +55,8 @@ const [autoavaliacao, setAutoavaliacao] = useState([]);
         console.log(error);
       });
   }, []);
+
+  console.log(autoavaliacao)
 
 /*------------------ get lista de chefiaavaliacoes------------------ */
 const [chefiaavaliacao, setChefiaavaliacao] = useState([]);
@@ -55,6 +71,8 @@ const [chefiaavaliacao, setChefiaavaliacao] = useState([]);
       });
   }, []);
 
+console.log(chefiaavaliacao)
+
 /*------------------ get lista de avaliacoes geral------------------ */
 const [notasavaliacao, setNotasavaliacao] = useState([]);
 
@@ -68,19 +86,9 @@ const [notasavaliacao, setNotasavaliacao] = useState([]);
       });
   }, []);
 
-/*------------------ get lista de lotacoes------------------ */
+console.log(notasavaliacao)
 
-    const [lotacoes, setLotacoes] = useState([]);
 
-    useEffect(() => {
-      axios.get(`${API_BASE_URL}/lotation/`)
-        .then(response => {
-            setLotacoes(response.data)
-        })
-        .catch(error => {
-        console.log(error)
-          })
-    }, [])
     
 /*----------- get lista de usuarios do back -------------*/
     useEffect(() => {
@@ -104,18 +112,6 @@ useEffect(() => {
         })
 }, [])
 
-/*----------- atualizar lista de usuarios do back -------------*/
-    useEffect(() => {
-    if (submitted) {
-        const getUsers = async () => {
-        const response = await axios.get(`${API_BASE_URL}/user_detail`);
-        setUsuarios(response.data);
-        setSubmitted(false);
-        };
-
-        getUsers();
-    }
-    }, [submitted]);
 /* ------------------ pegando id do access token ----------------*/
     useEffect(() => {
         const access_token2 = localStorage.getItem("access_token");
@@ -168,7 +164,7 @@ const formik = useFormik({
 
     return (
     <div className={styles.avaliacao_container1}>
-    <h1>Perfil</h1>
+    <h1>Sua Lotação</h1>
     <div className={styles.avaliacao_container}>
     
     <h2 className={styles.h22}>Suas informações:</h2>
@@ -195,7 +191,6 @@ const formik = useFormik({
         })}
     </div>
 
-    
     <h2 className={styles.h2}>Servidores da sua lotação:</h2>
         <table className={styles.table}>
             <thead>
@@ -218,87 +213,82 @@ const formik = useFormik({
             </tbody>
         </table>
 
-    <h2 className={styles.h22}>Avaliações:</h2>
+        {(notasavaliacao.length > 0 || autoavaliacao.length > 0 || chefiaavaliacao.length > 0) && (
+        <div> 
+            <h2 className={styles.h22}>Avaliações:</h2>
+            <div className={styles.h3div}>
+                {autoavaliacao.length > 0 && (
+                    <div>
+                        <h3 className={styles.h22}>Auto avaliações:</h3>
+                        <div className={styles.h2div}>
+                            {autoavaliacao.map((usuario) => (
+                                <div className={styles.userdiv2} key={usuario.id}>
+                                    <p>Avaliador: {usuario.avaliador}</p>
+                                    <p>Avaliado: {usuario.avaliado}</p>
+                                    <p>Média: {usuario.media}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
 
-    <h3 className={styles.h22}>Auto avaliações:</h3>
-    <div className={styles.h2div}>
+                {chefiaavaliacao.length > 0 && (
+                    <div>
+                        <h3 className={styles.h22}>Avaliações da chefia imediata:</h3>
+                        <div className={styles.h2div}>
+                            {chefiaavaliacao.map((usuario) => (
+                                <div className={styles.userdiv2} key={usuario.id}>
+                                    <p>Avaliador: {usuario.avaliador}</p>
+                                    <p>Avaliado: {usuario.avaliado}</p>
+                                    <p>Média: {usuario.media}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
 
-        <div className={styles.h2div}>
-            {autoavaliacao.map(usuario => (
-                <div className={styles.userdiv2} key={usuario.id}>
-                <p>Avaliador: {usuario.avaliador}</p>
-                <p>Avaliado: {usuario.avaliado}</p>
-                <p>Média: {usuario.media}</p>
-                </div>
-            ))}
+                {notasavaliacao.length > 0 && (
+                    <div>
+                        <h3 className={styles.h22}>Outras avaliações:</h3>
+                        <div className={styles.h2div}>
+                            {notasavaliacao.map((usuario) => (
+                                <div className={styles.userdiv2} key={usuario.id}>
+                                    <p>Avaliador: {usuario.avaliador}</p>
+                                    <p>Avaliado: {usuario.avaliado}</p>
+                                    <p>Média: {usuario.media}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+            </div>
         </div>
-    </div>
+        )}
 
-    <h3 className={styles.h22}>Avaliações da chefia imediata:</h3>
-    
-    <div className={styles.h2div}>
-            {chefiaavaliacao.map(usuario => (
+
+
+        {acordoRecusado.length > 0 && (
+        <div>
+            <h2 className={styles.h22}>Acordos desempenho recusado:</h2>
+            <div className={styles.h2div}>
+                {acordoRecusado.map((usuario) => (
                 <div className={styles.userdiv2} key={usuario.id}>
-                <p>Avaliador: {usuario.avaliador}</p>
-                <p>Avaliado: {usuario.avaliado}</p>
-                <p>Média: {usuario.media}</p>
-                </div>
-            ))}
-    </div>
-
-    <h3 className={styles.h22}>Outras avaliações:</h3>
-    <div className={styles.h2div}>
-            {notasavaliacao.map(usuario => (
-                <div className={styles.userdiv2} key={usuario.id}>
-                <p>Avaliador: {usuario.avaliador}</p>
-                <p>Avaliado: {usuario.avaliado}</p>
-                <p>Média: {usuario.media}</p>
-                </div>
-            ))}
-    </div>
-
-    {/* <form className={styles.form_control} onSubmit={formik.handleSubmit}>
-        <h2 className={styles.h2}>Adicionar/Mudar lotação:</h2>
-        <div className={styles.form_control}>
-            <label htmlFor="id">Servidor:</label>
-                <select
-                    id="id"
-                    name="id"
-                    onChange={formik.handleChange}
-                    value={formik.values.id}
-                >
-                    <option value="">Selecione um servidor</option>
-                        {usuarios.sort((a, b) => a.nome.localeCompare(b.nome)).map((user) => (
-                    <option key={user.id} value={user.id}>
-                        {user.nome}
-                    </option>
-                        ))}
-                </select>
-
-                {formik.touched.id && formik.errors.id ? (
-                    <div className={styles.error}>{formik.errors.id}</div>
-                ) : null}
-
-                <label htmlFor="lotacoes">Lotação:</label>
-                <select
-                    id="lotacoes"
-                    name="lotacoes"
-                    onChange={formik.handleChange}
-                    value={formik.values.lotacoes}
-                    multiple  // Permite a seleção de várias opções
-                >
-                    <option value="">Selecione uma lotação</option>
-                    {lotacoes.map((user) => (
-                        <option key={user.id} value={user.id}>
-                            {user.nome}
-                        </option>
+                    <p><strong>Avaliador:</strong> {usuario.avaliador}</p>
+                    <p><strong>Avaliado:</strong> {usuario.avaliado}</p>
+                    {usuario.atividades.map((atividade, index) => (
+                    <div key={index}>
+                        <p className={styles.atividades}><strong>Atividade {index + 1}:</strong></p>
+                        <div className={styles.atividades2}>
+                        <p><strong>Descrição:</strong> {atividade.descricao_atividade}</p>
+                        <p><strong>Desempenho Esperado:</strong> {atividade.desempenho_esperado}</p>
+                        </div>
+                    </div>
                     ))}
-                </select>
-
-            
+                </div>
+                ))}
+            </div>
         </div>
-        <SubmitButton text="Enviar" />
-    </form> */}
+        )}
 
     </div>
     </div>

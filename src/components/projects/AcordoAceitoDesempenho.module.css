@@ -1,0 +1,75 @@
+  .avaliacao_container {
+    width: 800px;
+    margin: 0 auto;
+    padding: 3em;
+  }
+
+  .aceito{
+    color: black;
+  }
+
+  .aceito p{
+    margin: 5px;
+  }
+  
+  .atividades{
+    font-weight: bold;
+    margin-bottom: 5px;
+    padding-top: 10px;
+  }
+
+  .atividades2{
+    margin-bottom: 10px;
+    margin-top: 3px;
+    margin-left: 20px;
+  }
+
+  .subtitulo{
+    color: #7b7b7b;
+    margin-bottom: 10px;
+  }
+
+  .form_control {
+    margin-top: 40px;
+    display: flex;
+    justify-content: center; /* Centraliza horizontalmente */
+    align-items: center;
+    gap: 10px; /* Espaçamento entre os botões */
+  }
+  
+
+  .buttonRed {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+  }
+  
+  .buttonGreen {
+    background-color: green;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    margin-left: 10px;
+  }
+
+  .success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+  }
+  
+  .error_message {
+    text-align: center;
+    margin-top: 15px;
+    padding: 8px;
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+  }
+  
+  
+  
+  

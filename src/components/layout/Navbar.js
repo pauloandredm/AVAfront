@@ -28,6 +28,8 @@ function Navbar() {
       setAuthenticated(true);
       // Decode the token
       const decodedToken = jwt_decode(access_token2);
+      const expirationTime = decodedToken.exp * 1000; // Convert expiration time to milliseconds
+      const currentTime = new Date().getTime();
       const decode = JSON.stringify(decodedToken);
       console.log(`decode: ${decode}`);
       // Check if the user is a gestor
@@ -37,10 +39,18 @@ function Navbar() {
       setGestor(isGestor);
       setLotacoes(lotacoes);
       setInAvaliacao(isInAvaliacao);
+
+      if (currentTime > expirationTime) {
+        // Token has expired, log out and navigate to the login page
+        handleLogout();
+        navigate('/login');
+      } else {
+        setAuthenticated(true);
+      }
     } else {
       setAuthenticated(false);
     }
-  }, [authenticated]); // Observa alterações no estado authenticated
+  }, [authenticated, navigate]); // Observa alterações no estado authenticated
 
   return (
     <div className={styles.navbar}>
@@ -64,13 +74,16 @@ function Navbar() {
 
           {authenticated ? (
             <>
-              {inAvaliacao && <li className={styles.item}><Link to="/avaliacao">Avaliação</Link></li>}
+              {gestor || inAvaliacao ? (
+                <li className={styles.item}><Link to="/avaliacao">Avaliação</Link></li>
+              ) : null}
+              {inAvaliacao && <li className={styles.item}><Link to="/AcordoAceitoDesempenho">Ver Acordo Desempenho</Link></li>}
               {gestor && <li className={styles.item}><Link to="/acordo-desempenho">Acordo Desempenho</Link></li>}
               {/* {inAvaliacao && <li className={styles.item}><Link to="/auto-avaliacao">Auto Avaliação</Link></li>}
               {inAvaliacao && <li className={styles.item}><Link to="/colegas-avaliacao">Avaliação Colegas</Link></li>} */}
 
               {gestor || !inAvaliacao ? (
-                <li className={styles.item}><Link to="/perfil">Perfil</Link></li>
+                <li className={styles.item}><Link to="/perfil">Sua Lotação</Link></li>
               ) : null}
 
               {gestor && <li className={styles.item}><Link to="/grupos">Grupos</Link></li>}
