@@ -1,5 +1,4 @@
 import styles from './Perfil.module.css'
-import SubmitButton from '../form/SubmitButton'
 
 import API_BASE_URL from '../ApiConfig';
 import { useState, useEffect, useContext  } from 'react'
@@ -8,7 +7,7 @@ import axios from '../../axiosConfig';
 import jwt_decode from 'jwt-decode';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import qs from 'qs';
+
 
 function Perfil() {
 
@@ -32,7 +31,7 @@ function Perfil() {
 const [acordoRecusado, setAcordoRecusado] = useState([]);
 
   useEffect(() => {
-    axios.get(`${API_BASE_URL}/acordos-nao-aceitos/`)
+    axios.get(`${API_BASE_URL}/verificar_acordo_desempenho/`)
       .then(response => {
         setAcordoRecusado(response.data);
       })
@@ -41,13 +40,11 @@ const [acordoRecusado, setAcordoRecusado] = useState([]);
       });
   }, []);
 
-  console.log(acordoRecusado)
-
 /*------------------ get lista de autoavaliacoes------------------ */
 const [autoavaliacao, setAutoavaliacao] = useState([]);
 
   useEffect(() => {
-    axios.get(`${API_BASE_URL}/notasauto2/`)
+    axios.get(`${API_BASE_URL}/auto_avaliacao/`)
       .then(response => {
         setAutoavaliacao(response.data);
       })
@@ -62,7 +59,7 @@ const [autoavaliacao, setAutoavaliacao] = useState([]);
 const [chefiaavaliacao, setChefiaavaliacao] = useState([]);
 
   useEffect(() => {
-    axios.get(`${API_BASE_URL}/notaschefia2/`)
+    axios.get(`${API_BASE_URL}/chefia_avaliacao/`)
       .then(response => {
         setChefiaavaliacao(response.data);
       })
@@ -77,7 +74,7 @@ console.log(chefiaavaliacao)
 const [notasavaliacao, setNotasavaliacao] = useState([]);
 
   useEffect(() => {
-    axios.get(`${API_BASE_URL}/notas2/`)
+    axios.get(`${API_BASE_URL}/geral_avaliacao/`)
       .then(response => {
         setNotasavaliacao(response.data);
       })
@@ -88,11 +85,10 @@ const [notasavaliacao, setNotasavaliacao] = useState([]);
 
 console.log(notasavaliacao)
 
-
-    
 /*----------- get lista de usuarios do back -------------*/
+
     useEffect(() => {
-        axios.get(`${API_BASE_URL}/user_detail`)
+        axios.get(`${API_BASE_URL}/user`)
             .then(response => {
                 setUsuarios(response.data)
             })
@@ -103,7 +99,7 @@ console.log(notasavaliacao)
 
 /*----------- get lista de usuarios do back -------------*/
 useEffect(() => {
-    axios.get(`${API_BASE_URL}/user_detail2`)
+    axios.get(`${API_BASE_URL}/servidores_lotacao`)
         .then(response => {
             setUsuarios2(response.data)
         })
@@ -175,15 +171,7 @@ const formik = useFormik({
             <div className={styles.userdiv} key={usuario.id}>
                 <p>Nome: {usuario.nome}</p>
                 <p>Matrícula: {usuario.matricula}</p>
-                <p>Cargo: {usuario.Cargo}</p>
-                <p>Lotações:</p>
-            {usuario.nome_lotacao &&
-            usuario.nome_lotacao.map((lotacao) => (
-                <div key={lotacao} style={{ marginLeft: '4ch' }}>
-                - {lotacao}
-                </div>
-            ))}
-
+                <p>Lotação: {usuario.lotacoes}</p>
             </div>
             );
         }
@@ -198,7 +186,8 @@ const formik = useFormik({
                     <th>Nome</th>
                     <th>Matrícula</th>
                     <th>Cargo</th>
-                    <th>Lotações</th>
+                    <th>Núcleo</th>
+                    <th>Chefia</th>
                 </tr>
             </thead>
             <tbody className={styles.tbody}>
@@ -207,7 +196,8 @@ const formik = useFormik({
                         <td>{usuario.nome}</td>
                         <td>{usuario.matricula}</td>
                         <td>{usuario.cargo}</td>
-                        <td>{usuario.lotacao}</td>
+                        <td>{usuario.nucleo}</td>
+                        <td>{usuario.chefia}</td>
                     </tr>
                 ))}
             </tbody>
@@ -223,7 +213,7 @@ const formik = useFormik({
                         <div className={styles.h2div}>
                             {autoavaliacao.map((usuario) => (
                                 <div className={styles.userdiv2} key={usuario.id}>
-                                    <p>Avaliador: {usuario.avaliador}</p>
+                                    <p>Avaliador: {usuario.avaliador_nome}</p>
                                     <p>Avaliado: {usuario.avaliado}</p>
                                     <p>Média: {usuario.media}</p>
                                 </div>
@@ -238,7 +228,7 @@ const formik = useFormik({
                         <div className={styles.h2div}>
                             {chefiaavaliacao.map((usuario) => (
                                 <div className={styles.userdiv2} key={usuario.id}>
-                                    <p>Avaliador: {usuario.avaliador}</p>
+                                    <p>Avaliador: {usuario.avaliador_nome}</p>
                                     <p>Avaliado: {usuario.avaliado}</p>
                                     <p>Média: {usuario.media}</p>
                                 </div>
@@ -253,7 +243,7 @@ const formik = useFormik({
                         <div className={styles.h2div}>
                             {notasavaliacao.map((usuario) => (
                                 <div className={styles.userdiv2} key={usuario.id}>
-                                    <p>Avaliador: {usuario.avaliador}</p>
+                                    <p>Avaliador: {usuario.avaliador_nome}</p>
                                     <p>Avaliado: {usuario.avaliado}</p>
                                     <p>Média: {usuario.media}</p>
                                 </div>
@@ -273,7 +263,7 @@ const formik = useFormik({
             <div className={styles.h2div}>
                 {acordoRecusado.map((usuario) => (
                 <div className={styles.userdiv2} key={usuario.id}>
-                    <p><strong>Avaliador:</strong> {usuario.avaliador}</p>
+                    <p><strong>Avaliador:</strong> {usuario.avaliador_nome}</p>
                     <p><strong>Avaliado:</strong> {usuario.avaliado}</p>
                     {usuario.atividades.map((atividade, index) => (
                     <div key={index}>

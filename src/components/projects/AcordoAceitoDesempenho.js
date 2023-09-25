@@ -32,7 +32,7 @@ function AcordoDesempenho(){
     const [acordo, setAcordo] = useState([]);
 
     useEffect(() => {
-        axios.get(`${API_BASE_URL}/AcordoAceitoDesempenho/`)
+        axios.get(`${API_BASE_URL}/ver_acordo_desempenho/`)
             .then(response => {
                 setAcordo(response.data)
             })
@@ -46,7 +46,7 @@ function AcordoDesempenho(){
     useEffect(() => {
       if (submitted) {
           const getUsers = async () => {
-          const response = await axios.get(`${API_BASE_URL}/AcordoAceitoDesempenho/`);
+          const response = await axios.get(`${API_BASE_URL}/ver_acordo_desempenho/`);
           setAcordo(response.data);
           setSubmitted(false);
           };
@@ -93,9 +93,9 @@ function AcordoDesempenho(){
 
     const handleRecusar = async (id) => {
       try {
-        await axios.put(`${API_BASE_URL}/AcordoAceitoDesempenho/`, { aceito: false });
+        await axios.put(`${API_BASE_URL}/ver_acordo_desempenho/${id}/`, { foi_visto_aceito: false });
         // Atualizar o estado para refletir a atualização
-        setAcordo(acordo.map(item => item.id === id ? { ...item, aceito: false } : item));
+        setAcordo(acordo.map(item => item.id === id ? { ...item, foi_visto_aceito: false } : item));
       } catch (error) {
         // Lidar com o erro
       } finally {
@@ -106,9 +106,9 @@ function AcordoDesempenho(){
   
     const handleAprovar = async (id) => {
       try {
-        await axios.put(`${API_BASE_URL}/AcordoAceitoDesempenho/`, { aceito: true });
+        await axios.put(`${API_BASE_URL}/ver_acordo_desempenho/${id}/`, { foi_visto_aceito: true });
         // Atualizar o estado para refletir a atualização
-        setAcordo(acordo.map(item => item.id === id ? { ...item, aceito: true } : item));
+        setAcordo(acordo.map(item => item.id === id ? { ...item, foi_visto_aceito: true } : item));
       } catch (error) {
         // Lidar com o erro
       } finally {
@@ -125,9 +125,6 @@ function AcordoDesempenho(){
         aceito: Yup.string()
           .required('Required')
       }),
-      onSubmit: () => {
-        // Você não precisa deste bloco para este caso
-      },
     });
 
     return(
@@ -160,11 +157,16 @@ function AcordoDesempenho(){
                 <div className={styles.form_control}>
                   {acordo.map(item => (
                     <div key={item.id}>
-                      <button className={styles.buttonRed} onClick={() => handleRecusar(item.id)}>Recusar</button>
-                      <button className={styles.buttonGreen} onClick={() => handleAprovar(item.id)}>Aprovar</button>
+                      {(!item.foi_visto_aceito || !item.aceito) && (
+                        <>
+                          <button className={styles.buttonRed} onClick={() => handleRecusar(item.id)}>Recusar</button>
+                          <button className={styles.buttonGreen} onClick={() => handleAprovar(item.id)}>Aprovar</button>
+                        </>
+                      )}
                     </div>
                   ))}
                 </div>
+
         </div>
     )
 }

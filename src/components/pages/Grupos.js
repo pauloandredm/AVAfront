@@ -33,34 +33,33 @@ function Perfil() {
         }
     }, []);
 
-/*------------------ get lista de grupos avaliacao------------------ */
 
-useEffect(() => {
-  axios.get(`${API_BASE_URL}/grupolist/`)
-    .then(response => {
-        setGrupolist(response.data)
-    })
-    .catch(error => {
-    console.log(error)
-      })
-}, [])
+    /*------------------ get lista de grupos avaliacao------------------ */
 
-/*----------- get lista de usuarios do back -------------*/
-useEffect(() => {
-    axios.get(`${API_BASE_URL}/servidores`)
+    useEffect(() => {
+        axios.get(`${API_BASE_URL}/grupolist/`)
         .then(response => {
-            setUsuarios(response.data)
+            setGrupolist(response.data)
         })
         .catch(error => {
-            console.log(error)
-        })
-}, [])
-
-
+        console.log(error)
+            })
+    }, [])
 
 /*----------- get lista de usuarios do back -------------*/
+    useEffect(() => {
+        axios.get(`${API_BASE_URL}/servidores`)
+            .then(response => {
+                setUsuarios(response.data)
+            })
+            .catch(error => {
+                console.log(error)
+            })
+    }, [])
+
+/*----------- get lista de servidores com grupo avaliacao back -------------*/
 useEffect(() => {
-    axios.get(`${API_BASE_URL}/GrupoAvaliacao2`)
+    axios.get(`${API_BASE_URL}/servidores_grupo_avaliacao/`)
         .then(response => {
             setUsuarios2(response.data)
         })
@@ -70,11 +69,11 @@ useEffect(() => {
 }, [])
 
 
-/*----------- atualizar lista de usuarios do back -------------*/
+/*----------- atualizar lista de servidores com grupo avaliacao back -------------*/
 useEffect(() => {
     if (submitted) {
         const getUsers = async () => {
-        const response = await axios.get(`${API_BASE_URL}/GrupoAvaliacao2`);
+        const response = await axios.get(`${API_BASE_URL}/servidores_grupo_avaliacao/`);
         setUsuarios2(response.data);
         setSubmitted(false);
         };
@@ -83,11 +82,9 @@ useEffect(() => {
     }
     }, [submitted]);
 
-
-
 /*----------- get lista de usuarios sem grupo do back -------------*/
 useEffect(() => {
-    axios.get(`${API_BASE_URL}/SemGrupoAvaliacao`)
+    axios.get(`${API_BASE_URL}/servidores_sem_grupo_avaliacao`)
         .then(response => {
             setSemGrupo(response.data)
         })
@@ -101,7 +98,7 @@ useEffect(() => {
 useEffect(() => {
     if (submitted) {
         const getUsers = async () => {
-        const response = await axios.get(`${API_BASE_URL}/SemGrupoAvaliacao`);
+        const response = await axios.get(`${API_BASE_URL}/servidores_sem_grupo_avaliacao`);
         setSemGrupo(response.data);
         setSubmitted(false);
         };
@@ -126,81 +123,100 @@ useEffect(() => {
           setAuthenticated(false);
         }
       }, [authenticated]); 
+
+/* ------------------ agrupando servidores por grupo avaliacao ----------------*/
+      const groupedUsuarios = {};
+
+      usuarios2.forEach((usuario) => {
+        usuario.grupo_avaliacao.forEach((grupo) => {
+          if (!groupedUsuarios[grupo]) {
+            groupedUsuarios[grupo] = [];
+          }
+          groupedUsuarios[grupo].push(usuario);
+        });
+      });
+      
     
 /* -------- Formik --------- */
 
-const handleGrupoAvaliacaoChange = (selectedOptions) => {
-    const selectedValues = selectedOptions.map((option) => option.value);
-    formik.setFieldValue('grupo_avaliacao', selectedValues);
-  };
-
-  /* options={grupolist.map((user) => ({ value: user.id, label: user.nome }))} */
+    const handleGrupoAvaliacaoChange = (selectedOptions) => {
+        const selectedValues = selectedOptions.map((option) => option.value);
+        formik.setFieldValue('grupo_avaliacao', selectedValues);
+    };
 
 
-const formik = useFormik({
+  const formik = useFormik({
     initialValues: {
-      nome: '',
-      grupo_avaliacao: [],
+        servidor: {
+          nome: '',
+          matricula: ''
+        },
+        grupo_avaliacao: [],
     },
     validationSchema: Yup.object({
-        nome: Yup.string()
-            .required('Required'),
-        grupo_avaliacao: Yup.array()
-            .required('Required'),
+        servidor: Yup.object({
+            nome: Yup.string().required('Required'),
+            matricula: Yup.string().required('Required')
+        }),
+        grupo_avaliacao: Yup.array().required('Required'),
     }),
+    
     onSubmit: async (values, { setSubmitting, resetForm }) => {      
         try {
-            // Converter lotacoes para número inteiro
             const grupo_avaliacao = values.grupo_avaliacao.map(Number);
-
+            const { nome, matricula } = values.servidor;
+            
             const serializedData = {
-                nome: values.nome,
+                servidor: nome,
+                matricula_servidor: matricula,  // novo campo
                 grupo_avaliacao: grupo_avaliacao,
             };
-
-            const response = await axios.put(`${API_BASE_URL}/GrupoAvaliacao/`, serializedData);
+    
+            const response = await axios.post(`${API_BASE_URL}/grupo_avaliacao/`, serializedData);
             resetForm();
         } catch (error) {
-          // Lidar com o erro, exibir mensagem de erro para o usuário
+            // Lidar com o erro
         } finally {
-          setSubmitting(false);
-          setSubmitted(true);
+            setSubmitting(false);
+            setSubmitted(true);
         }
     },
-  });      
+    
+});
+    
 
     return (
     <div className={styles.avaliacao_container1}>
     <h1>Grupos de Avaliação</h1>
     <div className={styles.avaliacao_container}>
-    
+
     <h2 className={styles.h2}>Servidores com Grupo:</h2>
         <table className={styles.table}>
             <thead>
                 <tr>
-                    <th>Grupo</th>
-                    <th>Servidores</th>
+                <th>Grupo</th>
+                <th>Servidores</th>
                 </tr>
             </thead>
             <tbody className={styles.tbody}>
-            {usuarios2
-            .sort((a, b) => a.Grupo - b.Grupo) // Ordena os grupos em ordem crescente
-            .map((usuario) => (
-                <tr className={styles.tr} key={usuario.Grupo}>
-                <td>{usuario.Grupo}</td>
-                <td>
+                {Object.keys(groupedUsuarios).map((grupo) => (
+                <tr className={styles.tr} key={grupo}>
+                    <td>{grupo}</td>
+                    <td>
                     <ul>
-                    {usuario.Servidores.map((servidor) => (
-                        <li key={servidor.id}>{servidor.nome}</li>
-                    ))}
+                        {groupedUsuarios[grupo].map((usuario) => (
+                        <li key={usuario.id}>
+                            {usuario.servidor}
+                        </li>
+                        ))}
                     </ul>
-                </td>
+                    </td>
                 </tr>
-            ))}
+                ))}
             </tbody>
         </table>
 
-    <h2 className={styles.h2}>Servidores sem Grupo:</h2>
+        <h2 className={styles.h2}>Servidores sem Grupo:</h2>
         <table className={styles.table}>
             <thead>
                 <tr>
@@ -209,33 +225,35 @@ const formik = useFormik({
             </thead>
             <tbody className={styles.tbody}>
                 {semGrupo
-                    .sort((a, b) => a.nome.localeCompare(b.nome)) // Ordenar pelo nome em ordem alfabética
+                    .sort((a, b) => a.Servidor_Nome.localeCompare(b.Servidor_Nome)) // Ordenar pelo Servidor_Nome em ordem alfabética
                     .map((usuario) => (
-                        <tr className={styles.tr} key={usuario.nome}>
-                            <td>{usuario.nome}</td>
+                        <tr className={styles.tr} key={usuario.Servidor_Nome}>
+                            <td>{usuario.Servidor_Nome}</td>
                         </tr>
                     ))}
             </tbody>
         </table>
 
-
     <form className={styles.form_control} onSubmit={formik.handleSubmit}>
         <h2 className={styles.h2}>Adicionar/Mudar Grupo de Avaliação:</h2>
         <div className={styles.form_control}>
-        <label htmlFor="nome">Servidor:</label>
+        <label htmlFor="servidor">Servidor:</label>
             <select
-                id="nome"
-                name="nome"
-                onChange={formik.handleChange}
-                value={formik.values.nome}
+                id="servidor"
+                name="servidor"
+                onChange={(e) => {
+                    const servidor = JSON.parse(e.target.value);
+                    formik.setFieldValue("servidor", servidor);
+                }}
+                value={JSON.stringify(formik.values.servidor)}
                 className={styles.select_servidor}
             >
                 <option value="">Selecione um servidor</option>
-                    {usuarios.sort((a, b) => a.nome.localeCompare(b.nome)).map((user) => (
-                <option key={user.id} value={user.id}>
-                    {user.nome}
-                </option>
-                    ))}
+                {usuarios.sort((a, b) => a.nome.localeCompare(b.nome)).map((user) => (
+                    <option key={user.matricula} value={JSON.stringify({nome: user.nome, matricula: user.matricula})}>
+                        {user.nome}
+                    </option>
+                ))}
             </select>
 
             {formik.touched.id && formik.errors.id ? (
@@ -243,30 +261,6 @@ const formik = useFormik({
             ) : null}
 
             <label htmlFor="grupo_avaliacao">Grupo:</label>
-            {/* <select
-                id="grupo_avaliacao"
-                name="grupo_avaliacao"
-                className={styles.select_grupo}
-                onChange={formik.handleChange}
-                value={formik.values.grupo_avaliacao}
-                multiple  // Permite a seleção de várias opções
-            >
-                {grupolist.map((user) => (
-                    <option key={user.id} value={user.id}>
-                        {user.nome}
-                    </option>
-                ))}
-            </select>  */}
-            
-            {/* <Select
-                id="grupo_avaliacao"
-                name="grupo_avaliacao"
-                className={styles.select_grupo}
-                options={grupolist.map((user) => ({ value: user.id, label: user.nome }))}
-                isMulti
-                onChange={formik.handleChange}
-                value={formik.values.grupo_avaliacao}
-            /> */}
 
             <Select
                 closeMenuOnSelect={false}
@@ -281,17 +275,11 @@ const formik = useFormik({
                     label: grupolist.find((user) => user.id === id).nome,
                 }))}
             />
-
-
         </div>
-
-    
         <SubmitButton text="Enviar" />
     </form>
-
     </div>
     </div>
     )
 }
-
 export default Perfil

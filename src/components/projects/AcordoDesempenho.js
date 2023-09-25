@@ -22,16 +22,15 @@ function AcordoDesempenho(){
         }
       }, []);
 
-    const [avaliado, setAvaliado] = useState([]);
     const [avaliado2, setAvaliado2] = useState([]);
-
     const [submitted, setSubmitted] = useState(false);
+
     const navigate = useNavigate();
 
 
     /*----------- get lista de servidores para acordo do back /acordo-desempenho2-------------*/
     useEffect(() => {
-        axios.get(`${API_BASE_URL}/acordo-desempenho2/`)
+        axios.get(`${API_BASE_URL}/acordo_desempenho/`)
             .then(response => {
                 setAvaliado2(response.data)
             })
@@ -45,7 +44,7 @@ function AcordoDesempenho(){
     useEffect(() => {
     if (submitted) {
         const getUsers = async () => {
-        const response = await axios.get(`${API_BASE_URL}/acordo-desempenho2/`);
+        const response = await axios.get(`${API_BASE_URL}/acordo_desempenho/`);
         setAvaliado2(response.data);
         setSubmitted(false);
         };
@@ -54,33 +53,6 @@ function AcordoDesempenho(){
     }
     }, [submitted]);
 
-
-
-
-    /* ----------- get lista de servidores para acordo do back -------------
-     useEffect(() => {
-        axios.get(`${API_BASE_URL}/acordo-desempenho/`)
-            .then(response => {
-                setAvaliado(response.data)
-            })
-            .catch(error => {
-                console.log(error)
-            })
-    }, [])
-
------------ atualizar lista de servidores para acordo do back -------------
-    
-    useEffect(() => {
-    if (submitted) {
-        const getUsers = async () => {
-        const response = await axios.get(`${API_BASE_URL}/acordo-desempenho/`);
-        setAvaliado(response.data);
-        setSubmitted(false);
-        };
-
-        getUsers();
-    }
-    }, [submitted]); */
 
     /* -------- editar data --------- */
 
@@ -98,22 +70,14 @@ function AcordoDesempenho(){
         formik.setFieldValue('periodo_fim', newPeriodoFim);
       };
       
+/* -------- dados do servidor escolhido --------- */
+    const [selectedServidor, setSelectedServidor] = useState(null);
 
-    /* -------- mensagem --------- */
-    const [showMessage, setShowMessage] = useState(false);
-
-    useEffect(() => {
-    let timer;
-    if (showMessage) {
-        timer = setTimeout(() => {
-        setShowMessage(false);
-        setShowMessage('');
-        }, 3000);
-    }
-    return () => {
-        clearTimeout(timer);
+    const handleSelectChange = (event) => {
+      const selectedId = event.target.value;
+      const selected = avaliado2.find(servidor => servidor.nome === selectedId);
+      setSelectedServidor(selected);
     };
-    }, [showMessage]);
 
     /* -------- Formik --------- */
 
@@ -140,160 +104,167 @@ function AcordoDesempenho(){
         }),
         onSubmit: async (values, { setSubmitting, resetForm }) => {      
             try {
-              // Atualizando a serialização dos dados
+
+              if (!selectedServidor) {
+                console.log("deu bigode")
+                return;
+              }
+
               const serializedData = {
                 avaliado: values.avaliado,
+                avaliado_matricula: selectedServidor.matricula,
+                chefia_imediata: selectedServidor.chefia,
+                funcao_confianca: selectedServidor.funcao_confianca,
                 periodo_inicio: moment(values.periodo_inicio).format('YYYY-MM-DD'),
                 periodo_fim: moment(values.periodo_fim).format('YYYY-MM-DD'),
                 atividades: values.atividades.map((atividade) => ({
                   descricao_atividade: atividade.descricao_atividade,
                   desempenho_esperado: atividade.desempenho_esperado,
                 })),
-              };
-        
-              const response = await axios.post(`${API_BASE_URL}/acordo-desempenho2/`, serializedData);
+              };        
+              const response = await axios.post(`${API_BASE_URL}/acordo_desempenho/`, serializedData);
 
               resetForm();
+              setPeriodoInicio(null); // Reseta o estado local para periodoInicio
+              setPeriodoFim(null);
             } catch (error) {
               // Lidar com o erro, exibir mensagem de erro para o usuário
             } finally {
               setSubmitting(false);
               setSubmitted(true);
-              setShowMessage(true);
             }
         },
       });
 
-    return(
-        <div className={styles.avaliacao_container}>
-            {showMessage && <div className={styles.success}>Acordo desempenho criado com sucesso!</div>}
-            <form className={styles.form_control} onSubmit={formik.handleSubmit}>
-                <h1>Acordo Desempenho</h1>
-                <p>Planeje as Atividade dos servidores</p>
-                <div className={styles.form_control}>
+  return(
+    <div className={styles.avaliacao_container}>
+        <form className={styles.form_control} onSubmit={formik.handleSubmit}>
+            <h1>Acordo Desempenho</h1>
+            <p>Planeje as Atividade dos servidores</p>
+            <div className={styles.form_control}>
 
-                    <label htmlFor="avaliado">Servidor:</label>
-                    <select
-                        id="avaliado"
-                        name="avaliado"
-                        onChange={formik.handleChange}
-                        value={formik.values.avaliado}
-                    >
-                        <option value="">Selecione um servidor</option>
-                        {avaliado2.sort((a, b) => a.nome.localeCompare(b.nome)).map((user) => (
-                            <option key={user.id} value={user.id}>
-                            {user.nome}
-                            </option>
-                        ))}
-                    </select>
-
-                    {formik.touched.avaliado && formik.errors.avaliado ? (
-                        <div className={styles.error}>{formik.errors.avaliado}</div>
-                    ) : null}
-
-                    <div className={styles.periodocontainer}>
-                        <div className={styles.periodoitem}>
-                            <label htmlFor="periodo_inicio">Início do Período:</label>
-                            <DatePicker
-                                id="periodo_inicio"
-                                name="periodo_inicio"
-                                selected={periodoInicio}
-                                onChange={handlePeriodoInicioChange}
-                                dateFormat="dd/MM/yyyy"
-                                isClearable
-                            />
-                            {formik.touched.periodo_inicio && formik.errors.periodo_inicio ? (
-                            <div className={styles.error}>{formik.errors.periodo_inicio}</div>
-                            ) : null}
-                        </div>
-                        <div className={styles.periodoitem}>
-                            <label htmlFor="periodo_fim">Fim do Período:</label>
-                            <DatePicker
-                                id="periodo_fim"
-                                name="periodo_fim"
-                                selected={periodoFim}
-                                onChange={(date) => {
-                                    setPeriodoFim(date);
-                                    formik.setFieldValue('periodo_fim', date);
-                                }}
-                                dateFormat="dd/MM/yyyy"
-                                isClearable
-                            />
-
-                            {formik.touched.periodo_fim && formik.errors.periodo_fim ? (
-                            <div className={styles.error}>{formik.errors.periodo_fim}</div>
-                            ) : null}
-                        </div>
-                    </div>
-
-
-                    {/* Campos de atividades dinâmicos */}
-                    {formik.values.atividades.map((atividade, index) => (
-                    <div key={index} className={styles.form_control}>
-                        <label htmlFor={`descricao_atividade_${index}`}>Descrição da atividade:</label>
-                        <input
-                            type="text"
-                            id={`descricao_atividade_${index}`}
-                            name={`atividades[${index}].descricao_atividade`}
-                            value={atividade.descricao_atividade}
-                            onChange={formik.handleChange}
-                        />
-                        {formik.touched.atividades && formik.errors.atividades && formik.errors.atividades[index] && (
-                        <div className={styles.error}>{formik.errors.atividades[index].descricao_atividade}</div>
-                        )}
-
-
-                        <label htmlFor={`desempenho_esperado_${index}`}>Desempenho esperado:</label>
-                        <textarea 
-                            type="text"
-                            id={styles.meuInput}
-                            name={`atividades[${index}].desempenho_esperado`}
-                            value={atividade.desempenho_esperado}
-                            onChange={formik.handleChange}
-                        />
-                        {formik.touched.atividades && formik.errors.atividades && formik.errors.atividades[index] && (
-                        <div className={styles.error}>{formik.errors.atividades[index].desempenho_esperado}</div>
-                        )}
-
-
-                        {/* Botão para remover a atividade */}
-                        {index > 0 && (
-                        <button
-                            type="button"
-                            id={styles.botao_remover}
-                            onClick={() => {
-                                const atividades = [...formik.values.atividades];
-                                atividades.splice(index, 1);
-                                formik.setFieldValue("atividades", atividades);
-                            }}
-                        >
-                            Remover Atividade
-                        </button>
-                        )}
-                    </div>
+                <label htmlFor="avaliado">Servidor:</label>
+                <select
+                    id="avaliado"
+                    name="avaliado"
+                    onChange={(e) => {
+                        formik.handleChange(e);
+                        handleSelectChange(e);
+                    }}
+                    value={formik.values.avaliado}
+                >
+                    <option value="">Selecione um servidor</option>
+                    {avaliado2.sort((a, b) => a.nome.localeCompare(b.nome)).map((user) => (
+                        <option key={user.id} value={user.id}>
+                        {user.nome}
+                        </option>
                     ))}
+                </select>
 
-                    {/* Botão para adicionar uma nova atividade */}
-                    {formik.values.atividades.length < 3 && (
+                {formik.touched.avaliado && formik.errors.avaliado ? (
+                    <div className={styles.error}>{formik.errors.avaliado}</div>
+                ) : null}
+
+
+                <div className={styles.periodocontainer}>
+                  <div className={styles.periodoitem}>
+                      <label htmlFor="periodo_inicio">Início do Período:</label>
+                      <DatePicker
+                          id="periodo_inicio"
+                          name="periodo_inicio"
+                          selected={periodoInicio}
+                          onChange={handlePeriodoInicioChange}
+                          dateFormat="dd/MM/yyyy"
+                          isClearable
+                      />
+                      {formik.touched.periodo_inicio && formik.errors.periodo_inicio ? (
+                      <div className={styles.error}>{formik.errors.periodo_inicio}</div>
+                      ) : null}
+                  </div>
+                  <div className={styles.periodoitem}>
+                      <label htmlFor="periodo_fim">Fim do Período:</label>
+                      <DatePicker
+                          id="periodo_fim"
+                          name="periodo_fim"
+                          selected={periodoFim}
+                          onChange={(date) => {
+                              setPeriodoFim(date);
+                              formik.setFieldValue('periodo_fim', date);
+                          }}
+                          dateFormat="dd/MM/yyyy"
+                          isClearable
+                      />
+
+                      {formik.touched.periodo_fim && formik.errors.periodo_fim ? (
+                      <div className={styles.error}>{formik.errors.periodo_fim}</div>
+                      ) : null}
+                  </div>
+                </div>
+
+                {formik.values.atividades.map((atividade, index) => (
+                <div key={index} className={styles.form_control}>
+                    <label htmlFor={`descricao_atividade_${index}`}>Descrição da atividade:</label>
+                    <input
+                        type="text"
+                        id={`descricao_atividade_${index}`}
+                        name={`atividades[${index}].descricao_atividade`}
+                        value={atividade.descricao_atividade}
+                        onChange={formik.handleChange}
+                    />
+                    {formik.touched.atividades && formik.errors.atividades && formik.errors.atividades[index] && (
+                    <div className={styles.error}>{formik.errors.atividades[index].descricao_atividade}</div>
+                    )}
+
+
+                    <label htmlFor={`desempenho_esperado_${index}`}>Desempenho esperado:</label>
+                    <textarea 
+                        type="text"
+                        id={styles.meuInput}
+                        name={`atividades[${index}].desempenho_esperado`}
+                        value={atividade.desempenho_esperado}
+                        onChange={formik.handleChange}
+                    />
+                    {formik.touched.atividades && formik.errors.atividades && formik.errors.atividades[index] && (
+                    <div className={styles.error}>{formik.errors.atividades[index].desempenho_esperado}</div>
+                    )}
+
+
+                    {/* Botão para remover a atividade */}
+                    {index > 0 && (
                     <button
                         type="button"
-                        id={styles.botao_adicionar}
+                        id={styles.botao_remover}
                         onClick={() => {
-                        const atividades = [...formik.values.atividades];
-                        atividades.push({ descricao_atividade: "", desempenho_esperado: "" });
-                        formik.setFieldValue("atividades", atividades);
+                            const atividades = [...formik.values.atividades];
+                            atividades.splice(index, 1);
+                            formik.setFieldValue("atividades", atividades);
                         }}
                     >
-                        Adicionar Atividade
+                        Remover Atividade
                     </button>
                     )}
                 </div>
-                {/* <button type="submit">Submit</button> */}
-                <SubmitButton text="Enviar" />
-            </form>
-            
-        </div>
-    )
+                ))}
+
+                {formik.values.atividades.length < 3 && (
+                  <button
+                    type="button"
+                    id={styles.botao_adicionar}
+                    onClick={() => {
+                      const atividades = [...formik.values.atividades];
+                      atividades.push({ descricao_atividade: "", desempenho_esperado: "" });
+                      formik.setFieldValue("atividades", atividades);
+                    }}
+                  >
+                    Adicionar Atividade
+                  </button>
+                )}
+                    
+            </div>
+            <SubmitButton text="Enviar" />
+        </form>  
+    </div>
+  )
 }
 
 export default AcordoDesempenho

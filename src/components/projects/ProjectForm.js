@@ -22,18 +22,13 @@ function ProjectForm(){
   const navigate = useNavigate();
 
 /* ---------- get ------------ */
-
-  const [avaliacoes, setAvaliacoes] = useState([])
   const [servidorId, setServidorId] = useState('');
-
-
-
 
 /*----------- get lista de usuarios do back /avaliacao2 -------------*/
 const [avaliacoes2, setAvaliacoes2] = useState([])
 
 useEffect(() => {
-  axios.get(`${API_BASE_URL}/avaliacao2`)
+  axios.get(`${API_BASE_URL}/avaliacao`)
       .then(response => {
           setAvaliacoes2(response.data)
       })
@@ -43,10 +38,11 @@ useEffect(() => {
 }, [])
 
 /*----------- atualizar lista de usuarios do back /avaliacao2 -------------*/
+
 useEffect(() => {
   if (submitted) {
     const getUsers = async () => {
-      const response = await axios.get(`${API_BASE_URL}/avaliacao2`);
+      const response = await axios.get(`${API_BASE_URL}/avaliacao`);
       setAvaliacoes2(response.data);
       setSubmitted(false);
     };
@@ -55,34 +51,6 @@ useEffect(() => {
   }
 }, [submitted]);
 
-
-
-
-
-/*----------- get lista de usuarios do back -------------*/
-  /* useEffect(() => {
-      axios.get(`${API_BASE_URL}/avaliacao`)
-          .then(response => {
-              setAvaliacoes(response.data)
-          })
-          .catch(error => {
-              console.log(error)
-          })
-  }, []) */
-
-/*----------- atualizar lista de usuarios do back -------------*/
-  /* useEffect(() => {
-    if (submitted) {
-      const getUsers = async () => {
-        const response = await axios.get(`${API_BASE_URL}/avaliacao`);
-        setAvaliacoes(response.data);
-        setSubmitted(false);
-      };
-
-      getUsers();
-    }
-  }, [submitted]);
- */
 /* ---------- get dados do usuario logado, para poder enviar o post ------------ */
   function handleSelectChange(event) {
     setServidorId(event.target.value);
@@ -111,8 +79,13 @@ useEffect(() => {
 
 const handleSubmit = (event) => {
   event.preventDefault();
-  axios.post(`${API_BASE_URL}/avaliacao2/`, {
+
+  const servidorSelecionado = avaliacoes2.find(avaliacao => avaliacao.Servidor_Nome === servidorId);
+  const avaliado_matricula = servidorSelecionado ? `${servidorSelecionado.S_Matricula}-${servidorSelecionado.S_Digito}` : '';
+
+  axios.post(`${API_BASE_URL}/avaliacao_post/`, {
     avaliado: servidorId,
+    avaliado_matricula,
     coop: document.querySelector('input[name=Cooperacao]:checked').value,
     iniciativa: document.querySelector('input[name=Iniciativa]:checked').value,
     assiduidade: document.querySelector('input[name=Assiduidade]:checked').value,
@@ -219,10 +192,10 @@ const handleSubmit = (event) => {
               <tr>
                 <td className={styles.topicos}>Assiduidade
                   <div className={styles.tooltip}><BiHelpCircle/>
-                    <span className={styles.tooltiptext}>Fraco: <p>Incapaz de apresentar ideias e tomar a frente em situações incomuns</p> <br/>
-                    Regular: <p>Demonstra pouca habilidade em inovar e decidir</p> <br/>
-                    Bom: <p>Apresenta ideias e procura resolver os problemas que surgem</p> <br/>
-                    Otimo: <p>Está sempre a frente em situações incomuns toma decisões e resolve problemas</p>
+                    <span className={styles.tooltiptext}>Fraco: <p>Sempre chega atrasado ao trabalho ou compromissos</p> <br/>
+                    Regular: <p>Chega atrasado com alguma frequencia ao trabalho ou compromissos</p> <br/>
+                    Bom: <p>Eventualmente se atrasa na chegada ao trabalho ou a algum compromisso</p> <br/>
+                    Otimo: <p>Nunca ou raramente se atrasa</p>
                     </span>
                   </div>
                 </td>
