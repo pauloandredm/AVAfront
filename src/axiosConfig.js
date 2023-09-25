@@ -10,6 +10,8 @@ instance.interceptors.request.use(
     const access_token = localStorage.getItem('access_token');
     if (access_token) {
       config.headers.Authorization = `Bearer ${access_token}`;
+    } else {
+      delete config.headers.Authorization;
     }
     return config;
   },

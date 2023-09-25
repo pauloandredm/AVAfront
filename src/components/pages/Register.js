@@ -57,7 +57,7 @@ function Register() {
       const matricula = event.target.value;
     
       try {
-        const response = await axios.post(`${API_BASE_URL}/verificar_matricula/`, { matricula: matricula });
+        const response = await axios.post(`${API_BASE_URL}/verificar_matricula/`, { matricula: matricula },);
         const data = response.data;
     
         if (data.length > 0) {
@@ -102,8 +102,6 @@ function Register() {
         matricula: Yup.string()
           .max(9, 'Must be 9 characters or less')
           .required('Required'),
-        /* lotacoes: Yup.string()
-          .required('Required'), */
         password: Yup.string()
           .required('Required'),
         passwordConfirm: Yup.string()

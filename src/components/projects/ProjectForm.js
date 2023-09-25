@@ -58,7 +58,7 @@ useEffect(() => {
   }
 
 /* -------- mensagem --------- */
-const [showMessage, setShowMessage] = useState(false);
+const [showMessage, setShowMessage] = useState('');
 
 useEffect(() => {
   let timer;
@@ -66,12 +66,28 @@ useEffect(() => {
     timer = setTimeout(() => {
       setShowMessage(false);
       setShowMessage('');
-    }, 3000);
+    }, 4000);
   }
   return () => {
     clearTimeout(timer);
   };
 }, [showMessage]);
+
+
+const [showMessage2, setShowMessage2] = useState('');
+
+useEffect(() => {
+  let timer;
+  if (showMessage2) {
+    timer = setTimeout(() => {
+      setShowMessage2(false);
+      setShowMessage2('');
+    }, 3000);
+  }
+  return () => {
+    clearTimeout(timer);
+  };
+}, [showMessage2])
 
 /* -------- post -------- */
 
@@ -79,6 +95,21 @@ useEffect(() => {
 
 const handleSubmit = (event) => {
   event.preventDefault();
+
+  const errorMessages = [];
+
+  if (!document.querySelector('input[name="Cooperacao"]:checked')) {
+    errorMessages.push('O campo Cooperacao precisa ser preenchido');
+  }
+  if (!document.querySelector('input[name="Iniciativa"]:checked')) {
+    errorMessages.push('O campo Iniciativa precisa ser preenchido');
+  }
+
+  if (errorMessages.length > 0) {
+    console.error('Erros encontrados:', errorMessages);
+    setShowMessage(errorMessages.join(', '));
+    return;
+  }
 
   const servidorSelecionado = avaliacoes2.find(avaliacao => avaliacao.Servidor_Nome === servidorId);
   const avaliado_matricula = servidorSelecionado ? `${servidorSelecionado.S_Matricula}-${servidorSelecionado.S_Digito}` : '';
@@ -105,11 +136,18 @@ const handleSubmit = (event) => {
   .catch(error => {
     console.log(error);
   });
-  setShowMessage(true);
+  setShowMessage2(true);
 };
 
   return(
       <div>
+
+        {showMessage && (
+          <div className={styles.error_message}>
+            {showMessage}
+          </div>
+        )}
+
         <form className={styles.form} onSubmit={handleSubmit}>
           <Select 
             text='Servidor' 
@@ -281,7 +319,7 @@ const handleSubmit = (event) => {
           </table>
           <SubmitButton text='Submit'/>
         </form>
-        {showMessage && <div className={styles.success}>Avaliação realizada com sucesso!</div>}
+        {showMessage2 && <div className={styles.success}>Avaliação realizada com sucesso!</div>}
       </div>
     )
 }

@@ -29,6 +29,15 @@
   border-color: #c3e6cb;
 }
 
+.error_message {
+  text-align: center;
+  margin-top: 15px;
+  padding: 8px;
+  color: #721c24;
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+}
+
 /* -------- tooltip ---------- */
 .tooltip {
   position: relative;
