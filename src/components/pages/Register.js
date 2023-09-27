@@ -84,6 +84,31 @@ function Register() {
           }
       }
     };
+
+     /* verificar a cpf no backend */
+     const handleCPFBlur = async (event) => {
+      const cpf = event.target.value;
+    
+      try {
+        const response = await axios.post(`${API_BASE_URL}/verificar_cpf/`, { cpf: cpf },);
+        const data = response.data;
+    
+        if (data.length > 0) {   
+          // Verifica se é um servidor
+          formik.setFieldValue('nome', data[0].Servidor_Nome);
+          formik.setFieldValue('matricula', data[0].S_Matricula);
+          formik.setFieldValue('lotacoes', data[0]['G_Lotação']);
+        }
+        
+      } catch (error) {
+          // Tratar erros ou lidar com a matrícula não encontrada
+          if (error.response && error.response.data.message === "Matrícula não encontrada") {
+            formik.setFieldError('matricula', 'Matrícula não encontrada');
+          } else {
+            console.log(error);
+          }
+      }
+    };
     
 
     const formik = useFormik({
@@ -171,7 +196,7 @@ function Register() {
           type="text"
           value={formik.values.cpf}
           onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
+          onBlur={handleCPFBlur}
         />
 
         {formik.touched.cpf && formik.errors.cpf ? (
