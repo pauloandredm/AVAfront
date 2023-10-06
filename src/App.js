@@ -9,6 +9,7 @@ import AcordoDesempenho from './components/projects/AcordoDesempenho'
 import Perfil from './components/pages/Perfil'
 import Grupos from './components/pages/Grupos'
 import AcordoAceitoDesempenho from './components/projects/AcordoAceitoDesempenho'
+import Esqueci from './components/pages/Esqueci'
 
 
 import Container from './components/layout/Container'
@@ -26,6 +27,7 @@ function App() {
             <Route exact path="/" element={<Home/>} />
             <Route exact path="/login" element={<Login/>}/>
             <Route exact path="/register" element={<Register />}/>
+            <Route exact path="/esqueci" element={<Esqueci />}/>
 
             <Route element={<PrivateRoute />}>  
               <Route exact path="/avaliacao" element={<Avaliacao />}/>

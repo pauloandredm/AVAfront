@@ -90,8 +90,9 @@ function Login() {
   return (
     <>
     <form className={styles.avaliacao_container} onSubmit={handleSubmit}>
+        <h2 className={styles.titulo}>Esqueci minha senha</h2>
 
-      <label className={styles.label_login} htmlFor="CPF">CPF:</label>
+      <label className={styles.label_login} htmlFor="CPF">Digite seu CPF:</label>
         <InputMask
           mask="999.999.999-99"
           className={styles.input_login}
@@ -102,35 +103,8 @@ function Login() {
           onChange={(event) => setCpf(event.target.value)}
         />
 
-      <label className={styles.label_login} htmlFor="password">Senha:</label>
-      <div className={styles.password_input_login}>
-        <input
-            className={styles.input_login}
-            type={showPassword ? 'text' : 'password'}
-            id="password"
-            name="password"
-            placeholder="Insira sua senha"
-            onChange={(event) => setPassword(event.target.value)}
-            value={password}
-        />
-        {showPassword ? (
-          <BiHide
-            className={styles.show_password_icon2}
-            onClick={() => setShowPassword(!showPassword)}
-          />
-        ) : (
-          <BiShowAlt
-            className={styles.show_password_icon2}
-            onClick={() => setShowPassword(!showPassword)}
-          />
-        )}
-      </div>
-
       <div className={styles.forgot}>
         <SubmitButton text="Entrar" />
-        <li className={styles.esqueci}>
-          <Link to="/esqueci">Esqueci minha senha</Link>
-        </li>
       </div>
 
       {showErrorMessage && <div className={styles.error_message}>{errorMessage}</div>}

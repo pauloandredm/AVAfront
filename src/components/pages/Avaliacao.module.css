@@ -158,3 +158,23 @@
   border-radius: 6px; 
   border: 1px solid black;
 }
+
+.esqueci{
+  list-style-type: none;
+  text-align: end;
+}
+
+.esqueci a {
+  text-decoration: none; /* Remove o sublinhado do link */
+}
+
+.forgot {
+  display: flex;
+  justify-content: space-between; /* Espaço entre os elementos */
+  align-items: baseline; /* Alinha os elementos verticalmente no centro */
+}
+
+.titulo{
+
+  margin-bottom: 16px;
+}
