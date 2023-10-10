@@ -7,19 +7,17 @@ import SubmitButton from '../form/SubmitButton';
 import API_BASE_URL from '../ApiConfig';
 import styles from './Avaliacao.module.css';
 import { Navigate } from 'react-router-dom';
-import { AuthContext } from '../../AuthContext';
-import { BiShowAlt, BiHide } from 'react-icons/bi';
+import ReactLoading from 'react-loading';
+import imagem from './Spinner.svg'
 
-function Login() {
+
+function Esqueci() {
   
   const [cpf, setCpf] = useState('');
-  const [password, setPassword] = useState('');
-  const [accessToken, setAccessToken] = useState('');
-  const [refreshToken, setRefreshToken] = useState('');
-  const { authenticated, setAuthenticated } = useContext(AuthContext);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [message, setMessage] = useState('');
   const [showErrorMessage, setShowErrorMessage] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+  const [messageType, setMessageType] = useState('');  // 'error' ou 'success'
+  const [loading, setLoading] = useState(false);
 
 
   /* ------ timeout mensagem ------ */
@@ -28,7 +26,7 @@ function Login() {
     if (showErrorMessage) {
       timer = setTimeout(() => {
         setShowErrorMessage(false);
-        setErrorMessage('');
+        setMessage('');
       }, 3000);
     }
     return () => {
@@ -36,84 +34,66 @@ function Login() {
     };
   }, [showErrorMessage]);
 
-  // Função para configurar o interceptor do Axios
-  function setupAxiosInterceptors(token) {
-    axios.interceptors.request.use(
-      (config) => {
-        config.headers.Authorization = `Bearer ${token}`;
-        return config;
-      },
-      (error) => {
-        return Promise.reject(error);
-      }
-    );
-  }
-
+ /* ------ mascara ------ */
   const removeMask = (maskedCPF) => {
     return maskedCPF.replace(/[.-]/g, "");
   };
-  
 
   /* -------- form login -------- */
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    setLoading(true); // Iniciar o carregamento
     const formData = new FormData();
     const unmaskedCPF = removeMask(cpf); // Remover a máscara
     formData.append('cpf', unmaskedCPF); 
-    formData.append('password', password);
 
     try {
-      const response = await axios.post(`${API_BASE_URL}/token/`, formData);
+      const response = await axios.post(`${API_BASE_URL}/reset/`, formData);
       console.log(response.data); // aqui você pode verificar se a autenticação foi bem sucedida e armazenar os tokens, se necessário
-      setAccessToken(response.data.access);  
-      setRefreshToken(response.data.refresh); 
-      setAuthenticated(true);
+      setMessage('Email enviado com sucesso');
+      setShowErrorMessage(true);
+      setMessageType('success');
 
-      const access_token = response.data.access;
-      const refresh_token = response.data.refresh; 
-
-      localStorage.setItem('access_token', access_token);
-      localStorage.setItem('refresh_token', refresh_token);
-
-      // Configura o interceptor do Axios com o token de acesso
-      setupAxiosInterceptors(access_token);
-      
     } catch (error) {
       console.error(error);
-      setErrorMessage('Usuário ou senha incorretos');
+      setMessage('Usuário não existe');
       setShowErrorMessage(true);
+      setMessageType('error');
+    } finally {
+      setLoading(false);  // Finalizar o carregamento
     }
   };
 
   return (
-    <>
     <form className={styles.avaliacao_container} onSubmit={handleSubmit}>
-        <h2 className={styles.titulo}>Esqueci minha senha</h2>
+      {loading ? (
+            // Renderize o gif de carregamento quando a requisição estiver em andamento
+            <img src={imagem} alt="Enviando..." />
+            // <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+        ) : (
+            // Renderize o conteúdo normal quando não estiver em carregamento
+        <>
+          <h2 className={styles.titulo}>Esqueci minha senha</h2>
 
-      <label className={styles.label_login} htmlFor="CPF">Digite seu CPF:</label>
-        <InputMask
-          mask="999.999.999-99"
-          className={styles.input_login}
-          type="text"
-          name="cpf"
-          placeholder="Insira seu CPF"
-          value={cpf}
-          onChange={(event) => setCpf(event.target.value)}
-        />
-
-      <div className={styles.forgot}>
-        <SubmitButton text="Entrar" />
-      </div>
-
-      {showErrorMessage && <div className={styles.error_message}>{errorMessage}</div>}
-      {authenticated && <Navigate to="/" />}
-
+          <label className={styles.label_login} htmlFor="CPF">Digite seu CPF:</label>
+            <InputMask
+              mask="999.999.999-99"
+              className={styles.input_login}
+              type="text"
+              name="cpf"
+              placeholder="Insira seu CPF"
+              value={cpf}
+              onChange={(event) => setCpf(event.target.value)}
+            />
+            <div className={styles.forgot}>
+              <SubmitButton text="Entrar" />
+            </div>
+            {showErrorMessage && <div className={messageType === 'error' ? styles.error_message : styles.success_message}>{message}</div>}
+        </>
+      )}
     </form>
-    
-    </>
   );
 }
-
-export default Login;
+export default Esqueci;
