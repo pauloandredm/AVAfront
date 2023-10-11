@@ -133,6 +133,11 @@ function AcordoDesempenho(){
             {showMessageAprovado && <div className={styles.success}>Acordo Desempenho Aprovado!</div>}
                 <h1>Acordo Desempenho</h1>
                 <p className={styles.subtitulo}>Confira ou Recuse o arcordo desempenho criado</p>
+                
+                {acordo.length === 0 ? (
+                    <p className={styles.sem_acordo}>Você ainda não tem nenhum Acordo Desempenho</p>
+                ) : (
+
                 <div>
                     {acordo.map(ad => (
                         <div className={styles.aceito} key={ad.id}>
@@ -154,6 +159,9 @@ function AcordoDesempenho(){
                         </div>
                     ))}
                 </div>
+                )}
+
+
                 <div className={styles.form_control}>
                   {acordo.map(item => (
                     <div key={item.id}>
