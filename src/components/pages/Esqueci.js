@@ -4,11 +4,12 @@ import InputMask from 'react-input-mask';
 import axios from 'axios';
 import Input from '../form/Input';
 import SubmitButton from '../form/SubmitButton';
+import Loading from '../layout/Loading';
 import API_BASE_URL from '../ApiConfig';
 import styles from './Avaliacao.module.css';
 import { Navigate } from 'react-router-dom';
 import ReactLoading from 'react-loading';
-import imagem from './Spinner.svg'
+
 
 
 function Esqueci() {
@@ -68,32 +69,26 @@ function Esqueci() {
 
   return (
     <form className={styles.avaliacao_container} onSubmit={handleSubmit}>
-      {loading ? (
-            // Renderize o gif de carregamento quando a requisição estiver em andamento
-            <img src={imagem} alt="Enviando..." />
-            // <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-        ) : (
-            // Renderize o conteúdo normal quando não estiver em carregamento
-        <>
-          <h2 className={styles.titulo}>Esqueci minha senha</h2>
+        <h2 className={styles.titulo}>Esqueci minha senha</h2>
 
-          <label className={styles.label_login} htmlFor="CPF">Digite seu CPF:</label>
-            <InputMask
-              mask="999.999.999-99"
-              className={styles.input_login}
-              type="text"
-              name="cpf"
-              placeholder="Insira seu CPF"
-              value={cpf}
-              onChange={(event) => setCpf(event.target.value)}
-            />
-            <div className={styles.forgot}>
-              <SubmitButton text="Entrar" />
-            </div>
-            {showErrorMessage && <div className={messageType === 'error' ? styles.error_message : styles.success_message}>{message}</div>}
-        </>
-      )}
+        <label className={styles.label_login} htmlFor="CPF">Digite seu CPF:</label>
+        <InputMask
+            mask="999.999.999-99"
+            className={styles.input_login}
+            type="text"
+            name="cpf"
+            placeholder="Insira seu CPF"
+            value={cpf}
+            onChange={(event) => setCpf(event.target.value)}
+        />
+
+        <div className={styles.forgot}>
+            {loading ? <Loading /> : <SubmitButton text="Enviar" />}
+        </div>
+
+        {showErrorMessage && <div className={messageType === 'error' ? styles.error_message : styles.success_message}>{message}</div>}
     </form>
   );
+
 }
 export default Esqueci;
