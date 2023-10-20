@@ -5,6 +5,7 @@ import { useState, useEffect, useContext  } from 'react'
 import { AuthContext } from '../../AuthContext';
 import axios from '../../axiosConfig';
 import jwt_decode from 'jwt-decode';
+import Loading from '../layout/Loading';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
@@ -27,86 +28,36 @@ function Perfil() {
         }
     }, []);
 
-/*------------------ get lista de acordo desempenho ------------------ */
-const [acordoRecusado, setAcordoRecusado] = useState([]);
-
-  useEffect(() => {
-    axios.get(`${API_BASE_URL}/verificar_acordo_desempenho/`)
-      .then(response => {
-        setAcordoRecusado(response.data);
-      })
-      .catch(error => {
-        console.log(error);
-      });
-  }, []);
-
-/*------------------ get lista de autoavaliacoes------------------ */
-const [autoavaliacao, setAutoavaliacao] = useState([]);
-
-  useEffect(() => {
-    axios.get(`${API_BASE_URL}/auto_avaliacao/`)
-      .then(response => {
-        setAutoavaliacao(response.data);
-      })
-      .catch(error => {
-        console.log(error);
-      });
-  }, []);
-
-  console.log(autoavaliacao)
-
-/*------------------ get lista de chefiaavaliacoes------------------ */
-const [chefiaavaliacao, setChefiaavaliacao] = useState([]);
-
-  useEffect(() => {
-    axios.get(`${API_BASE_URL}/chefia_avaliacao/`)
-      .then(response => {
-        setChefiaavaliacao(response.data);
-      })
-      .catch(error => {
-        console.log(error);
-      });
-  }, []);
-
-console.log(chefiaavaliacao)
-
-/*------------------ get lista de avaliacoes geral------------------ */
-const [notasavaliacao, setNotasavaliacao] = useState([]);
-
-  useEffect(() => {
-    axios.get(`${API_BASE_URL}/geral_avaliacao/`)
-      .then(response => {
-        setNotasavaliacao(response.data);
-      })
-      .catch(error => {
-        console.log(error);
-      });
-  }, []);
-
-console.log(notasavaliacao)
-
-/*----------- get lista de usuarios do back -------------*/
+    const [loading, setLoading] = useState(true);
+    const [acordoRecusado, setAcordoRecusado] = useState([]);
+    const [autoavaliacao, setAutoavaliacao] = useState([]);
+    const [chefiaavaliacao, setChefiaavaliacao] = useState([]);
+    const [notasavaliacao, setNotasavaliacao] = useState([]);
 
     useEffect(() => {
-        axios.get(`${API_BASE_URL}/user`)
-            .then(response => {
-                setUsuarios(response.data)
-            })
-            .catch(error => {
-                console.log(error)
-            })
-    }, [])
+      Promise.all([
+          axios.get(`${API_BASE_URL}/verificar_acordo_desempenho/`),
+          axios.get(`${API_BASE_URL}/auto_avaliacao/`),
+          axios.get(`${API_BASE_URL}/chefia_avaliacao/`),
+          axios.get(`${API_BASE_URL}/geral_avaliacao/`),
+          axios.get(`${API_BASE_URL}/user`),
+          axios.get(`${API_BASE_URL}/servidores_lotacao`),
+          // ... adicione todas as suas chamadas axios aqui
+      ]).then((responses) => {
+          setAcordoRecusado(responses[0].data);
+          setAutoavaliacao(responses[1].data);
+          setChefiaavaliacao(responses[2].data);
+          setNotasavaliacao(responses[3].data);
+          setUsuarios(responses[4].data);
+          setUsuarios2(responses[5].data)
+          // ... defina os outros estados aqui usando os índices apropriados
+      }).catch((error) => {
+          console.error("Houve um erro ao buscar os dados:", error);
+      }).finally(() => {
+          setLoading(false);
+      });
+  }, []);
 
-/*----------- get lista de usuarios do back -------------*/
-useEffect(() => {
-    axios.get(`${API_BASE_URL}/servidores_lotacao`)
-        .then(response => {
-            setUsuarios2(response.data)
-        })
-        .catch(error => {
-            console.log(error)
-        })
-}, [])
 
 /* ------------------ pegando id do access token ----------------*/
     useEffect(() => {
@@ -156,9 +107,15 @@ const formik = useFormik({
           setSubmitted(true);
         }
     },
-  });      
+  });    
+
+  
+  if (loading) {
+    return <Loading/>; // Você pode substituir isso por uma animação de carregamento, por exemplo
+  }
 
     return (
+    
     <div className={styles.avaliacao_container1}>
     <h1>Sua Lotação</h1>
     <div className={styles.avaliacao_container}>

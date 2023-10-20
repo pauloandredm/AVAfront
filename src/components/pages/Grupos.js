@@ -8,12 +8,15 @@ import axios from '../../axiosConfig';
 import jwt_decode from 'jwt-decode';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import qs from 'qs';
+import Loading from '../layout/Loading';
+
 
 import Select from 'react-select'
 
 
 function Perfil() {
+
+    const [loading, setLoading] = useState(true);
 
     const { authenticated, setAuthenticated } = useContext(AuthContext);
     const [UserId, setUserId] = useState(false);
@@ -33,40 +36,25 @@ function Perfil() {
         }
     }, []);
 
-
-    /*------------------ get lista de grupos avaliacao------------------ */
-
     useEffect(() => {
-        axios.get(`${API_BASE_URL}/grupolist/`)
-        .then(response => {
-            setGrupolist(response.data)
-        })
-        .catch(error => {
-        console.log(error)
-            })
-    }, [])
+        Promise.all([
+            axios.get(`${API_BASE_URL}/grupolist/`),
+            axios.get(`${API_BASE_URL}/servidores`),
+            axios.get(`${API_BASE_URL}/servidores_grupo_avaliacao/`),
+            axios.get(`${API_BASE_URL}/servidores_sem_grupo_avaliacao`),
 
-/*----------- get lista de usuarios do back -------------*/
-    useEffect(() => {
-        axios.get(`${API_BASE_URL}/servidores`)
-            .then(response => {
-                setUsuarios(response.data)
-            })
-            .catch(error => {
-                console.log(error)
-            })
-    }, [])
+        ]).then((responses) => {
+            setGrupolist(responses[0].data);
+            setUsuarios(responses[1].data);
+            setUsuarios2(responses[2].data);
+            setSemGrupo(responses[3].data);
 
-/*----------- get lista de servidores com grupo avaliacao back -------------*/
-useEffect(() => {
-    axios.get(`${API_BASE_URL}/servidores_grupo_avaliacao/`)
-        .then(response => {
-            setUsuarios2(response.data)
-        })
-        .catch(error => {
-            console.log(error)
-        })
-}, [])
+        }).catch((error) => {
+            console.error("Houve um erro ao buscar os dados:", error);
+        }).finally(() => {
+            setLoading(false);
+        });
+    }, []);
 
 
 /*----------- atualizar lista de servidores com grupo avaliacao back -------------*/
@@ -81,17 +69,6 @@ useEffect(() => {
         getUsers();
     }
     }, [submitted]);
-
-/*----------- get lista de usuarios sem grupo do back -------------*/
-useEffect(() => {
-    axios.get(`${API_BASE_URL}/servidores_sem_grupo_avaliacao`)
-        .then(response => {
-            setSemGrupo(response.data)
-        })
-        .catch(error => {
-            console.log(error)
-        })
-}, [])
 
 
 /*----------- atualizar lista de usuarios sem grupo do back -------------*/
@@ -127,14 +104,20 @@ useEffect(() => {
 /* ------------------ agrupando servidores por grupo avaliacao ----------------*/
       const groupedUsuarios = {};
 
-      usuarios2.forEach((usuario) => {
-        usuario.grupo_avaliacao.forEach((grupo) => {
-          if (!groupedUsuarios[grupo]) {
-            groupedUsuarios[grupo] = [];
-          }
-          groupedUsuarios[grupo].push(usuario);
+      if (usuarios2 && Array.isArray(usuarios2)) {
+        usuarios2.forEach((usuario) => {
+            if (usuario.grupo_avaliacao && Array.isArray(usuario.grupo_avaliacao)) {
+                usuario.grupo_avaliacao.forEach((grupo) => {
+                    if (!groupedUsuarios[grupo]) {
+                        groupedUsuarios[grupo] = [];
+                    }
+                    groupedUsuarios[grupo].push(usuario);
+                });
+            }
         });
-      });
+    }
+    
+    
       
     
 /* -------- Formik --------- */
@@ -183,7 +166,10 @@ useEffect(() => {
     },
     
 });
-    
+
+    if (loading) {
+        return <Loading/>; // Você pode substituir isso por uma animação de carregamento, por exemplo
+    }    
 
     return (
     <div className={styles.avaliacao_container1}>

@@ -3,6 +3,8 @@
     justify-content: flex-start;
     background-color: #334a91;
     padding: 1em;
+    width: 100%;
+    box-sizing: border-box;
   }
   
   .list {
