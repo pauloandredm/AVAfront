@@ -104,6 +104,19 @@ const handleSubmit = (event) => {
   if (!document.querySelector('input[name="Iniciativa"]:checked')) {
     errorMessages.push('O campo Iniciativa precisa ser preenchido');
   }
+  if (!document.querySelector('input[name="Assiduidade"]:checked')) {
+    errorMessages.push('O campo Assiduidade precisa ser preenchido');
+  }
+  if (!document.querySelector('input[name="Pontualidade"]:checked')) {
+    errorMessages.push('O campo Pontualidade precisa ser preenchido');
+  }
+  if (!document.querySelector('input[name="Eficiencia"]:checked')) {
+    errorMessages.push('O campo Eficiencia precisa ser preenchido');
+  }
+  if (!document.querySelector('input[name="Responsabilidade"]:checked')) {
+    errorMessages.push('O campo Responsabilidade precisa ser preenchido');
+  }
+
 
   if (errorMessages.length > 0) {
     console.error('Erros encontrados:', errorMessages);
