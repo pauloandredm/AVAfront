@@ -66,6 +66,12 @@ function Register() {
             formik.setFieldValue('nome', data[0].Gestor_Nome);
             formik.setFieldValue('lotacoes', data[0].G_Lotacao);
           }
+
+          // Verifica se é um chefia
+          if (data[0].Chefe_Nome) {
+            formik.setFieldValue('nome', data[0].Chefe_Nome);
+            formik.setFieldValue('lotacoes', data[0]['G_Lotação']);
+          }
     
           // Verifica se é um servidor
           if (data[0].Servidor_Nome) {
@@ -109,7 +115,11 @@ function Register() {
           }
       }
     };
-    
+
+    const handleNameChange = (e) => {
+      // Transforma o valor do input em maiúsculas
+      formik.setFieldValue('nome', e.target.value.toUpperCase());
+  };    
 
     const formik = useFormik({
       initialValues: {
@@ -209,7 +219,7 @@ function Register() {
             className={styles.input_register}
             id="nome"
             name="nome"
-            onChange={formik.handleChange}
+            onChange={handleNameChange}
             onBlur={formik.handleBlur}
             value={formik.values.nome}
           />

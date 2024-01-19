@@ -16,6 +16,7 @@ function Perfil() {
     const [UserId, setUserId] = useState(false);
     const [usuarios, setUsuarios] = useState([])
     const [usuarios2, setUsuarios2] = useState([])
+    const [acordosdesempenho, setAcordosdesempenho] = useState([])
     const [submitted, setSubmitted] = useState(false);
 
     useEffect(() => {
@@ -42,6 +43,7 @@ function Perfil() {
           axios.get(`${API_BASE_URL}/geral_avaliacao/`),
           axios.get(`${API_BASE_URL}/user`),
           axios.get(`${API_BASE_URL}/servidores_lotacao`),
+          axios.get(`${API_BASE_URL}/lotacao_acordo_desempenho`),
           // ... adicione todas as suas chamadas axios aqui
       ]).then((responses) => {
           setAcordoRecusado(responses[0].data);
@@ -49,7 +51,8 @@ function Perfil() {
           setChefiaavaliacao(responses[2].data);
           setNotasavaliacao(responses[3].data);
           setUsuarios(responses[4].data);
-          setUsuarios2(responses[5].data)
+          setUsuarios2(responses[5].data);
+          setAcordosdesempenho(responses[6].data);
           // ... defina os outros estados aqui usando os índices apropriados
       }).catch((error) => {
           console.error("Houve um erro ao buscar os dados:", error);
@@ -212,6 +215,29 @@ const formik = useFormik({
         </div>
         )}
 
+
+        {acordosdesempenho.length > 0 && (
+            <div>
+                <h2 className={styles.h22}>Acordos desempenho:</h2>
+                <div className={styles.h2div}>
+                    {acordosdesempenho.map((usuario) => (
+                    <div className={styles.userdiv2} key={usuario.id}>
+                        <p><strong>Avaliador:</strong> {usuario.avaliador_nome}</p>
+                        <p><strong>Avaliado:</strong> {usuario.avaliado}</p>
+                        {usuario.atividades.map((atividade, index) => (
+                        <div key={index}>
+                            <p className={styles.atividades}><strong>Atividade {index + 1}:</strong></p>
+                            <div className={styles.atividades2}>
+                            <p><strong>Descrição:</strong> {atividade.descricao_atividade}</p>
+                            <p><strong>Desempenho Esperado:</strong> {atividade.desempenho_esperado}</p>
+                            </div>
+                        </div>
+                        ))}
+                    </div>
+                    ))}
+                </div>
+            </div>
+        )}
 
 
         {acordoRecusado.length > 0 && (

@@ -12,6 +12,7 @@ function Navbar() {
   const { authenticated, setAuthenticated } = useContext(AuthContext);
   const navigate = useNavigate();
   const [gestor, setGestor] = useState(false);
+  const [chefia, setChefia] = useState(false);
   const [inAvaliacao, setInAvaliacao] = useState(false);
   const [lotacoes, setLotacoes] = useState([]);
 
@@ -34,9 +35,11 @@ function Navbar() {
       console.log(`decode: ${decode}`);
       // Check if the user is a gestor
       const isGestor = decodedToken.is_gestor;
+      const isChefia = decodedToken.is_chefia;
       const lotacoes = decodedToken.lotacoes;
       const isInAvaliacao = decodedToken.in_avaliacao;
       setGestor(isGestor);
+      setChefia(isChefia);
       setLotacoes(lotacoes);
       setInAvaliacao(isInAvaliacao);
 
@@ -74,19 +77,22 @@ function Navbar() {
 
           {authenticated ? (
             <>
-              {gestor || inAvaliacao ? (
+              {gestor || inAvaliacao || chefia ? (
                 <li className={styles.item}><Link to="/avaliacao">Avaliação</Link></li>
               ) : null}
+
               {inAvaliacao && <li className={styles.item}><Link to="/AcordoAceitoDesempenho">Ver Acordo Desempenho</Link></li>}
-              {gestor && <li className={styles.item}><Link to="/acordo-desempenho">Acordo Desempenho</Link></li>}
-              {/* {inAvaliacao && <li className={styles.item}><Link to="/auto-avaliacao">Auto Avaliação</Link></li>}
-              {inAvaliacao && <li className={styles.item}><Link to="/colegas-avaliacao">Avaliação Colegas</Link></li>} */}
+
+              {chefia && <li className={styles.item}><Link to="/acordo-desempenho">Acordo Desempenho</Link></li>}
 
               {gestor || !inAvaliacao ? (
                 <li className={styles.item}><Link to="/perfil">Sua Lotação</Link></li>
               ) : null}
 
-              {gestor && <li className={styles.item}><Link to="/grupos">Grupos</Link></li>}
+              {gestor || chefia ? ( 
+                <li className={styles.item}><Link to="/grupos">Grupos</Link></li>
+                ) : null}
+
               <li className={styles.item} onClick={handleLogout}>Logout</li>
             </>
           ) : (
