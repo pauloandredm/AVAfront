@@ -34,6 +34,7 @@ function Perfil() {
     const [autoavaliacao, setAutoavaliacao] = useState([]);
     const [chefiaavaliacao, setChefiaavaliacao] = useState([]);
     const [notasavaliacao, setNotasavaliacao] = useState([]);
+    const [mediasavaliacao, setMediasavaliacao] = useState([]);
 
     useEffect(() => {
       Promise.all([
@@ -44,6 +45,7 @@ function Perfil() {
           axios.get(`${API_BASE_URL}/user`),
           axios.get(`${API_BASE_URL}/servidores_lotacao`),
           axios.get(`${API_BASE_URL}/lotacao_acordo_desempenho`),
+          axios.get(`${API_BASE_URL}/media_avaliacoes`),
           // ... adicione todas as suas chamadas axios aqui
       ]).then((responses) => {
           setAcordoRecusado(responses[0].data);
@@ -53,6 +55,7 @@ function Perfil() {
           setUsuarios(responses[4].data);
           setUsuarios2(responses[5].data);
           setAcordosdesempenho(responses[6].data);
+          setMediasavaliacao(responses[7].data);
           // ... defina os outros estados aqui usando os índices apropriados
       }).catch((error) => {
           console.error("Houve um erro ao buscar os dados:", error);
@@ -154,7 +157,7 @@ const formik = useFormik({
                 {usuarios2.map((usuario) => (
                     <tr className={styles.tr} key={usuario.id}>
                         <td>{usuario.nome}</td>
-                        <td>{usuario.matricula}</td>
+                        <td className={styles.tdMatriculas}>{usuario.matricula}</td>
                         <td>{usuario.cargo}</td>
                         <td>{usuario.nucleo}</td>
                         <td>{usuario.chefia}</td>
@@ -169,7 +172,7 @@ const formik = useFormik({
             <div className={styles.h3div}>
                 {autoavaliacao.length > 0 && (
                     <div>
-                        <h3 className={styles.h22}>Auto avaliações:</h3>
+                        <h3>Auto avaliações:</h3>
                         <div className={styles.h2div}>
                             {autoavaliacao.map((usuario) => (
                                 <div className={styles.userdiv2} key={usuario.id}>
@@ -184,7 +187,7 @@ const formik = useFormik({
 
                 {chefiaavaliacao.length > 0 && (
                     <div>
-                        <h3 className={styles.h22}>Avaliações da chefia imediata:</h3>
+                        <h3>Avaliações da chefia imediata:</h3>
                         <div className={styles.h2div}>
                             {chefiaavaliacao.map((usuario) => (
                                 <div className={styles.userdiv2} key={usuario.id}>
@@ -199,7 +202,7 @@ const formik = useFormik({
 
                 {notasavaliacao.length > 0 && (
                     <div>
-                        <h3 className={styles.h22}>Outras avaliações:</h3>
+                        <h3>Outras avaliações:</h3>
                         <div className={styles.h2div}>
                             {notasavaliacao.map((usuario) => (
                                 <div className={styles.userdiv2} key={usuario.id}>
@@ -214,6 +217,40 @@ const formik = useFormik({
             </div>
         </div>
         )}
+
+        <div>
+        <h2 className={styles.h22}>Médias de Avaliações</h2>
+        <table className={styles.table}>
+            <thead>
+            <tr>
+                <th>Avaliado</th>
+                <th>Média Autoavaliação</th>
+                <th>Média Avaliações da Chefia</th>
+                <th>Média Avaliações Gerais</th>
+                <th>Nota de Assiduidade</th>
+                <th>Média Final</th>
+            </tr>
+            </thead>
+            <tbody>
+            {mediasavaliacao.length > 0 ? (
+                mediasavaliacao.map((avaliacao, index) => (
+                <tr className={styles.tr} key={index}>
+                    <td className={styles.avaliadoMedia}>{avaliacao.avaliado}</td>
+                    <td>{avaliacao.media_auto_avaliacao.toFixed(2)}</td>
+                    <td>{avaliacao.media_avaliacoes_chefia.toFixed(2)}</td>
+                    <td>{avaliacao.media_avaliacoes_gerais.toFixed(2)}</td>
+                    <td>{avaliacao.nota_assiduidade.toFixed(2)}</td>
+                    <td>{avaliacao.media_final.toFixed(2)}</td>
+                </tr>
+                ))
+            ) : (
+                <tr>
+                <td colSpan="5">Carregando dados...</td>
+                </tr>
+            )}
+            </tbody>
+        </table>
+        </div>
 
 
         {acordosdesempenho.length > 0 && (

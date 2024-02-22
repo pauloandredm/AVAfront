@@ -6,6 +6,7 @@ import styles from './ProjectForm.module.css'
 import Select from '../form/Select'
 import SubmitButton from '../form/SubmitButton'
 import API_BASE_URL from '../ApiConfig';
+import jwt_decode from 'jwt-decode';
 
 import axios from '../../axiosConfig';
 
@@ -89,6 +90,23 @@ useEffect(() => {
   };
 }, [showMessage2])
 
+//is chefia
+
+const [chefia, setChefia] = useState(false);
+
+useEffect(() => {
+  const access_token2 = localStorage.getItem("access_token");
+  if (access_token2) {
+    // Decode the token
+    const decodedToken = jwt_decode(access_token2);
+    // Check if the user is a gestor
+    const isChefia = decodedToken.is_chefia;
+    setChefia(isChefia);
+  
+  } else {
+  }
+}, [navigate]);
+
 /* -------- post -------- */
 
 /* const navigate = useNavigate(); */
@@ -104,7 +122,7 @@ const handleSubmit = (event) => {
   if (!document.querySelector('input[name="Iniciativa"]:checked')) {
     errorMessages.push('O campo Iniciativa precisa ser preenchido');
   }
-  if (!document.querySelector('input[name="Assiduidade"]:checked')) {
+  if (chefia && !document.querySelector('input[name="Assiduidade"]:checked')) {
     errorMessages.push('O campo Assiduidade precisa ser preenchido');
   }
   if (!document.querySelector('input[name="Pontualidade"]:checked')) {
@@ -127,16 +145,27 @@ const handleSubmit = (event) => {
   const servidorSelecionado = avaliacoes2.find(avaliacao => avaliacao.Servidor_Nome === servidorId);
   const avaliado_matricula = servidorSelecionado ? `${servidorSelecionado.S_Matricula}-${servidorSelecionado.S_Digito}` : '';
 
-  axios.post(`${API_BASE_URL}/avaliacao_post/`, {
+
+  let dadosAvaliacao = {
     avaliado: servidorId,
     avaliado_matricula,
-    coop: document.querySelector('input[name=Cooperacao]:checked').value,
-    iniciativa: document.querySelector('input[name=Iniciativa]:checked').value,
-    assiduidade: document.querySelector('input[name=Assiduidade]:checked').value,
-    pontualidade: document.querySelector('input[name=Pontualidade]:checked').value,
-    eficiencia: document.querySelector('input[name=Eficiencia]:checked').value,
-    responsabilidade: document.querySelector('input[name=Responsabilidade]:checked').value
-  })
+    coop: document.querySelector('input[name="Cooperacao"]:checked').value,
+    iniciativa: document.querySelector('input[name="Iniciativa"]:checked').value,
+    pontualidade: document.querySelector('input[name="Pontualidade"]:checked').value,
+    eficiencia: document.querySelector('input[name="Eficiencia"]:checked').value,
+    responsabilidade: document.querySelector('input[name="Responsabilidade"]:checked').value,
+  };
+
+  // Adiciona a propriedade assiduidade apenas se o usuário for chefia e o campo estiver preenchido
+  if (chefia) {
+    const assiduidadeRadio = document.querySelector('input[name="Assiduidade"]:checked');
+    if (assiduidadeRadio) {
+      dadosAvaliacao.assiduidade = assiduidadeRadio.value;
+    }
+  }
+
+
+  axios.post(`${API_BASE_URL}/avaliacao_post/`, dadosAvaliacao)
   .then(response => {
     console.log(response);
     setServidorId('');
@@ -240,28 +269,26 @@ const handleSubmit = (event) => {
                 <td><input type="radio" name="Iniciativa" value="9" /></td>
                 <td><input type="radio" name="Iniciativa" value="10" /></td>
               </tr>
-              <tr>
-                <td className={styles.topicos}>Assiduidade
-                  <div className={styles.tooltip}><BiHelpCircle/>
-                    <span className={styles.tooltiptext}>Fraco: <p>Sempre chega atrasado ao trabalho ou compromissos</p> <br/>
-                    Regular: <p>Chega atrasado com alguma frequencia ao trabalho ou compromissos</p> <br/>
-                    Bom: <p>Eventualmente se atrasa na chegada ao trabalho ou a algum compromisso</p> <br/>
-                    Otimo: <p>Nunca ou raramente se atrasa</p>
-                    </span>
-                  </div>
-                </td>
-                <td><input type="radio" name="Assiduidade" value="0" /></td>
-                <td><input type="radio" name="Assiduidade" value="1" /></td>
-                <td><input type="radio" name="Assiduidade" value="2" /></td>
-                <td><input type="radio" name="Assiduidade" value="3" /></td>
-                <td><input type="radio" name="Assiduidade" value="4" /></td>
-                <td><input type="radio" name="Assiduidade" value="5" /></td>
-                <td><input type="radio" name="Assiduidade" value="6" /></td>
-                <td><input type="radio" name="Assiduidade" value="7" /></td>
-                <td><input type="radio" name="Assiduidade" value="8" /></td>
-                <td><input type="radio" name="Assiduidade" value="9" /></td>
-                <td><input type="radio" name="Assiduidade" value="10" /></td>
-              </tr>
+              {chefia && (
+                <tr>
+                  <td className={styles.topicos}>Assiduidade
+                    <div className={styles.tooltip}><BiHelpCircle/>
+                      <span className={styles.tooltiptext}><p>0 faltas sem justificativa: Nota 10</p> <br/><p>1 faltas sem justificativa: Nota 9</p> <br/><p>2 faltas sem justificativa: Nota 8</p> <br/><p>3 faltas sem justificativa: Nota 7</p> <br/> <p>...</p> <br/></span>
+                    </div>
+                  </td>
+                  <td><input type="radio" name="Assiduidade" value="0" /></td>
+                  <td><input type="radio" name="Assiduidade" value="1" /></td>
+                  <td><input type="radio" name="Assiduidade" value="2" /></td>
+                  <td><input type="radio" name="Assiduidade" value="3" /></td>
+                  <td><input type="radio" name="Assiduidade" value="4" /></td>
+                  <td><input type="radio" name="Assiduidade" value="5" /></td>
+                  <td><input type="radio" name="Assiduidade" value="6" /></td>
+                  <td><input type="radio" name="Assiduidade" value="7" /></td>
+                  <td><input type="radio" name="Assiduidade" value="8" /></td>
+                  <td><input type="radio" name="Assiduidade" value="9" /></td>
+                  <td><input type="radio" name="Assiduidade" value="10" /></td>
+                </tr>
+              )}
               <tr>
                 <td className={styles.topicos}>Pontualidade
                   <div className={styles.tooltip}><BiHelpCircle/>

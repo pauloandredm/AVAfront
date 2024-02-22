@@ -70,15 +70,14 @@ function Register() {
           // Verifica se é um chefia
           if (data[0].Chefe_Nome) {
             formik.setFieldValue('nome', data[0].Chefe_Nome);
-            formik.setFieldValue('lotacoes', data[0]['G_Lotação']);
+            formik.setFieldValue('lotacoes', data[0].G_Lotacao);
           }
     
           // Verifica se é um servidor
           if (data[0].Servidor_Nome) {
             formik.setFieldValue('nome', data[0].Servidor_Nome);
-            // Aqui estou assumindo que o campo do CPF também existe no seu Formik form
             formik.setFieldValue('cpf', data[0].S_CPF);
-            formik.setFieldValue('lotacoes', data[0]['G_Lotação']);
+            formik.setFieldValue('lotacoes', data[0].G_Lotacao);
           }
         }
       } catch (error) {
@@ -103,7 +102,7 @@ function Register() {
           // Verifica se é um servidor
           formik.setFieldValue('nome', data[0].Servidor_Nome);
           formik.setFieldValue('matricula', data[0].S_Matricula);
-          formik.setFieldValue('lotacoes', data[0]['G_Lotação']);
+          formik.setFieldValue('lotacoes', data[0].G_Lotacao);
         }
         
       } catch (error) {
