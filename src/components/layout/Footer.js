@@ -18,10 +18,6 @@ function Footer() {
           </Link>
         </li>
 
-
-
-        
-
         <li>
           <a href="https://www.instagram.com/AssembleiaRN/" target="_blank" rel="noopener noreferrer" style={{ color: 'white', textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
             <FaInstagram style={{ marginRight: '10px' }} />
@@ -29,7 +25,7 @@ function Footer() {
           </a>
         </li>
 
-        <li style={{ color: 'white', textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+        <li style={{ color: 'white', textDecoration: 'none', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center' }}>
             <FiPhoneCall style={{ marginRight: '10px' }} />
             (84) 8807-4270
         </li>
@@ -46,9 +42,7 @@ function Footer() {
         </li>
 
       </ul>
-      {/* <p className={styles.copy_right}>
-        <span>Stacks</span> &copy; 2021
-      </p> */}
+      
     </footer>
   )
 }

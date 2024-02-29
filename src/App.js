@@ -1,6 +1,8 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import React from 'react';
 
+import styles from "./App.module.css"
+
 import Home from './components/pages/Home'
 import Login from './components/pages/Login'
 import Avaliacao from './components/pages/Avaliacao'
@@ -23,25 +25,27 @@ function App() {
   return (
     <Router>
         <Navbar />
-        <Container customClass='min-height'>
-          <Routes>
-            <Route exact path="/" element={<Home/>} />
-            <Route exact path="/login" element={<Login/>}/>
-            <Route exact path="/register" element={<Register />}/>
-            <Route exact path="/esqueci" element={<Esqueci />}/>
-            <Route exact path="/redefinir_senha/:uid/:token" element={<Redefinir />} />
+          <div className={styles.content}>
+            <Container customClass='min-height'>
+              <Routes>
+                <Route exact path="/" element={<Home/>} />
+                <Route exact path="/login" element={<Login/>}/>
+                <Route exact path="/register" element={<Register />}/>
+                <Route exact path="/esqueci" element={<Esqueci />}/>
+                <Route exact path="/redefinir_senha/:uid/:token" element={<Redefinir />} />
 
-            <Route element={<PrivateRoute />}>  
-              <Route exact path="/avaliacao" element={<Avaliacao />}/>
-              <Route exact path="/acordo-desempenho" element={<AcordoDesempenho />}/>
-              <Route exact path="/perfil" element={<Perfil />}/>
-              <Route exact path="/grupos" element={<Grupos />}/>
-              <Route exact path="/AcordoAceitoDesempenho" element={<AcordoAceitoDesempenho />}/>
-            </Route>
+                <Route element={<PrivateRoute />}>  
+                  <Route exact path="/avaliacao" element={<Avaliacao />}/>
+                  <Route exact path="/acordo-desempenho" element={<AcordoDesempenho />}/>
+                  <Route exact path="/perfil" element={<Perfil />}/>
+                  <Route exact path="/grupos" element={<Grupos />}/>
+                  <Route exact path="/AcordoAceitoDesempenho" element={<AcordoAceitoDesempenho />}/>
+                </Route>
 
-          </Routes>
-        </Container>
-        <Footer />
+              </Routes>
+            </Container>
+          </div>
+        <Footer/>
     </Router>
   );
 }

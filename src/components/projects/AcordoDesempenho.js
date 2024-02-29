@@ -90,15 +90,15 @@ function AcordoDesempenho(){
         },
         validationSchema: Yup.object({
           avaliado: Yup.string()
-            .required('Required'),
+            .required("Necessario preencher o campo 'avaliado'"),
           periodo_inicio: Yup.date()
-            .required('Required'), // Validação para o início do período
+            .required("Necessario preencher o campo 'inicio do periodo'"), // Validação para o início do período
           periodo_fim: Yup.date()
-            .required('Required'), // Validação para o fim do período
+            .required("Necessario preencher o campo 'fim do periodo'"), // Validação para o fim do período
           atividades: Yup.array().of(
             Yup.object().shape({
-                descricao_atividade: Yup.string().required('Required'),
-                desempenho_esperado: Yup.string().required('Required'),
+                descricao_atividade: Yup.string().required("Necessario preencher o campo 'descrição da atividade'"),
+                desempenho_esperado: Yup.string().required("Necessario preencher o campo 'desempenho esperado'"),
             })
           ),
         }),
@@ -139,7 +139,7 @@ function AcordoDesempenho(){
   return(
     <div className={styles.avaliacao_container}>
         <form className={styles.form_control} onSubmit={formik.handleSubmit}>
-            <h1>Acordo Desempenho</h1>
+            <h1>Acordo de Desempenho</h1>
             <p>Planeje as Atividade dos servidores</p>
             <div className={styles.form_control}>
 

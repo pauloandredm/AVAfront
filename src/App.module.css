@@ -1,0 +1,18 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%; /* Define a altura mínima para o conteúdo total da página */
+  }
+  
+  #root {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  
+  .content {
+    flex: 1; /* Faz com que o conteúdo cresça e ocupe qualquer espaço disponível */
+    padding-top: 80px; /* Espaço para a navbar fixa */
+  }
+
+  

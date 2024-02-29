@@ -1,10 +1,12 @@
 .container {
-    width: 1200px;
-    display: flex;
-    justify-content: space-between;
-    margin: 0 auto;
-    flex-wrap: wrap;
-  }
+  max-width: 1200px; /* Define uma largura máxima em vez de uma largura fixa para responsividade */
+  width: 100%; /* Garante que o container ocupe a largura disponível até o máximo definido */
+  display: flex;
+  justify-content: space-between;
+  margin: 0 auto;
+  flex-wrap: wrap;
+  padding-top: 40px; /* Ajuste este valor conforme a altura da sua navbar */
+}
   
   .start {
     justify-content: flex-start;

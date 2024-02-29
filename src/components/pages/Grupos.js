@@ -204,8 +204,8 @@ useEffect(() => {
         <table className={styles.table}>
             <thead>
                 <tr>
-                <th>Grupo</th>
-                <th>Servidores</th>
+                    <th>Grupo</th>
+                    <th>Servidores</th>
                 </tr>
             </thead>
             <tbody className={styles.tbody}>
@@ -284,6 +284,7 @@ useEffect(() => {
                 isMulti
                 onChange={handleGrupoAvaliacaoChange2}
                 value={opcoesSelecionadas}
+                placeholder="Selecione um grupo predefinido ou crie um grupo"
             />
 
         </div>

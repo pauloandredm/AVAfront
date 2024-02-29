@@ -2,6 +2,7 @@ import styles from './Home.module.css'
 import React, { useState, useEffect, useContext } from 'react';
 import jwt_decode from 'jwt-decode';
 import { AuthContext } from '../../AuthContext';
+import avaliacao from './avaliacao-desempenho.png'
 
 function Home() {
   const [gestor, setGestor] = useState(false);
@@ -23,21 +24,8 @@ function Home() {
 
   return (
     <div className={styles.h1}>
-      <h1>Bem-vindo</h1>
-      <div className={styles.explicacao}>
-        {authenticated && gestor && (
-          <>
-            <h2>Grupos:</h2>
-            <p>divida os servidores da sua lotação em grupos para que cada servidor só avalie os servidores seu grupo</p>
-          </>
-        )}
-        {authenticated && gestor && (
-          <>
-            <h2>Sua Lotação:</h2>
-            <p>Mostra os dados da sua lotação</p>
-          </>
-        )}
-      </div>
+      <h1>Avaliação de Desempenho</h1>
+      <img src={avaliacao} alt="Avaliacao" className={styles.background_image} />
     </div>
   );
 }

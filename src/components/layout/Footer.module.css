@@ -1,8 +1,14 @@
 .footer {
-    background-color: #334a91;
-    color: #fff;
-    padding: 1em;
-  }
+  background-color: #334a91;
+  color: #fff;
+  padding: 1em;
+  width: 100vw;
+  box-sizing: border-box;
+  position: relative; /* Faz com que o rodapé siga o fluxo normal do documento */
+  z-index: 1000;
+  left: 50%;
+  transform: translateX(-50%); /* This will help to center the footer if 100vw causes scrolling */
+}
   
   .social_list {
     display: flex;
@@ -14,6 +20,7 @@
   
   .social_list li {
     margin: 0 1em;
+    flex: 1 1 auto;
   }
   
   .social_list li:hover {

@@ -116,6 +116,9 @@ const handleSubmit = (event) => {
 
   const errorMessages = [];
 
+  if (!servidorId) {
+    errorMessages.push('O campo Servidor precisa ser selecionado');
+  }
   if (!document.querySelector('input[name="Cooperacao"]:checked')) {
     errorMessages.push('O campo Cooperacao precisa ser preenchido');
   }
@@ -183,12 +186,6 @@ const handleSubmit = (event) => {
 
   return(
       <div>
-
-        {showMessage && (
-          <div className={styles.error_message}>
-            {showMessage}
-          </div>
-        )}
 
         <form className={styles.form} onSubmit={handleSubmit}>
           <Select 
@@ -357,8 +354,16 @@ const handleSubmit = (event) => {
               </tr>
             </tbody>
           </table>
-          <SubmitButton text='Submit'/>
+          
+          <SubmitButton text='Enviar'/>
         </form>
+
+        {showMessage && (
+          <div className={styles.error_message}>
+            {showMessage}
+          </div>
+        )}
+
         {showMessage2 && <div className={styles.success}>Avaliação realizada com sucesso!</div>}
       </div>
     )

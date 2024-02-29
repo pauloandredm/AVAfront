@@ -6,6 +6,11 @@
     width: 100%;
     box-sizing: border-box;
     overflow-x: auto;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
   }
   
   .list {
@@ -20,13 +25,6 @@
     color: #fff;
     cursor: pointer;
   }
-
-  .item2 {
-    margin-right: 1em;
-    color: #fff;
-    cursor: pointer;
-    margin-left: 3em;
-  }
   
   .item a {
     color: #fff;
@@ -36,6 +34,13 @@
   .item a:hover {
     color: #ffbb33;
     text-decoration: none;
+  }
+
+  .item2 {
+    margin-right: 1em;
+    color: #fff;
+    cursor: pointer;
+    margin-left: 3em;
   }
 
   .item2 a {
