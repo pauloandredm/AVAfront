@@ -25,7 +25,7 @@ function Home() {
   return (
     <div className={styles.h1}>
       <h1>Avaliação de Desempenho</h1>
-      <img src={avaliacao} alt="Avaliacao" className={styles.background_image} />
+      {/* <img src={avaliacao} alt="Avaliacao" className={styles.background_image} /> */}
     </div>
   );
 }
