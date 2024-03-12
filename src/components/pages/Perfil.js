@@ -8,16 +8,35 @@ import jwt_decode from 'jwt-decode';
 import Loading from '../layout/Loading';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import Select from '../form/Select'
 
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+
+function EvaluationRow({evalu}) {
+  return (
+    <tr>
+      <td>{evalu.avaliador_nome}</td>
+      <td>{evalu.avaliado}</td>
+      <td>{evalu.coop}</td>
+      <td>{evalu.iniciativa}</td>
+      <td>{evalu.pontualidade}</td>
+      <td>{evalu.eficiencia}</td>
+      <td>{evalu.responsabilidade}</td>
+      <td>{evalu.media}</td>
+    </tr>
+  );
+}
 
 function Perfil() {
 
     const { authenticated, setAuthenticated } = useContext(AuthContext);
-    const [UserId, setUserId] = useState(false);
-    const [usuarios, setUsuarios] = useState([])
-    const [usuarios2, setUsuarios2] = useState([])
-    const [acordosdesempenho, setAcordosdesempenho] = useState([])
+    const [usuarios2, setUsuarios2] = useState([]);
     const [submitted, setSubmitted] = useState(false);
+    const [userId, setUserId] = useState(null); // Define the state for the user ID
+    const [nome, setNome] = useState(''); // Define the state for the selected server's name
+    const [ano, setAno] = useState(new Date().getFullYear()); // Define the state for the selected year
+    const [evaluationData, setEvaluationData] = useState(null);
 
     useEffect(() => {
         const accessToken = localStorage.getItem('access_token');
@@ -30,39 +49,38 @@ function Perfil() {
     }, []);
 
     const [loading, setLoading] = useState(true);
-    const [acordoRecusado, setAcordoRecusado] = useState([]);
-    const [autoavaliacao, setAutoavaliacao] = useState([]);
-    const [chefiaavaliacao, setChefiaavaliacao] = useState([]);
-    const [notasavaliacao, setNotasavaliacao] = useState([]);
-    const [mediasavaliacao, setMediasavaliacao] = useState([]);
 
-    useEffect(() => {
+    /* useEffect(() => {
       Promise.all([
-          axios.get(`${API_BASE_URL}/verificar_acordo_desempenho/`),
-          axios.get(`${API_BASE_URL}/auto_avaliacao/`),
-          axios.get(`${API_BASE_URL}/chefia_avaliacao/`),
-          axios.get(`${API_BASE_URL}/geral_avaliacao/`),
-          axios.get(`${API_BASE_URL}/user`),
           axios.get(`${API_BASE_URL}/servidores_lotacao`),
-          axios.get(`${API_BASE_URL}/lotacao_acordo_desempenho`),
-          axios.get(`${API_BASE_URL}/media_avaliacoes`),
-          // ... adicione todas as suas chamadas axios aqui
       ]).then((responses) => {
-          setAcordoRecusado(responses[0].data);
-          setAutoavaliacao(responses[1].data);
-          setChefiaavaliacao(responses[2].data);
-          setNotasavaliacao(responses[3].data);
-          setUsuarios(responses[4].data);
-          setUsuarios2(responses[5].data);
-          setAcordosdesempenho(responses[6].data);
-          setMediasavaliacao(responses[7].data);
-          // ... defina os outros estados aqui usando os índices apropriados
+          setUsuarios2(responses[0].data);
       }).catch((error) => {
           console.error("Houve um erro ao buscar os dados:", error);
       }).finally(() => {
           setLoading(false);
       });
-  }, []);
+  }, []); */
+
+/* ------------------ get servidores ----------------*/
+
+  const fetchServidoresByAno = async (ano) => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/servidores_avaliacao_lotacao/`, { params: { ano } });
+      setUsuarios2(response.data);
+    } catch (error) {
+      console.error("Houve um erro ao buscar os servidores:", error);
+    }
+  };
+  
+
+
+  /* ------------------ handle select ----------------*/
+
+  function handleSelectChange(event) {
+    // Update the state with the selected server's name
+    setNome(event.target.value);
+  }
 
 
 /* ------------------ pegando id do access token ----------------*/
@@ -80,229 +98,198 @@ function Perfil() {
           setAuthenticated(false);
         }
       }, [authenticated]); 
+
+/* ------------------ download tabela ----------------*/
+
+    const downloadPdfDocument = () => {
+      const input = document.getElementById('evaluationTable');
+      const topMargin = 15; // top margin in mm
+      const leftMargin = 15; // left margin in mm
+      html2canvas(input)
+        .then((canvas) => {
+          const imgWidth = 295 - leftMargin * 2; // PDF width - leftMargin - rightMargin
+          const pageHeight = 295;  // A4 height in mm
+          const imgHeight = canvas.height * imgWidth / canvas.width;
+          let heightLeft = imgHeight;
+          let position = 0;
+          
+          const imgData = canvas.toDataURL('image/png');
+          const pdf = new jsPDF({
+            orientation: 'landscape',
+          });
+          
+          // Add image to PDF
+          pdf.addImage(imgData, 'PNG', leftMargin, position + topMargin, imgWidth, imgHeight);
+          heightLeft -= pageHeight;
+
+          while (heightLeft >= 0) {
+            position = heightLeft - imgHeight;
+            pdf.addPage();
+            pdf.addImage(imgData, 'PNG', leftMargin, position + topMargin, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+          }
+          
+          pdf.save('evaluation-table.pdf');
+        });
+    }
     
 /* -------- Formik --------- */
 
-const formik = useFormik({
-    initialValues: {
-      id: '',
-      lotacoes: [],
-    },
-    validationSchema: Yup.object({
-        id: Yup.string()
-            .required('Required'),
-        lotacoes: Yup.array()
-            .required('Required'),
-    }),
-    onSubmit: async (values, { setSubmitting, resetForm }) => {      
-        try {
-            // Converter lotacoes para número inteiro
-            const lotacoes = values.lotacoes.map(Number);
+    const formik = useFormik({
+        initialValues: {
+        servidor: '',
+        ano: '',
+        },
+        validationSchema: Yup.object({
+        servidor: Yup.string().required('Required'),
+        ano: Yup.number().required('Required'),
+        }),
+        onSubmit: async (values, { setSubmitting }) => {
+          console.log('Form submitted', values);
+          try {
+            const matricula = values.servidor;
+            const ano = values.ano;
+            const response = await axios.get(`${API_BASE_URL}/servidor/${matricula}/${ano}`);
+            // Assuming you want to store the fetched data in a state
+            setEvaluationData(response.data);
+          } catch (error) {
+            console.error('Houve um erro ao buscar os dados:', error);
+          } finally {
+            setSubmitting(false);
+          }
+        },
+    }); 
 
-            const serializedData = {
-                id: values.id,
-                lotacoes: lotacoes,
-            };
-
-            const response = await axios.put(`${API_BASE_URL}/user_detail/`, serializedData);
-            resetForm();
-        } catch (error) {
-          // Lidar com o erro, exibir mensagem de erro para o usuário
-        } finally {
-          setSubmitting(false);
-          setSubmitted(true);
-        }
-    },
-  });    
-
-  
-  if (loading) {
-    return <Loading/>; // Você pode substituir isso por uma animação de carregamento, por exemplo
-  }
-
-    return (
-    
+  return (
     <div className={styles.avaliacao_container1}>
-    <h1>Sua Lotação</h1>
-    <div className={styles.avaliacao_container}>
-    
-    <h2 className={styles.h22}>Suas informações:</h2>
-    <div className={styles.h2div}>
-        {usuarios.map((usuario) => {
-        if (usuario.id === UserId) {
-            return (
-            <div className={styles.userdiv} key={usuario.id}>
-                <p>Nome: {usuario.nome}</p>
-                <p>Matrícula: {usuario.matricula}</p>
-                <p>Lotação: {usuario.lotacoes}</p>
-            </div>
-            );
-        }
-        return null;
-        })}
-    </div>
+      <h1>Sua Lotação</h1>
+      <div className={styles.avaliacao_container}>
+        <form className={styles.form} onSubmit={formik.handleSubmit}>
+        
+            <select
+              className={styles.selectservidor}
+              name="ano"
+              onChange={(e) => {
+                formik.setFieldValue('ano', e.target.value);
+                fetchServidoresByAno(e.target.value);
+              }}
+              value={formik.values.ano}
+            >
+              <option value="" disabled>Selecione um ano</option> {/* Placeholder option */}
+              {[2024, 2025, 2026, 2027, 2028].map((year) => (
+                <option key={year} value={year}>
+                    {year}
+                </option>
+              ))}
+            </select>
 
-    <h2 className={styles.h2}>Servidores da sua lotação:</h2>
-        <table className={styles.table}>
-            <thead>
-                <tr>
-                    <th>Nome</th>
-                    <th>Matrícula</th>
-                    <th>Cargo</th>
-                    <th>Núcleo</th>
-                    <th>Chefia</th>
-                </tr>
-            </thead>
-            <tbody className={styles.tbody}>
-                {usuarios2.map((usuario) => (
-                    <tr className={styles.tr} key={usuario.id}>
-                        <td>{usuario.nome}</td>
-                        <td className={styles.tdMatriculas}>{usuario.matricula}</td>
-                        <td>{usuario.cargo}</td>
-                        <td>{usuario.nucleo}</td>
-                        <td>{usuario.chefia}</td>
-                    </tr>
-                ))}
-            </tbody>
-        </table>
+            <select
+              className={styles.selectservidor2}
+              name="servidor"
+              onChange={(e) => formik.setFieldValue('servidor', e.target.value)}
+              value={formik.values.servidor}
+            >
+              <option value="" disabled>Selecione um servidor</option> {/* Placeholder option */}
+              {usuarios2 && usuarios2.map((usuario, index) => (
+                <option key={index} value={usuario.matricula}>
+                    {usuario.avaliado}
+                </option>
+              ))}
+            </select>
 
-        {(notasavaliacao.length > 0 || autoavaliacao.length > 0 || chefiaavaliacao.length > 0) && (
-        <div> 
-            <h2 className={styles.h22}>Avaliações:</h2>
-            <div className={styles.h3div}>
-                {autoavaliacao.length > 0 && (
-                    <div>
-                        <h3>Auto avaliações:</h3>
-                        <div className={styles.h2div}>
-                            {autoavaliacao.map((usuario) => (
-                                <div className={styles.userdiv2} key={usuario.id}>
-                                    <p>Avaliador: {usuario.avaliador_nome}</p>
-                                    <p>Avaliado: {usuario.avaliado}</p>
-                                    <p>Média: {usuario.media}</p>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                )}
-
-                {chefiaavaliacao.length > 0 && (
-                    <div>
-                        <h3>Avaliações da chefia imediata:</h3>
-                        <div className={styles.h2div}>
-                            {chefiaavaliacao.map((usuario) => (
-                                <div className={styles.userdiv2} key={usuario.id}>
-                                    <p>Avaliador: {usuario.avaliador_nome}</p>
-                                    <p>Avaliado: {usuario.avaliado}</p>
-                                    <p>Média: {usuario.media}</p>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                )}
-
-                {notasavaliacao.length > 0 && (
-                    <div>
-                        <h3>Outras avaliações:</h3>
-                        <div className={styles.h2div}>
-                            {notasavaliacao.map((usuario) => (
-                                <div className={styles.userdiv2} key={usuario.id}>
-                                    <p>Avaliador: {usuario.avaliador_nome}</p>
-                                    <p>Avaliado: {usuario.avaliado}</p>
-                                    <p>Média: {usuario.media}</p>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                )}
-            </div>
-        </div>
-        )}
+            <button className={styles.botaoservidor} type="submit">Pesquisar</button>
+        </form>
 
         <div>
-        <h2 className={styles.h22}>Médias de Avaliações</h2>
-        <table className={styles.table}>
-            <thead>
-            <tr>
-                <th>Avaliado</th>
-                <th>Média Autoavaliação</th>
-                <th>Média Avaliações da Chefia</th>
-                <th>Média Avaliações Gerais</th>
-                <th>Nota de Assiduidade</th>
-                <th>Média Final</th>
-            </tr>
-            </thead>
-            <tbody>
-            {mediasavaliacao.length > 0 ? (
-                mediasavaliacao.map((avaliacao, index) => (
-                <tr className={styles.tr} key={index}>
-                    <td className={styles.avaliadoMedia}>{avaliacao.avaliado}</td>
-                    <td>{avaliacao.media_auto_avaliacao.toFixed(2)}</td>
-                    <td>{avaliacao.media_avaliacoes_chefia.toFixed(2)}</td>
-                    <td>{avaliacao.media_avaliacoes_gerais.toFixed(2)}</td>
-                    <td>{avaliacao.nota_assiduidade.toFixed(2)}</td>
-                    <td>{avaliacao.media_final.toFixed(2)}</td>
-                </tr>
-                ))
-            ) : (
+          {evaluationData && (
+            <>
+            <button onClick={downloadPdfDocument} className={styles.downloadButton}>
+              Download as PDF
+            </button>
+            <table className={styles.evaluationTable} id="evaluationTable">
+              <thead>
                 <tr>
-                <td colSpan="5">Carregando dados...</td>
+                  <th>Avaliador</th>
+                  <th>Avaliado</th>
+                  <th>Cooperação</th>
+                  <th>Iniciativa</th>
+                  <th>Pontualidade</th>
+                  <th>Eficiência</th>
+                  <th>Responsabilidade</th>
+                  <th>Média</th>
                 </tr>
-            )}
-            </tbody>
-        </table>
+              </thead>
+              <tbody>
+                {/* Autoavaliação */}
+                <tr>
+                  <td colSpan="8" style={{textAlign: "center", fontWeight: "bold"}}>Autoavaliação</td>
+                </tr>
+                {evaluationData.auto_avaliacoes.length > 0 ? (
+                  evaluationData.auto_avaliacoes.map((evalu, index) => (
+                    <EvaluationRow key={`auto_${index}`} evalu={evalu} />
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="8" style={{textAlign: "center", backgroundColor: "#efefef", fontWeight: "normal"}}>Essa avaliação ainda não foi feita</td>
+                  </tr>
+                )}
+
+                {/* Avaliação da Chefia */}
+                <tr>
+                  <td colSpan="8" style={{textAlign: "center", fontWeight: "bold"}}>Avaliação da Chefia</td>
+                </tr>
+                {evaluationData.avaliacao_da_chefia.length > 0 ? (
+                  evaluationData.avaliacao_da_chefia.map((evalu, index) => (
+                    <EvaluationRow key={`chefia_${index}`} evalu={evalu} />
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="8" style={{textAlign: "center", backgroundColor: "#efefef", fontWeight: "normal"}}>Essa avaliação ainda não foi feita</td>
+                  </tr>
+                )}
+
+                {/* Avaliação da Equipe */}
+                <tr>
+                  <td colSpan="8" style={{textAlign: "center", fontWeight: "bold"}}>Avaliação da Equipe</td>
+                </tr>
+                {evaluationData.avaliacao_da_equipe.length > 0 ? (
+                  evaluationData.avaliacao_da_equipe.map((evalu, index) => (
+                    <EvaluationRow key={`equipe_${index}`} evalu={evalu} />
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="8" style={{textAlign: "center", backgroundColor: "#efefef", fontWeight: "normal"}}>Essa avaliação ainda não foi feita</td>
+                  </tr>
+                )}
+
+                {/* Assiduidade - Sempre será parte da avaliação da chefia, mas mostramos condicionalmente */}
+                <tr>
+                  <td colSpan="8" style={{textAlign: "center", fontWeight: "bold"}}>Assiduidade</td>
+                </tr>
+                <tr>
+                  <td colSpan="8" style={{textAlign: "center",  backgroundColor: "#ededed", fontWeight: "normal"}}>
+                    {evaluationData.avaliacao_da_chefia.length > 0 ? evaluationData.avaliacao_da_chefia[0].assiduidade : "Essa avaliação ainda não foi feita"}
+                  </td>
+                </tr>
+
+                {/* Nota geral */}
+                <tr>
+                  <td colSpan="8" style={{textAlign: "center", fontWeight: "bold"}}>Nota Final</td>
+                </tr>
+                <tr>
+                  <td colSpan="8" style={{textAlign: "center", fontWeight: "normal", backgroundColor: "#e0e0e0", border: "1px solid #ccc"}}>
+                    {evaluationData.nota_geral ? evaluationData.nota_geral.toFixed(2) : "N/A"}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            </>
+          )}
         </div>
 
-
-        {acordosdesempenho.length > 0 && (
-            <div>
-                <h2 className={styles.h22}>Acordos desempenho:</h2>
-                <div className={styles.h2div}>
-                    {acordosdesempenho.map((usuario) => (
-                    <div className={styles.userdiv2} key={usuario.id}>
-                        <p><strong>Avaliador:</strong> {usuario.avaliador_nome}</p>
-                        <p><strong>Avaliado:</strong> {usuario.avaliado}</p>
-                        {usuario.atividades.map((atividade, index) => (
-                        <div key={index}>
-                            <p className={styles.atividades}><strong>Atividade {index + 1}:</strong></p>
-                            <div className={styles.atividades2}>
-                            <p><strong>Descrição:</strong> {atividade.descricao_atividade}</p>
-                            <p><strong>Desempenho Esperado:</strong> {atividade.desempenho_esperado}</p>
-                            </div>
-                        </div>
-                        ))}
-                    </div>
-                    ))}
-                </div>
-            </div>
-        )}
-
-
-        {acordoRecusado.length > 0 && (
-        <div>
-            <h2 className={styles.h22}>Acordos desempenho recusado:</h2>
-            <div className={styles.h2div}>
-                {acordoRecusado.map((usuario) => (
-                <div className={styles.userdiv2} key={usuario.id}>
-                    <p><strong>Avaliador:</strong> {usuario.avaliador_nome}</p>
-                    <p><strong>Avaliado:</strong> {usuario.avaliado}</p>
-                    {usuario.atividades.map((atividade, index) => (
-                    <div key={index}>
-                        <p className={styles.atividades}><strong>Atividade {index + 1}:</strong></p>
-                        <div className={styles.atividades2}>
-                        <p><strong>Descrição:</strong> {atividade.descricao_atividade}</p>
-                        <p><strong>Desempenho Esperado:</strong> {atividade.desempenho_esperado}</p>
-                        </div>
-                    </div>
-                    ))}
-                </div>
-                ))}
-            </div>
-        </div>
-        )}
-
+      </div>
     </div>
-    </div>
-    )
+  );
 }
 
 export default Perfil

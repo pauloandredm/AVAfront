@@ -198,3 +198,68 @@ table tbody tr:last-child td {
 .mediaAvaliacao{
     margin-bottom: 10px;
 }
+
+
+
+
+
+
+
+.evaluationTable {
+    width: 100%; /* Adjust the width as needed */
+    margin: 20px auto; /* Center the table on the page with margin */
+    border-collapse: collapse; /* Removes the space between the borders */
+    margin-left: -200px;
+  }
+
+.evaluationTable th:nth-child(1), /* Targets the "Avaliador" column */
+.evaluationTable td:nth-child(1), /* Targets "Avaliador" column cells */
+.evaluationTable th:nth-child(2), /* Targets the "Avaliado" column */
+.evaluationTable td:nth-child(2) { /* Targets "Avaliado" column cells */
+  min-width: 200px; /* Adjust this value based on your preference */
+}
+
+  
+  .evaluationTable th,
+  .evaluationTable td {
+    text-align: center; /* Center-align text */
+    padding: 10px; /* Add padding inside each cell */
+    border: 1px solid #ccc; /* Optional: add a border to each cell */
+  }
+  
+  .evaluationTable thead th {
+    background-color: #f0f0f0; /* Optional: add a background color to the header */
+    font-weight: bold; /* Make header text bold */
+  }
+  
+  .evaluationTable tbody tr:nth-child(odd) {
+    background-color: #f9f9f9; /* Optional: add zebra stripes to table */
+  }
+  
+  .evaluationTable tbody tr td[colspan="8"] {
+    font-weight: bold; /* Make section titles bold */
+    background-color: #e8e8e8; /* Optional: differentiate section titles with a background color */
+  }
+
+  .selectservidor{
+    padding: 9px;
+    margin-right: 10px;
+    border-radius: 5px;
+  }
+
+  .selectservidor2{
+    padding: 9px;
+    margin-right: 10px;
+    border-radius: 5px;
+    min-width: 150px;
+  }
+
+  .botaoservidor{
+    margin-top: 10px;
+    padding: 5px;
+    border-radius: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  

@@ -7,6 +7,7 @@
   position: relative; /* Faz com que o rodapé siga o fluxo normal do documento */
   z-index: 1000;
   left: 50%;
+  min-width: 1107px;
   transform: translateX(-50%); /* This will help to center the footer if 100vw causes scrolling */
 }
   
