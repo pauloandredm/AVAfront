@@ -86,7 +86,7 @@ function Navbar() {
               {chefia && <li className={styles.item}><Link to="/acordo-desempenho">Acordo Desempenho</Link></li>}
 
               {gestor || !inAvaliacao ? (
-                <li className={styles.item}><Link to="/perfil">Sua Lotação</Link></li>
+                <li className={styles.item}><Link to="/perfil">Resumo avaliação</Link></li>
               ) : null}
 
               {gestor || chefia ? ( 

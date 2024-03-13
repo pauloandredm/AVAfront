@@ -251,7 +251,8 @@ table tbody tr:last-child td {
     padding: 9px;
     margin-right: 10px;
     border-radius: 5px;
-    min-width: 150px;
+    min-width: 350px;
+    text-align: center;
   }
 
   .botaoservidor{
@@ -262,4 +263,5 @@ table tbody tr:last-child td {
     justify-content: center;
     align-items: center;
   }
+
   

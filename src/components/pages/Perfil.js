@@ -1,5 +1,6 @@
 import styles from './Perfil.module.css'
 
+import { BiHelpCircle } from "react-icons/bi";
 import API_BASE_URL from '../ApiConfig';
 import { useState, useEffect, useContext  } from 'react'
 import { AuthContext } from '../../AuthContext';
@@ -12,6 +13,7 @@ import Select from '../form/Select'
 
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import 'jspdf-autotable';
 
 function EvaluationRow({evalu}) {
   return (
@@ -101,7 +103,7 @@ function Perfil() {
 
 /* ------------------ download tabela ----------------*/
 
-    const downloadPdfDocument = () => {
+    /* const downloadPdfDocument = () => {
       const input = document.getElementById('evaluationTable');
       const topMargin = 15; // top margin in mm
       const leftMargin = 15; // left margin in mm
@@ -131,7 +133,74 @@ function Perfil() {
           
           pdf.save('evaluation-table.pdf');
         });
-    }
+    } */
+
+    const downloadPdfDocumentWithText = () => {
+      const doc = new jsPDF();
+    
+      // Cabeçalhos da tabela
+      const head = [['Avaliador', 'Avaliado', 'Cooperação', 'Iniciativa', 'Pontualidade', 'Eficiência', 'Responsabilidade', 'Média']];
+      
+      let body = [];
+    
+      // Seções de avaliação
+      const sections = [
+        { title: 'Autoavaliação', data: evaluationData.auto_avaliacoes },
+        { title: 'Avaliação da Chefia', data: evaluationData.avaliacao_da_chefia },
+        { title: 'Avaliação da Equipe', data: evaluationData.avaliacao_da_equipe }
+      ];
+    
+      sections.forEach(section => {
+        // Adicionar cabeçalho da seção independentemente de haver dados
+        body.push([{ content: section.title, colSpan: 8, styles: { halign: 'center', fillColor: [211, 211, 211] } }]);
+        if (section.data.length > 0) {
+          // Adicionar dados da seção
+          section.data.forEach(evaluation => {
+            body.push([
+              evaluation.avaliador_nome, 
+              evaluation.avaliado, 
+              evaluation.coop, 
+              evaluation.iniciativa, 
+              evaluation.pontualidade, 
+              evaluation.eficiencia, 
+              evaluation.responsabilidade, 
+              evaluation.media
+            ]);
+          });
+        } else {
+          // Adicionar linha informando que a avaliação não foi feita
+          body.push([{ content: "Essa avaliação ainda não foi feita", colSpan: 8, styles: { halign: 'center' } }]);
+        }
+      });
+    
+      // Adicionar Assiduidade e Nota Geral
+      if (evaluationData.avaliacao_da_chefia.length > 0) {
+        body.push(
+          [{ content: 'Assiduidade', colSpan: 7, styles: { halign: 'right', fillColor: [211, 211, 211] } }, evaluationData.avaliacao_da_chefia[0].assiduidade.toString()],        
+        );
+      }
+      else {
+        // Adicionar linha informando que a avaliação não foi feita
+        body.push([{ content: 'Assiduidade', colSpan: 7, styles: { halign: 'right', fillColor: [211, 211, 211] } }, "Sem Nota"]);
+      }
+
+      body.push(     
+        [{ content: 'Nota Final', colSpan: 7, styles: { halign: 'right', fillColor: [211, 211, 211] } }, evaluationData.nota_geral.toFixed(2)],
+      );
+    
+      // Adicionar tabela ao documento
+      doc.autoTable({
+        head: head,
+        body: body,
+        theme: 'grid',
+        didDrawPage: function(data) {
+          // Configurações adicionais podem ser feitas aqui
+        },
+      });
+    
+      // Salvar o PDF
+      doc.save('evaluation-table.pdf');
+    };
     
 /* -------- Formik --------- */
 
@@ -203,9 +272,8 @@ function Perfil() {
         <div>
           {evaluationData && (
             <>
-            <button onClick={downloadPdfDocument} className={styles.downloadButton}>
-              Download as PDF
-            </button>
+            <button onClick={downloadPdfDocumentWithText}>Baixar PDF com Texto</button>
+
             <table className={styles.evaluationTable} id="evaluationTable">
               <thead>
                 <tr>
