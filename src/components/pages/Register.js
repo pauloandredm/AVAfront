@@ -223,23 +223,6 @@ function Register() {
             value={formik.values.nome}
           />
 
-          <label htmlFor="lotacoes">Lotação:</label>
-          <select
-            id="lotacoes"
-            className={styles.input_register}
-            name="lotacoes"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.lotacoes}
-          >
-            <option value="">Selecione uma opção</option>
-            {lotacoes.map((lotacao) => (
-              <option key={lotacao.id} value={lotacao.id}>
-                {lotacao.nome}
-              </option>
-            ))}
-          </select>
-
         <label htmlFor="password">Senha:</label>
         <div className={styles.password_input}>
           <input
