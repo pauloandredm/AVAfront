@@ -1,5 +1,5 @@
 .container {
-  max-width: 1200px; /* Define uma largura máxima em vez de uma largura fixa para responsividade */
+  /* max-width: 1200px; */ /* Define uma largura máxima em vez de uma largura fixa para responsividade */
   width: 100%; /* Garante que o container ocupe a largura disponível até o máximo definido */
   display: flex;
   justify-content: space-between;
