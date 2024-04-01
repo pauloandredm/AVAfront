@@ -52,18 +52,6 @@ function Perfil() {
 
     const [loading, setLoading] = useState(true);
 
-    /* useEffect(() => {
-      Promise.all([
-          axios.get(`${API_BASE_URL}/servidores_lotacao`),
-      ]).then((responses) => {
-          setUsuarios2(responses[0].data);
-      }).catch((error) => {
-          console.error("Houve um erro ao buscar os dados:", error);
-      }).finally(() => {
-          setLoading(false);
-      });
-  }, []); */
-
 /* ------------------ get servidores ----------------*/
 
   const fetchServidoresByAno = async (ano) => {
@@ -75,8 +63,6 @@ function Perfil() {
     }
   };
   
-
-
   /* ------------------ handle select ----------------*/
 
   function handleSelectChange(event) {
@@ -101,39 +87,6 @@ function Perfil() {
         }
       }, [authenticated]); 
 
-/* ------------------ download tabela ----------------*/
-
-    /* const downloadPdfDocument = () => {
-      const input = document.getElementById('evaluationTable');
-      const topMargin = 15; // top margin in mm
-      const leftMargin = 15; // left margin in mm
-      html2canvas(input)
-        .then((canvas) => {
-          const imgWidth = 295 - leftMargin * 2; // PDF width - leftMargin - rightMargin
-          const pageHeight = 295;  // A4 height in mm
-          const imgHeight = canvas.height * imgWidth / canvas.width;
-          let heightLeft = imgHeight;
-          let position = 0;
-          
-          const imgData = canvas.toDataURL('image/png');
-          const pdf = new jsPDF({
-            orientation: 'landscape',
-          });
-          
-          // Add image to PDF
-          pdf.addImage(imgData, 'PNG', leftMargin, position + topMargin, imgWidth, imgHeight);
-          heightLeft -= pageHeight;
-
-          while (heightLeft >= 0) {
-            position = heightLeft - imgHeight;
-            pdf.addPage();
-            pdf.addImage(imgData, 'PNG', leftMargin, position + topMargin, imgWidth, imgHeight);
-            heightLeft -= pageHeight;
-          }
-          
-          pdf.save('evaluation-table.pdf');
-        });
-    } */
 
     const downloadPdfDocumentWithText = () => {
       const doc = new jsPDF();
@@ -268,8 +221,9 @@ function Perfil() {
 
             <button className={styles.botaoservidor} type="submit">Pesquisar</button>
         </form>
+      </div>
 
-        <div>
+        <div className={styles.tableContainer}>
           {evaluationData && (
             <>
             <button onClick={downloadPdfDocumentWithText}>Baixar PDF com Texto</button>
@@ -355,7 +309,6 @@ function Perfil() {
           )}
         </div>
 
-      </div>
     </div>
   );
 }

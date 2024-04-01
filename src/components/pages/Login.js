@@ -5,7 +5,7 @@ import axios from 'axios';
 import Input from '../form/Input';
 import SubmitButton from '../form/SubmitButton';
 import API_BASE_URL from '../ApiConfig';
-import styles from './Avaliacao.module.css';
+import styles from './Login.module.css';
 import { Navigate } from 'react-router-dom';
 import { AuthContext } from '../../AuthContext';
 import { BiShowAlt, BiHide } from 'react-icons/bi';

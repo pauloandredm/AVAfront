@@ -1,0 +1,196 @@
+.avaliacao_container {
+    width: 800px;
+    margin: 0 auto;
+    padding: 3em;
+  }
+  
+  .avaliacao_container h1 {
+    margin-bottom: 0.5em;
+  }
+  
+  .avaliacao_container p {
+    color: #7b7b7b;
+  }
+
+  .error_message {
+    text-align: center;
+    margin-top: 15px;
+    padding: 8px;
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+  }
+
+  .success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+  }
+
+ /*  ------ input ----------- */
+  .form_control {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1em;
+  }
+
+  .form_control p {
+    margin-bottom: 0.6em;
+  }
+  
+  .form_control label {
+    margin-bottom: 0.6em;
+    margin-top: 0.6em;
+    font-weight: bold;
+  }
+  
+  .form_control input {
+    padding: 0.7em;
+  }
+
+  .form_control select {
+    padding: 0.7em;
+    border-radius: 6px; 
+    border: 1px solid black;
+  }
+  
+  .form_control input::placeholder {
+    color: #7b7b7b;
+  }
+  
+  .error {
+    color: red;
+  }
+
+  /* -------- tooltip ---------- */
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+/* Tooltip text */
+.tooltip .tooltiptext {
+  visibility: hidden;
+  background-color: black;
+  color: white;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+ 
+  /* Position the tooltip text - see examples below! */
+  position: absolute;
+  z-index: 1;
+  width: 320px;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -160px;
+}
+.tooltip .tooltiptext p {
+  color: #bab6b6;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
+.tooltip .tooltiptext::after {
+  content: " ";
+  position: absolute;
+  top: 100%; /* At the bottom of the tooltip */
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: black transparent transparent transparent;
+}
+
+/* senha cadastro*/
+
+
+.password_input{
+  position: relative;
+
+}
+
+.show_password_icon {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+.input_container{
+  width: 100%;
+  border-radius: 6px; 
+  border: 1px solid black;
+}
+
+.input_container2{
+  width: 100%;
+  height: 30px;
+  border-radius: 6px; 
+  border: 1px solid black;
+}
+
+/* senha login*/
+.label_login {
+  font-weight: bold;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.input_login {
+  padding: 0.7em;
+  border-radius: 6px;
+  border: 1px solid black;
+  width: 100%;
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
+
+.password_input_login{
+  position: relative;
+}
+
+.show_password_icon2 {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+.input_register{
+  border-radius: 6px; 
+  border: 1px solid black;
+}
+
+.esqueci{
+  list-style-type: none;
+  text-align: end;
+}
+
+.esqueci a {
+  text-decoration: none; /* Remove o sublinhado do link */
+}
+
+.forgot {
+  display: flex;
+  justify-content: space-between; /* Espaço entre os elementos */
+  align-items: baseline; /* Alinha os elementos verticalmente no centro */
+}
+
+.titulo{
+  margin-bottom: 16px;
+}
+
+.success_message{
+  color: #155724;
+  background-color: #d4edda;
+  border-color: #c3e6cb;
+  text-align: center;
+  margin-top: 15px;
+  padding: 8px;
+}
