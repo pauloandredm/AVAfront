@@ -1,7 +1,9 @@
 .avaliacao_container {
-    width: 800px;
+    width: auto;
+    max-width: 800px;
     margin: 0 auto;
     padding: 3em;
+    margin-bottom: 60px;
   }
   
   .avaliacao_container h1 {

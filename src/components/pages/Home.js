@@ -27,7 +27,7 @@ function Home() {
       <div className={styles.overlay}>
         <h1>Avaliação de Desempenho</h1>
       </div>
-      {/* <img src={avaliacao} alt="Avaliacao" className={styles.background_image} /> */}
+      <img src={avaliacao} alt="Avaliacao" className={styles.background_image} />
     </div>
   );
 }

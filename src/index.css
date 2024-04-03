@@ -8,10 +8,5 @@
 html,
 body,
 #root {
-  width: 100vw;
   background-color: #efefef;
-  height: 100vh;
-
-  display: flex;
-  flex-direction: column;
 }

@@ -141,10 +141,11 @@ function AcordoDesempenho(){
         <form className={styles.form_control} onSubmit={formik.handleSubmit}>
             <h1>Acordo de Desempenho</h1>
             <p>Planeje as Atividade dos servidores</p>
-            <div className={styles.form_control}>
+            <div className={styles.div_form_control}>
 
                 <label htmlFor="avaliado">Servidor:</label>
                 <select
+                    className={styles.select_servidor}
                     id="avaliado"
                     name="avaliado"
                     onChange={(e) => {
@@ -170,6 +171,7 @@ function AcordoDesempenho(){
                   <div className={styles.periodoitem}>
                       <label htmlFor="periodo_inicio">Início do Período:</label>
                       <DatePicker
+                          className={styles.date_picker}
                           id="periodo_inicio"
                           name="periodo_inicio"
                           selected={periodoInicio}
@@ -184,6 +186,7 @@ function AcordoDesempenho(){
                   <div className={styles.periodoitem}>
                       <label htmlFor="periodo_fim">Fim do Período:</label>
                       <DatePicker
+                          className={styles.date_picker}
                           id="periodo_fim"
                           name="periodo_fim"
                           selected={periodoFim}
@@ -261,7 +264,7 @@ function AcordoDesempenho(){
                 )}
                     
             </div>
-            <SubmitButton text="Enviar" />
+            <SubmitButton text="Enviar" className={styles.botao_enviar} />
         </form>  
     </div>
   )

@@ -1,79 +1,105 @@
-.avaliacao_container {
-    width: 800px;
-    margin: 0 auto;
-    padding: 3em;
+.avaliacao_container1 {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
-.avaliacao_container1 {
-    
-    max-width: 1300px;
-    margin: 0 auto;
-    padding: 1em;
+.avaliacao_container {
+    max-width: 900px;
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    margin-top: 30px;
 }
   
 .avaliacao_container h1 {
     margin-bottom: 0.5em;
+    justify-content: flex-start;
 }
   
 .avaliacao_container p {
     color: #7b7b7b;
 }
 
+.form_servidor{
+  width: 100%;
+}
+
+.selectservidor{
+  padding: 9px;
+  margin-right: 10px;
+  border-radius: 5px;
+  width: 20%;
+  max-width: 200px;
+}
+
+.selectservidor2{
+  padding: 9px;
+  margin-right: 10px;
+  border-radius: 5px;
+  width: 75%;
+  text-align: center;
+}
+
+.botaoservidor{
+  padding: 5px;
+  border-radius: 4px;
+  width: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+}
+
 .tableContainer {
+    max-width: 1200px;
     width: 100%;
-    overflow-x: auto; /* Habilita a rolagem horizontal se necessário */
-    margin: 20px auto; /* Centraliza o contêiner na página */
-    -webkit-overflow-scrolling: touch; /* Melhora a rolagem em dispositivos iOS */
+    overflow-x: auto; 
+    margin: 20px auto;
+    -webkit-overflow-scrolling: touch;
+    display: flex;
+    flex-direction: column;
+    /* align-items: center;
+    justify-content: center; */
+}
+
+.botao_baixar{
+  margin-bottom: 15px;
+  max-width: 200px;
+  width: 100%;
+  height: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .evaluationTable {
-    width: auto; /* Permite que a tabela expanda conforme necessário */
-    margin-bottom: 20px; /* Espaçamento abaixo da tabela */
-    border-collapse: collapse; /* Removes the space between the borders */
+    width: auto;
+    margin-bottom: 20px;
+    border-collapse: collapse;
   }
 
   .evaluationTable th,
   .evaluationTable td {
-    text-align: center; /* Center-align text */
-    padding: 10px; /* Add padding inside each cell */
-    border: 1px solid #ccc; /* Optional: add a border to each cell */
+    text-align: center;
+    padding: 10px;
+    border: 1px solid #ccc;
   }
   
   .evaluationTable thead th {
-    background-color: #f0f0f0; /* Optional: add a background color to the header */
-    font-weight: bold; /* Make header text bold */
+    background-color: #f0f0f0;
+    font-weight: bold;
   }
   
   .evaluationTable tbody tr:nth-child(odd) {
-    background-color: #f9f9f9; /* Optional: add zebra stripes to table */
+    background-color: #f9f9f9;
   }
   
   .evaluationTable tbody tr td[colspan="8"] {
-    font-weight: bold; /* Make section titles bold */
-    background-color: #e8e8e8; /* Optional: differentiate section titles with a background color */
-  }
-
-  .selectservidor{
-    padding: 9px;
-    margin-right: 10px;
-    border-radius: 5px;
-  }
-
-  .selectservidor2{
-    padding: 9px;
-    margin-right: 10px;
-    border-radius: 5px;
-    min-width: 350px;
-    text-align: center;
-  }
-
-  .botaoservidor{
-    margin-top: 10px;
-    padding: 5px;
-    border-radius: 4px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    font-weight: bold;
+    background-color: #e8e8e8;
   }
 
   

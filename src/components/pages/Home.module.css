@@ -16,12 +16,12 @@
 }
 
 .background_image {
-    width: 100vw;
     height: 100vh;
+    width: 100%;
     object-fit: cover;
-}
+  }
 
-/* .overlay {
+.overlay {
     position: absolute;
     top: 0;
     left: 0;
@@ -31,4 +31,4 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-} */
+}

@@ -55,21 +55,23 @@ function Navbar() {
     }
   }, [authenticated, navigate]); // Observa alterações no estado authenticated
 
+
+  
+
+  
+
+
   return (
+
     <div className={styles.navbar}>
 
-        <li style={{ listStyle: 'none', paddingLeft: "40px" }}> 
+        <li className={styles.logo_li}> 
           <Link to="/">
-            <img src={logo} alt="Logo" style={{ height: '80px', width: 'auto'}} />
+            <img src={logo} alt="Logo" style={{ height: '60px', width: 'auto'}} />
           </Link>
         </li>
       
-      {/* <Container> */}
         <ul className={styles.list}>
-
-          {/* <li className={styles.item}>
-            <img src={logo} alt="Logo" style={{ height: '80px', width: 'auto' }} />
-          </li> */}
 
           <li className={styles.item2}>
             <Link to="/">Home</Link>
@@ -91,7 +93,7 @@ function Navbar() {
 
               {gestor || chefia ? ( 
                 <li className={styles.item}><Link to="/grupos">Grupos</Link></li>
-                ) : null}
+              ) : null}
 
               <li className={styles.item} onClick={handleLogout}>Logout</li>
             </>
@@ -102,7 +104,7 @@ function Navbar() {
             </>
           )}
         </ul>
-      {/* </Container> */}
+
     </div>
   );
 }

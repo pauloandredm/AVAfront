@@ -1,51 +1,68 @@
-.form {
+.avaliacao_container1 {
+    width: auto;
+    margin: 0 auto;
+    padding: 1em;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.avaliacao_container {
+    width: 80%;
+    margin-top: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+}
+
+.table_container{
+    display: flex;
+    overflow-x: auto;
+}
+
+.table1 {
+    border-collapse: collapse;
     width: 100%;
-    margin: 2em 0;
+    text-align: center;
+    margin-bottom: 30px;
+    margin-right: 15px;
+    border: 1px solid black;
   }
+
+.table1 ul {
+    list-style-type: none; 
+}
+ 
+.table1 th, .table1 td {
+    padding: 10px;
+    border: 1px solid black;
+}
+
+.table1 li:not(:last-child) {
+    border-bottom: 1px solid #999999; 
+    padding-bottom: 5px; 
+    margin-bottom: 5px; 
+}
 
 .table {
   border-collapse: collapse;
-  width: 115%;
-  margin-left: -40px;
+  width: 100%;
   text-align: center;
   margin-bottom: 30px;
+  margin-right: 15px;
   border: 1px solid black;
-
 }
 
+
 .table ul {
-    list-style-type: none; /* This removes the bullet points */
-    padding: 0; /* This removes the padding which is usually reserved for bullet points */
-    margin: 0; /* Adjust the margin as needed */
+    list-style-type: none; 
 }
  
 .table th, .table td {
     padding: 10px;
     border: 1px solid black;
-}
-
-.table th:first-child, .table td:first-child {
-    width: 25%; /* 1/4 da largura para a primeira coluna */
-}
-
-.table th:nth-child(2), .table td:nth-child(2) {
-    width: 75%; /* 3/4 da largura para a segunda coluna */
-}
-
-.tr{
-    border-bottom: 1px solid black;
-}
-
-.avaliacao_container {
-    width: 800px;
-    margin: 0 auto;
-    padding: 3em;
-}
-
-.avaliacao_container1 {
-    width: 800px;
-    margin: 0 auto;
-    padding: 1em;
 }
   
 .avaliacao_container h1 {
@@ -95,6 +112,7 @@
 }
 
 .form_control select {
+    width: 80%;
     padding: 0.7em;
     border-radius: 6px;
     border: 1px solid black;
@@ -108,7 +126,7 @@
     color: red;
 }
 
-.h2{
+/* .h2{
     padding-bottom: 30px;
 }
 
@@ -130,9 +148,15 @@
 }
 .userdiv2 p{
     color: rgba(0, 0, 0, 0.76);
-}
+} */
+
+/* .form {
+    width: 100%;
+    margin: 2em 0;
+  } */
 
 .select_grupo{
+    width: 80%;
     border-radius: 6px;
     border: 1px solid black;
     font-size: 14px;

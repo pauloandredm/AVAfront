@@ -184,9 +184,9 @@ function Perfil() {
 
   return (
     <div className={styles.avaliacao_container1}>
-      <h1>Sua Lotação</h1>
       <div className={styles.avaliacao_container}>
-        <form className={styles.form} onSubmit={formik.handleSubmit}>
+        <h1>Sua Lotação</h1>
+        <form className={styles.form_servidor} onSubmit={formik.handleSubmit}>
         
             <select
               className={styles.selectservidor}
@@ -226,8 +226,6 @@ function Perfil() {
         <div className={styles.tableContainer}>
           {evaluationData && (
             <>
-            <button onClick={downloadPdfDocumentWithText}>Baixar PDF com Texto</button>
-
             <table className={styles.evaluationTable} id="evaluationTable">
               <thead>
                 <tr>
@@ -308,6 +306,7 @@ function Perfil() {
             </>
           )}
         </div>
+        <button className={styles.botao_baixar} onClick={downloadPdfDocumentWithText}>Baixar PDF com Texto</button>
 
     </div>
   );

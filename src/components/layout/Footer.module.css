@@ -2,13 +2,8 @@
   background-color: #334a91;
   color: #fff;
   padding: 1em;
-  width: 100vw;
-  box-sizing: border-box;
-  position: relative; /* Faz com que o rodapé siga o fluxo normal do documento */
-  z-index: 1000;
-  left: 50%;
-  min-width: 1107px;
-  transform: translateX(-50%); /* This will help to center the footer if 100vw causes scrolling */
+  position: relative;
+  bottom: 0;
 }
   
   .social_list {
@@ -17,11 +12,11 @@
     list-style-type: none;
     text-align: center;
     align-items: center;
+    flex-wrap: wrap;
   }
   
   .social_list li {
     margin: 0 1em;
-    flex: 1 1 auto;
   }
   
   .social_list li:hover {
@@ -34,10 +29,37 @@
   }
   
   .copy_right {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
     margin-top: 2em;
   }
   
   .copy_right span {
     font-weight: bold;
     color: #ffbb33;
+  }
+
+  .itens{
+    color: white;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+    margin-bottom: 10px;
+  }
+
+  .logo_footer{
+    height: 120px; 
+    width: auto;
+  }
+
+  @media (max-width: 370px) {
+    .logo_footer {
+      display: none;
+    }
+
+    .logo_footer {
+      padding-left: 0px;
+    }
   }

@@ -1,4 +1,9 @@
 .navbar {
+    position: relative;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
     display: flex;
     justify-content: flex-start;
     background-color: #334a91;
@@ -6,18 +11,18 @@
     width: 100%;
     box-sizing: border-box;
     overflow-x: auto;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
+    flex-wrap: wrap;
+  }
+
+  .logo_li{
+    list-Style: none;
+    padding-left: 40px;
   }
   
   .list {
     display: flex;
     list-style: none;
     align-items: center;
-    justify-content: flex-start;
   }
   
   .item {
@@ -51,4 +56,14 @@
   .item2 a:hover {
     color: #ffbb33;
     text-decoration: none;
+  }
+
+  @media (max-width: 875px) {
+    .navbar li img {
+      display: none;
+    }
+
+    .logo_li{
+      padding-left: 0px;
+    }
   }

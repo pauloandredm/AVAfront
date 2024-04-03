@@ -1,7 +1,11 @@
 .avaliacao_container {
-    width: 800px;
+    width: auto;
+    max-width: 800px;
     margin: 0 auto;
     padding: 3em;
+    display: flex;
+    flex-direction: column;
+    /* flex-wrap: wrap; */
   }
   
   .avaliacao_container h1 {

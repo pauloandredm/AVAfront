@@ -198,99 +198,101 @@ useEffect(() => {
     return (
     <div className={styles.avaliacao_container1}>
     <h1>Grupos de Avaliação</h1>
-    <div className={styles.avaliacao_container}>
+        <div className={styles.avaliacao_container}>
 
-    <h2 className={styles.h2}>Servidores com Grupo:</h2>
-        <table className={styles.table}>
-            <thead>
-                <tr>
-                    <th>Grupo</th>
-                    <th>Servidores</th>
-                </tr>
-            </thead>
-            <tbody className={styles.tbody}>
-                {Object.keys(groupedUsuarios).map((groupId) => {
-                    const grupo = grupolist.find((g) => g.id == groupId);  // Encontre o objeto de grupo correspondente
-                    return (
-                        <tr className={styles.tr} key={groupId}>
-                            <td>{grupo ? grupo.nome : 'Nome Desconhecido'}</td>
-                            <td>
-                                <ul>
-                                    {groupedUsuarios[groupId].map((usuario) => (
-                                        <li key={usuario.id}>
-                                            {usuario.servidor}
-                                        </li>
-                                    ))}
-                                </ul>
-                            </td>
+            <h2>Servidores com Grupo:</h2>
+                <div className={styles.table_container}>
+                    <table className={styles.table1}>
+                        <thead>
+                            <tr>
+                                <th>Grupo</th>
+                                <th>Servidores</th>
+                            </tr>
+                        </thead>
+                        <tbody className={styles.tbody}>
+                            {Object.keys(groupedUsuarios).map((groupId) => {
+                                const grupo = grupolist.find((g) => g.id == groupId);  // Encontre o objeto de grupo correspondente
+                                return (
+                                    <tr className={styles.tr} key={groupId}>
+                                        <td>{grupo ? grupo.nome : 'Nome Desconhecido'}</td>
+                                        <td>
+                                            <ul>
+                                                {groupedUsuarios[groupId].map((usuario) => (
+                                                    <li key={usuario.id}>
+                                                        {usuario.servidor}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                </div>
+
+                <h2 className={styles.h2}>Servidores sem Grupo:</h2>
+                <table className={styles.table}>
+                    <thead>
+                        <tr>
+                            <th>Servidor</th>
                         </tr>
-                    );
-                })}
-            </tbody>
-        </table>
+                    </thead>
+                    <tbody className={styles.tbody}>
+                        {semGrupo
+                            .sort((a, b) => a.Servidor_Nome.localeCompare(b.Servidor_Nome)) // Ordenar pelo Servidor_Nome em ordem alfabética
+                            .map((usuario) => (
+                                <tr className={styles.tr} key={usuario.Servidor_Nome}>
+                                    <td>{usuario.Servidor_Nome}</td>
+                                </tr>
+                            ))}
+                    </tbody>
+                </table>
 
-        <h2 className={styles.h2}>Servidores sem Grupo:</h2>
-        <table className={styles.table}>
-            <thead>
-                <tr>
-                    <th>Servidor</th>
-                </tr>
-            </thead>
-            <tbody className={styles.tbody}>
-                {semGrupo
-                    .sort((a, b) => a.Servidor_Nome.localeCompare(b.Servidor_Nome)) // Ordenar pelo Servidor_Nome em ordem alfabética
-                    .map((usuario) => (
-                        <tr className={styles.tr} key={usuario.Servidor_Nome}>
-                            <td>{usuario.Servidor_Nome}</td>
-                        </tr>
-                    ))}
-            </tbody>
-        </table>
+            <form className={styles.form_control} onSubmit={formik.handleSubmit}>
+                <h2 className={styles.h2}>Adicionar/Mudar Grupo de Avaliação:</h2>
+                <div className={styles.form_control}>
+                    <label htmlFor="servidor">Servidor:</label>
+                        <select
+                            id="servidor"
+                            name="servidor"
+                            onChange={(e) => {
+                                const servidor = JSON.parse(e.target.value);
+                                formik.setFieldValue("servidor", servidor);
+                            }}
+                            value={JSON.stringify(formik.values.servidor)}
+                            className={styles.select_servidor}
+                        >
+                            <option value="">Selecione um servidor</option>
+                            {usuarios.sort((a, b) => a.nome.localeCompare(b.nome)).map((user) => (
+                                <option key={user.matricula} value={JSON.stringify({nome: user.nome, matricula: user.matricula})}>
+                                    {user.nome}
+                                </option>
+                            ))}
+                        </select>
 
-    <form className={styles.form_control} onSubmit={formik.handleSubmit}>
-        <h2 className={styles.h2}>Adicionar/Mudar Grupo de Avaliação:</h2>
-        <div className={styles.form_control}>
-            <label htmlFor="servidor">Servidor:</label>
-                <select
-                    id="servidor"
-                    name="servidor"
-                    onChange={(e) => {
-                        const servidor = JSON.parse(e.target.value);
-                        formik.setFieldValue("servidor", servidor);
-                    }}
-                    value={JSON.stringify(formik.values.servidor)}
-                    className={styles.select_servidor}
-                >
-                    <option value="">Selecione um servidor</option>
-                    {usuarios.sort((a, b) => a.nome.localeCompare(b.nome)).map((user) => (
-                        <option key={user.matricula} value={JSON.stringify({nome: user.nome, matricula: user.matricula})}>
-                            {user.nome}
-                        </option>
-                    ))}
-                </select>
+                    {formik.touched.id && formik.errors.id ? (
+                        <div className={styles.error}>{formik.errors.id}</div>
+                    ) : null}
 
-            {formik.touched.id && formik.errors.id ? (
-                <div className={styles.error}>{formik.errors.id}</div>
-            ) : null}
+                    <label htmlFor="grupo_avaliacao">Selecione um grupo ou crie um novo:</label>
 
-            <label htmlFor="grupo_avaliacao">Selecione um grupo ou crie um novo:</label>
+                    <CreatableSelect
+                        closeMenuOnSelect={false}
+                        id="grupo_avaliacao"
+                        name="grupo_avaliacao"
+                        className={styles.select_grupo}
+                        options={grupolist.map((grupo) => ({ value: grupo.id, label: grupo.nome }))}
+                        isMulti
+                        onChange={handleGrupoAvaliacaoChange2}
+                        value={opcoesSelecionadas}
+                        placeholder="Selecione um grupo predefinido ou crie um grupo"
+                    />
 
-            <CreatableSelect
-                closeMenuOnSelect={false}
-                id="grupo_avaliacao"
-                name="grupo_avaliacao"
-                className={styles.select_grupo}
-                options={grupolist.map((grupo) => ({ value: grupo.id, label: grupo.nome }))}
-                isMulti
-                onChange={handleGrupoAvaliacaoChange2}
-                value={opcoesSelecionadas}
-                placeholder="Selecione um grupo predefinido ou crie um grupo"
-            />
-
+                </div>
+                <SubmitButton text="Enviar" />
+            </form>
         </div>
-        <SubmitButton text="Enviar" />
-    </form>
-    </div>
     </div>
     )
 }

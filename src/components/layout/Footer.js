@@ -14,29 +14,29 @@ function Footer() {
 
         <li style={{ listStyle: 'none', paddingLeft: "40px" }}> 
           <Link to="/">
-            <img src={logo} alt="Logo" style={{ height: '120px', width: 'auto'}} />
+            <img src={logo} alt="Logo" className={styles.logo_footer} />
           </Link>
         </li>
 
         <li>
           <a href="https://www.instagram.com/AssembleiaRN/" target="_blank" rel="noopener noreferrer" style={{ color: 'white', textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
-            <FaInstagram style={{ marginRight: '10px' }} />
+            <FaInstagram className={styles.itens} />
             Instagram
           </a>
         </li>
 
         <li style={{ color: 'white', textDecoration: 'none', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center' }}>
-            <FiPhoneCall style={{ marginRight: '10px' }} />
+            <FiPhoneCall className={styles.itens} />
             (84) 8807-4270
         </li>
 
         <li style={{ color: 'white', textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
-            <HiOutlineMail style={{ marginRight: '10px' }} />
+            <HiOutlineMail className={styles.itens} />
             assecom.alrn@gmail.com
         </li>
 
         <li style={{ color: 'white', textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
-            <MdOutlineLocationOn style={{ marginRight: '10px' }} />
+            <MdOutlineLocationOn className={styles.itens} />
             Praça Sete de Setembro, 120 
             Cidade Alta Natal/RN - CEP 59025-300
         </li>
