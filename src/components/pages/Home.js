@@ -25,7 +25,7 @@ function Home() {
   return (
     <div className={styles.h1}>
       <div className={styles.overlay}>
-        <h1>Avaliação de Desempenho</h1>
+        {/* <h1>Avaliação de Desempenho</h1> */}
       </div>
       <img src={avaliacao} alt="Avaliacao" className={styles.background_image} />
     </div>
