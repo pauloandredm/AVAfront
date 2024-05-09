@@ -106,7 +106,6 @@ function AcordoDesempenho(){
             try {
 
               if (!selectedServidor) {
-                console.log("deu bigode")
                 return;
               }
 

@@ -18,7 +18,7 @@ import 'jspdf-autotable';
 function EvaluationRow({evalu}) {
   return (
     <tr>
-      <td>{evalu.avaliador_nome}</td>
+      <td>{evalu.nome_avaliador}</td>
       <td>{evalu.avaliado}</td>
       <td>{evalu.coop}</td>
       <td>{evalu.iniciativa}</td>
