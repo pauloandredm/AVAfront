@@ -70,6 +70,14 @@
     background-color: #f8d7da;
     border-color: #f5c6cb;
   }
+
+  .certo_message{
+    text-align: center;
+    margin-top: 15px;
+    padding: 8px;
+    color: #1c7227;
+    background-color: #d7f8df;
+  }
   
   .sem_acordo{
     text-align: center;

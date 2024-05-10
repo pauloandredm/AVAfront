@@ -141,7 +141,9 @@ function AcordoDesempenho(){
                 <div>
                     {acordo.map(ad => (
                         <div className={styles.aceito} key={ad.id}>
-                            <p><strong>Avaliador:</strong> {ad.avaliador}</p>
+                          {ad.aceito === false && <p className={styles.error_message}>Acordo Recusado</p>}
+                          {ad.foi_visto_aceito === true && <p className={styles.certo_message}>Acordo Aceito</p>}
+                            <p><strong>Avaliador:</strong> {ad.nome_avaliador}</p>
                             <p><strong>Avaliado:</strong> {ad.avaliado}</p>
                             <p><strong>periodo:</strong> {ad.periodo_inicio} até {ad.periodo_fim}</p>
                             <p><strong>Foi aceito:</strong> {ad.aceito ? 'Sim' : 'Não'}</p>
