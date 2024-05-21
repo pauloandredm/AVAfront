@@ -210,6 +210,7 @@ function Perfil() {
               name="servidor"
               onChange={(e) => formik.setFieldValue('servidor', e.target.value)}
               value={formik.values.servidor}
+              style={{ display: formik.values.ano ? '' : 'none'}}
             >
               <option value="" disabled>Selecione um servidor</option> {/* Placeholder option */}
               {usuarios2 && usuarios2.map((usuario, index) => (
@@ -303,10 +304,11 @@ function Perfil() {
                 </tr>
               </tbody>
             </table>
+            <button className={styles.botao_baixar} onClick={downloadPdfDocumentWithText}>Baixar PDF</button>
             </>
           )}
         </div>
-        <button className={styles.botao_baixar} onClick={downloadPdfDocumentWithText}>Baixar PDF com Texto</button>
+        
 
     </div>
   );

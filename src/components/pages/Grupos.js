@@ -251,7 +251,7 @@ useEffect(() => {
 
             <form className={styles.form_control} onSubmit={formik.handleSubmit}>
                 <h2 className={styles.h2}>Adicionar/Mudar Grupo de Avaliação:</h2>
-                <div className={styles.form_control}>
+                <div className={styles.form_control2}>
                     <label htmlFor="servidor">Servidor:</label>
                         <select
                             id="servidor"
