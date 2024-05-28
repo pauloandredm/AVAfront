@@ -39,13 +39,20 @@
   padding: 10px;
 }
 
-.table .tbody th:nth-child(5),
-.table .tbody th:nth-child(8),
-.table .tbody th:nth-child(11),
 .table .tbody td:nth-child(5),
 .table .tbody td:nth-child(8),
 .table .tbody td:nth-child(11) {
   border-right: 1px solid black;
+}
+
+.row2 th:nth-child(5),
+.row2 th:nth-child(8),
+.row2 th:nth-child(11){
+  border-right: 1px solid black;
+}
+
+.row1 {
+  border-bottom: 1px solid black;
 }
 
 /* ------ mensagem ------ */
@@ -95,13 +102,3 @@
   visibility: visible;
 }
 
-/* .tooltip .tooltiptext::after {
-  content: " ";
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: black transparent transparent transparent;
-} */

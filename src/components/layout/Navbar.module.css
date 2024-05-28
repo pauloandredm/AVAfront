@@ -58,7 +58,7 @@
     text-decoration: none;
   }
 
-  @media (max-width: 875px) {
+  @media (max-width: 989px) {
     .navbar li img {
       display: none;
     }

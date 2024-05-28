@@ -8,10 +8,6 @@
     /* flex-wrap: wrap; */
   }
   
-  .avaliacao_container h1 {
-    margin-bottom: 0.5em;
-  }
-  
   .avaliacao_container p {
     color: #7b7b7b;
   }
@@ -197,4 +193,9 @@
   text-align: center;
   margin-top: 15px;
   padding: 8px;
+}
+
+.p_data{
+  font-size: 21px;
+  margin-bottom: 5px;
 }
