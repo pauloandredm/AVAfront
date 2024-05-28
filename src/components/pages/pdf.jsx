@@ -7,7 +7,7 @@ import '@react-pdf-viewer/default-layout';
 const AdvancedPDFViewer = () => {
 
     /* const pdfUrl = './pdf-open-parameters.pdf'; */
-    const pdfUrl = './pdf-open-parameters2.pdf';
+    const pdfUrl = './pdf-open-parameters3.pdf';
 
     return (
         <div style={styles.container}>
