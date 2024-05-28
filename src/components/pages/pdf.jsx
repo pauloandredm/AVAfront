@@ -1,17 +1,17 @@
 import React from 'react';
 
-import { Worker, Viewer } from '@react-pdf-viewer/core';
 import '@react-pdf-viewer/core/lib/styles/index.css';
 import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 import '@react-pdf-viewer/default-layout';
 
 const AdvancedPDFViewer = () => {
 
-    const pdfUrl = './pdf-open-parameters.pdf';
+    /* const pdfUrl = './pdf-open-parameters.pdf'; */
+    const pdfUrl = './pdf-open-parameters2.pdf';
 
     return (
         <div style={styles.container}>
-          <h1 style={styles.h1}>Resolução 089/2019</h1>
+          <h1 style={styles.h1}>Ato da mesa 2388/2019</h1>
           <iframe src={pdfUrl} style={styles.iframe} title="PDF Viewer"></iframe>
         </div>
       );

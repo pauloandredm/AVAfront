@@ -105,7 +105,7 @@ function Navbar() {
           )}
 
           <li className={styles.item}>
-            <Link to="/pdf">Resolução 89</Link>
+            <Link to="/pdf">Ato da mesa 2388/2019</Link>
           </li>
 
           {authenticated ? (
