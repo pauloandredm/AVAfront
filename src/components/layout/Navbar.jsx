@@ -83,9 +83,9 @@ function Navbar() {
                 <li className={styles.item}><Link to="/avaliacao">Avaliação</Link></li>
               ) : null}
 
-              {inAvaliacao && <li className={styles.item}><Link to="/AcordoAceitoDesempenho">Ver Acordo Desempenho</Link></li>}
+              {inAvaliacao && <li className={styles.item}><Link to="/AcordoAceitoDesempenho">Ver Acordo de Desempenho</Link></li>}
 
-              {chefia && <li className={styles.item}><Link to="/acordo-desempenho">Acordo Desempenho</Link></li>}
+              {chefia && <li className={styles.item}><Link to="/acordo-desempenho">Acordo de Desempenho</Link></li>}
 
               {gestor || !inAvaliacao ? (
                 <li className={styles.item}><Link to="/perfil">Resumo avaliação</Link></li>
