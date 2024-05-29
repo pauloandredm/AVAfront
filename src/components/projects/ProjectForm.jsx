@@ -192,19 +192,21 @@ const handleSubmit = (event) => {
       ) : (
         <p>Faça a autoavaliação e avalie seus colegas</p>
       )}
+
+      {avaliacoes2.length > 0 ? (
         <form className={styles.form} onSubmit={handleSubmit}>
-          <Select 
-            text='Servidor' 
-            name='Servidor_id'
-            options={avaliacoes2}
-            value={servidorId}
-            handleOnChange={handleSelectChange}
-          />
+            <Select 
+              text='Servidor' 
+              name='Servidor_id'
+              options={avaliacoes2}
+              value={servidorId}
+              handleOnChange={handleSelectChange}
+            />
           <div className={styles.tableContainer}>
             <table className={styles.table}>
               <thead>
                 <tr className={styles.row1}>
-                  <th>Criterios de avaliação</th>
+                  <th>Fatores de Eficiência</th>
                   <th colSpan="4">Fraco</th>
                   <th colSpan="3">Regular</th>
                   <th colSpan="3">Bom</th>
@@ -363,6 +365,10 @@ const handleSubmit = (event) => {
           
           <SubmitButton text='Enviar'/>
         </form>
+
+      ) : (
+        <h1 className={styles.h1_sem_servidor}>Você não tem mais nenhuma avaliação a ser feita</h1>
+      )}
 
         {showMessage && (
           <div className={styles.error_message}>

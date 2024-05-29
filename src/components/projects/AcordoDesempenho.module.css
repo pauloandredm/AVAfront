@@ -151,4 +151,11 @@
     font-size: 21px;
   }
   
+  .h1_sem_servidor{
+    margin-top: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
   

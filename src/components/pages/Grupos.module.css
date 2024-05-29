@@ -138,21 +138,6 @@
     color: red;
 }
 
-.deleteButton {
-    display: flex;
-    flex-direction: column;
-    /* align-items: center;
-    justify-content: center; */
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
-    border-radius: 5px;
-}
-
-.deleteButton:hover {
-    background-color: red;
-}
-
 /* .h2{
     padding-bottom: 30px;
 }
@@ -202,11 +187,28 @@
     font-size: 14px
 }
 
+.deleteButton {
+    display: flex;
+    flex-direction: column;
+    /* align-items: center;
+    justify-content: center; */
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.deleteButton:hover {
+    background-color: red;
+}
+
 #td_delete{
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-around;
     border: none;
-    height: 100%;
+    /* height: tr.heigth; */
 }
+
+

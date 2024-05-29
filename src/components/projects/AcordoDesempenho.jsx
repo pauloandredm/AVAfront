@@ -144,8 +144,9 @@ function AcordoDesempenho(){
             <h1>Acordo de Desempenho</h1>
             <p className={styles.p_data}>Acordo de desempenho referente aos últimos 12 meses ({lastYear} - {currentYear})</p>
             <p>Planeje as Atividade dos servidores</p>
-            <div className={styles.div_form_control}>
 
+          {avaliado2.length > 0 ? (
+            <div className={styles.div_form_control}>
                 <label htmlFor="avaliado">Servidor:</label>
                 <select
                     className={styles.select_servidor}
@@ -157,7 +158,7 @@ function AcordoDesempenho(){
                     }}
                     value={formik.values.avaliado}
                 >
-                    <option value="">Selecione um servidor</option>
+                  <option value="">Selecione um servidor</option>
                     {avaliado2.sort((a, b) => a.nome.localeCompare(b.nome)).map((user) => (
                         <option key={user.id} value={user.id}>
                         {user.nome}
@@ -267,6 +268,9 @@ function AcordoDesempenho(){
                 )}
                     
             </div>
+          ) : (
+            <h1 className={styles.h1_sem_servidor}>Você não tem mais nenhum acordo de desempenho a ser feito</h1>
+          )}
             <SubmitButton text="Enviar" className={styles.botao_enviar} />
         </form>  
     </div>

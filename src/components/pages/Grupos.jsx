@@ -231,7 +231,7 @@ useEffect(() => {
                             {Object.keys(groupedUsuarios).map((groupId) => {
                                 const grupo = grupolist.find((g) => g.id == groupId);  // Encontre o objeto de grupo correspondente
                                 return (
-                                    <tr className={styles.tr} key={groupId}>
+                                    <tr className={styles.tr_servidores} key={groupId}>
                                         <td>{grupo ? grupo.nome : 'Nome Desconhecido'}</td>
                                         <td>
                                             <ul>

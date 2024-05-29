@@ -102,3 +102,10 @@
   visibility: visible;
 }
 
+.h1_sem_servidor{
+  margin-top: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
