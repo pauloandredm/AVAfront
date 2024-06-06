@@ -10,12 +10,31 @@ import jwt_decode from 'jwt-decode';
 
 import axios from '../../axiosConfig';
 
+const decodeToken = (token) => {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(atob(base64).split('').map((c) => {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+
+    return JSON.parse(jsonPayload);
+  } catch (error) {
+    console.error('Error decoding token:', error);
+    return null;
+  }
+};
+
 function ProjectForm(){
+
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     const access_token = localStorage.getItem('access_token');
     if (access_token) {
       axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
+      const decodedUser = decodeToken(access_token);
+      setUser(decodedUser);
     }
   }, []);
 
@@ -52,11 +71,22 @@ useEffect(() => {
   }
 }, [submitted]);
 
-/* ---------- get dados do usuario logado, para poder enviar o post ------------ */
-  function handleSelectChange(event) {
-    setServidorId(event.target.value);
-    console.log(setServidorId)
-  }
+/* ---------- get dados do servidor selecionado, para poder enviar o post ------------ */
+
+  const handleSelectChange = (e) => {
+    const selectedServidorId = e.target.value;
+    setServidorId(selectedServidorId);
+
+    // Encontrar o servidor selecionado
+    const servidorSelecionado2 = avaliacoes2.find(avaliacao => avaliacao.Servidor_Nome === selectedServidorId);
+
+    // Verificar se o usuário logado é a chefia imediata do servidor selecionado
+    if (servidorSelecionado2 && user && servidorSelecionado2.C_Matricula === user.matricula.split('-')[0]) {
+      setChefia(true);
+    } else {
+      setChefia(false);
+    }
+  };
 
 /* -------- mensagem --------- */
 const [showMessage, setShowMessage] = useState('');

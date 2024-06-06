@@ -192,10 +192,11 @@
     flex-direction: column;
     /* align-items: center;
     justify-content: center; */
-    border: none;
     padding: 5px 10px;
     cursor: pointer;
     border-radius: 5px;
+    border: 1px solid black;
+    margin-bottom: 5px;
 }
 
 .deleteButton:hover {
@@ -211,4 +212,6 @@
     /* height: tr.heigth; */
 }
 
-
+.linha_botton{
+    border: 1px solid black;
+}

@@ -197,7 +197,6 @@ useEffect(() => {
                 const response = await axios.post(`${API_BASE_URL}/grupo_avaliacao/`, serializedData);
                 resetForm();
                 setOpcoesSelecionadas([]);
-                console.log("F reset")
             } catch (error) {
                 // Lidar com o erro
             } finally {

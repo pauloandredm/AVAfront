@@ -14,7 +14,8 @@ function Navbar() {
   const [gestor, setGestor] = useState(false);
   const [chefia, setChefia] = useState(false);
   const [inAvaliacao, setInAvaliacao] = useState(false);
-  const [lotacoes, setLotacoes] = useState([]);
+  const [comissao, setComissao] = useState(false);
+  const [admin, setAdmin] = useState(false);
 
   const handleLogout = () => {
     localStorage.removeItem('access_token');
@@ -36,12 +37,14 @@ function Navbar() {
       // Check if the user is a gestor
       const isGestor = decodedToken.is_gestor;
       const isChefia = decodedToken.is_chefia;
-      const lotacoes = decodedToken.lotacoes;
       const isInAvaliacao = decodedToken.in_avaliacao;
+      const iscomissao = decodedToken.is_comissao;
+      const is_admin = decodedToken.is_admin;
       setGestor(isGestor);
       setChefia(isChefia);
-      setLotacoes(lotacoes);
       setInAvaliacao(isInAvaliacao);
+      setComissao(iscomissao);
+      setAdmin(is_admin);
 
       if (currentTime > expirationTime) {
         // Token has expired, log out and navigate to the login page
@@ -79,7 +82,7 @@ function Navbar() {
 
           {authenticated ? (
             <>
-              {gestor || inAvaliacao || chefia ? (
+              {gestor || inAvaliacao || chefia || comissao ? (
                 <li className={styles.item}><Link to="/avaliacao">Avaliação</Link></li>
               ) : null}
 
@@ -87,7 +90,7 @@ function Navbar() {
 
               {chefia && <li className={styles.item}><Link to="/acordo-desempenho">Acordo de Desempenho</Link></li>}
 
-              {gestor || !inAvaliacao ? (
+              {gestor || chefia || admin ? (
                 <li className={styles.item}><Link to="/perfil">Resumo avaliação</Link></li>
               ) : null}
 
