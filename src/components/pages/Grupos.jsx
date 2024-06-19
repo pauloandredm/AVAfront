@@ -70,7 +70,7 @@ useEffect(() => {
 
         getUsers();
     }
-    }, [submitted]);
+}, [submitted]);
 
 
 /*----------- atualizar GROUPLIST avaliacao back -------------*/
