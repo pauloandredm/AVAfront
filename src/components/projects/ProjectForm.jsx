@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 import { BiHelpCircle } from "react-icons/bi";
 import styles from './ProjectForm.module.css'
@@ -28,6 +28,7 @@ const decodeToken = (token) => {
 function ProjectForm(){
 
   const [user, setUser] = useState(null);
+  const location = useLocation();
 
   useEffect(() => {
     const access_token = localStorage.getItem('access_token');
@@ -41,37 +42,47 @@ function ProjectForm(){
   const [submitted, setSubmitted] = useState(false);
   const navigate = useNavigate();
 
-/* ---------- get ------------ */
+  /* ---------- get ------------ */
   const [servidorId, setServidorId] = useState('');
 
-/*----------- get lista de usuarios do back /avaliacao2 -------------*/
-const [avaliacoes2, setAvaliacoes2] = useState([])
+  /*----------- get lista de usuarios do back /avaliacao2 -------------*/
+  const [avaliacoes2, setAvaliacoes2] = useState([])
 
-useEffect(() => {
-  axios.get(`${API_BASE_URL}/avaliacao`)
+  useEffect(() => {
+    axios.get(`${API_BASE_URL}/avaliacao`)
       .then(response => {
-          setAvaliacoes2(response.data)
+        setAvaliacoes2(response.data);
+
+        // Preencher o campo select com base no parâmetro da URL
+        const params = new URLSearchParams(location.search);
+        const servidorNome = params.get('servidor');
+        if (servidorNome) {
+          const servidorSelecionado = response.data.find(avaliacao => avaliacao.Servidor_Nome === servidorNome);
+          if (servidorSelecionado) {
+            setServidorId(servidorSelecionado.Servidor_Nome);
+          }
+        }
       })
       .catch(error => {
-          console.log(error)
-      })
-}, [])
+        console.log(error);
+      });
+  }, [location.search]);
 
-/*----------- atualizar lista de usuarios do back /avaliacao2 -------------*/
+  /*----------- atualizar lista de usuarios do back /avaliacao2 -------------*/
 
-useEffect(() => {
-  if (submitted) {
-    const getUsers = async () => {
-      const response = await axios.get(`${API_BASE_URL}/avaliacao`);
-      setAvaliacoes2(response.data);
-      setSubmitted(false);
-    };
+  useEffect(() => {
+    if (submitted) {
+      const getUsers = async () => {
+        const response = await axios.get(`${API_BASE_URL}/avaliacao`);
+        setAvaliacoes2(response.data);
+        setSubmitted(false);
+      };
 
-    getUsers();
-  }
-}, [submitted]);
+      getUsers();
+    }
+  }, [submitted]);
 
-/* ---------- get dados do servidor selecionado, para poder enviar o post ------------ */
+  /* ---------- get dados do servidor selecionado, para poder enviar o post ------------ */
 
   const handleSelectChange = (e) => {
     const selectedServidorId = e.target.value;
@@ -79,7 +90,6 @@ useEffect(() => {
 
     // Encontrar o servidor selecionado
     const servidorSelecionado2 = avaliacoes2.find(avaliacao => avaliacao.Servidor_Nome === selectedServidorId);
-
     // Verificar se o usuário logado é a chefia imediata do servidor selecionado
     if (servidorSelecionado2 && user && servidorSelecionado2.C_Matricula === user.matricula.split('-')[0]) {
       setChefia(true);
@@ -88,134 +98,133 @@ useEffect(() => {
     }
   };
 
-/* -------- mensagem --------- */
-const [showMessage, setShowMessage] = useState('');
+  /* -------- mensagem --------- */
+  const [showMessage, setShowMessage] = useState('');
 
-useEffect(() => {
-  let timer;
-  if (showMessage) {
-    timer = setTimeout(() => {
-      setShowMessage(false);
-      setShowMessage('');
-    }, 4000);
-  }
-  return () => {
-    clearTimeout(timer);
-  };
-}, [showMessage]);
-
-
-const [showMessage2, setShowMessage2] = useState('');
-
-useEffect(() => {
-  let timer;
-  if (showMessage2) {
-    timer = setTimeout(() => {
-      setShowMessage2(false);
-      setShowMessage2('');
-    }, 3000);
-  }
-  return () => {
-    clearTimeout(timer);
-  };
-}, [showMessage2])
-
-//is chefia
-
-const [chefia, setChefia] = useState(false);
-
-useEffect(() => {
-  const access_token2 = localStorage.getItem("access_token");
-  if (access_token2) {
-    // Decode the token
-    const decodedToken = jwt_decode(access_token2);
-    // Check if the user is a gestor
-    const isChefia = decodedToken.is_chefia;
-    setChefia(isChefia);
-  
-  } else {
-  }
-}, [navigate]);
-
-/* -------- post -------- */
-
-/* const navigate = useNavigate(); */
-
-const handleSubmit = (event) => {
-  event.preventDefault();
-
-  const errorMessages = [];
-
-  if (!servidorId) {
-    errorMessages.push('O campo Servidor precisa ser selecionado');
-  }
-  if (!document.querySelector('input[name="Cooperacao"]:checked')) {
-    errorMessages.push('O campo Cooperacao precisa ser preenchido');
-  }
-  if (!document.querySelector('input[name="Iniciativa"]:checked')) {
-    errorMessages.push('O campo Iniciativa precisa ser preenchido');
-  }
-  if (chefia && !document.querySelector('input[name="Assiduidade"]:checked')) {
-    errorMessages.push('O campo Assiduidade precisa ser preenchido');
-  }
-  if (!document.querySelector('input[name="Pontualidade"]:checked')) {
-    errorMessages.push('O campo Pontualidade precisa ser preenchido');
-  }
-  if (!document.querySelector('input[name="Eficiencia"]:checked')) {
-    errorMessages.push('O campo Eficiencia precisa ser preenchido');
-  }
-  if (!document.querySelector('input[name="Responsabilidade"]:checked')) {
-    errorMessages.push('O campo Responsabilidade precisa ser preenchido');
-  }
-
-
-  if (errorMessages.length > 0) {
-    console.error('Erros encontrados:', errorMessages);
-    setShowMessage(errorMessages.join(', '));
-    return;
-  }
-
-  const servidorSelecionado = avaliacoes2.find(avaliacao => avaliacao.Servidor_Nome === servidorId);
-  const avaliado_matricula = servidorSelecionado ? `${servidorSelecionado.S_Matricula}-${servidorSelecionado.S_Digito}` : '';
-
-
-  let dadosAvaliacao = {
-    avaliado: servidorId,
-    avaliado_matricula,
-    coop: document.querySelector('input[name="Cooperacao"]:checked').value,
-    iniciativa: document.querySelector('input[name="Iniciativa"]:checked').value,
-    pontualidade: document.querySelector('input[name="Pontualidade"]:checked').value,
-    eficiencia: document.querySelector('input[name="Eficiencia"]:checked').value,
-    responsabilidade: document.querySelector('input[name="Responsabilidade"]:checked').value,
-  };
-
-  // Adiciona a propriedade assiduidade apenas se o usuário for chefia e o campo estiver preenchido
-  if (chefia) {
-    const assiduidadeRadio = document.querySelector('input[name="Assiduidade"]:checked');
-    if (assiduidadeRadio) {
-      dadosAvaliacao.assiduidade = assiduidadeRadio.value;
+  useEffect(() => {
+    let timer;
+    if (showMessage) {
+      timer = setTimeout(() => {
+        setShowMessage(false);
+        setShowMessage('');
+      }, 4000);
     }
-  }
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [showMessage]);
 
 
-  axios.post(`${API_BASE_URL}/avaliacao_post/`, dadosAvaliacao)
-  .then(response => {
-    console.log(response);
-    setServidorId('');
-    document.querySelectorAll('input[type="radio"]').forEach(radio => {
-      radio.checked = false;
+  const [showMessage2, setShowMessage2] = useState('');
+
+  useEffect(() => {
+    let timer;
+    if (showMessage2) {
+      timer = setTimeout(() => {
+        setShowMessage2(false);
+        setShowMessage2('');
+      }, 3000);
+    }
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [showMessage2])
+
+  //is chefia
+  const [chefia, setChefia] = useState(false);
+
+  useEffect(() => {
+    const access_token2 = localStorage.getItem("access_token");
+    if (access_token2) {
+      // Decode the token
+      const decodedToken = jwt_decode(access_token2);
+      // Check if the user is a gestor
+      const isChefia = decodedToken.is_chefia;
+      setChefia(isChefia);
+    
+    } else {
+    }
+  }, [navigate]);
+
+  /* -------- post -------- */
+
+  /* const navigate = useNavigate(); */
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    const errorMessages = [];
+
+    if (!servidorId) {
+      errorMessages.push('O campo Servidor precisa ser selecionado');
+    }
+    if (!document.querySelector('input[name="Cooperacao"]:checked')) {
+      errorMessages.push('O campo Cooperacao precisa ser preenchido');
+    }
+    if (!document.querySelector('input[name="Iniciativa"]:checked')) {
+      errorMessages.push('O campo Iniciativa precisa ser preenchido');
+    }
+    if (chefia && !document.querySelector('input[name="Assiduidade"]:checked')) {
+      errorMessages.push('O campo Assiduidade precisa ser preenchido');
+    }
+    if (!document.querySelector('input[name="Pontualidade"]:checked')) {
+      errorMessages.push('O campo Pontualidade precisa ser preenchido');
+    }
+    if (!document.querySelector('input[name="Eficiencia"]:checked')) {
+      errorMessages.push('O campo Eficiencia precisa ser preenchido');
+    }
+    if (!document.querySelector('input[name="Responsabilidade"]:checked')) {
+      errorMessages.push('O campo Responsabilidade precisa ser preenchido');
+    }
+
+
+    if (errorMessages.length > 0) {
+      console.error('Erros encontrados:', errorMessages);
+      setShowMessage(errorMessages.join(', '));
+      return;
+    }
+
+    const servidorSelecionado = avaliacoes2.find(avaliacao => avaliacao.Servidor_Nome === servidorId);
+    const avaliado_matricula = servidorSelecionado ? `${servidorSelecionado.S_Matricula}-${servidorSelecionado.S_Digito}` : '';
+
+
+    let dadosAvaliacao = {
+      avaliado: servidorId,
+      avaliado_matricula,
+      coop: document.querySelector('input[name="Cooperacao"]:checked').value,
+      iniciativa: document.querySelector('input[name="Iniciativa"]:checked').value,
+      pontualidade: document.querySelector('input[name="Pontualidade"]:checked').value,
+      eficiencia: document.querySelector('input[name="Eficiencia"]:checked').value,
+      responsabilidade: document.querySelector('input[name="Responsabilidade"]:checked').value,
+    };
+
+    // Adiciona a propriedade assiduidade apenas se o usuário for chefia e o campo estiver preenchido
+    if (chefia) {
+      const assiduidadeRadio = document.querySelector('input[name="Assiduidade"]:checked');
+      if (assiduidadeRadio) {
+        dadosAvaliacao.assiduidade = assiduidadeRadio.value;
+      }
+    }
+
+
+    axios.post(`${API_BASE_URL}/avaliacao_post/`, dadosAvaliacao)
+    .then(response => {
+      console.log(response);
+      setServidorId('');
+      document.querySelectorAll('input[type="radio"]').forEach(radio => {
+        radio.checked = false;
+      });
+      setSubmitted(true);
+      /* navigate('/acordo-desempenho'); */
+    })
+    .catch(error => {
+      console.log(error);
     });
-    setSubmitted(true);
-    /* navigate('/acordo-desempenho'); */
-  })
-  .catch(error => {
-    console.log(error);
-  });
-  setShowMessage2(true);
-};
+    setShowMessage2(true);
+  };
 
   return(
-      <div className={styles.div_pai}>
+    <div className={styles.div_pai}>
 
       {chefia ? (
         <p>Avalie os servidores no qual você é a chefia imediata</p>
@@ -408,7 +417,7 @@ const handleSubmit = (event) => {
 
         {showMessage2 && <div className={styles.success}>Avaliação realizada com sucesso!</div>}
       
-      </div>
+    </div>
 
       
     )

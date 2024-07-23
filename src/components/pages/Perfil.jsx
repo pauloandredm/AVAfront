@@ -187,6 +187,33 @@ function Perfil() {
             // Configurações adicionais podem ser feitas aqui
           },
         });
+
+        // Adicionar tabela do acordo de desempenho
+        const acordoDesempenhoHead = [['Acordo de Desempenho']];
+        const acordoDesempenhoBody = [
+            [{ content: `Avaliador: ${evaluationData.acordo_desempenho.nome_avaliador}`, colSpan: 1 }],
+            [{ content: `Período de Início: ${formatDate(evaluationData.acordo_desempenho.periodo_inicio)}`, colSpan: 1 }],
+            [{ content: `Período de Fim: ${formatDate(evaluationData.acordo_desempenho.periodo_fim)}`, colSpan: 1 }]
+        ];
+
+        evaluationData.acordo_desempenho.atividades.forEach((atividade, index) => {
+            acordoDesempenhoBody.push([{ content: `Descrição da Atividade: ${atividade.descricao_atividade}`, colSpan: 1 }]);
+            acordoDesempenhoBody.push([{ content: `Desempenho Esperado: ${atividade.desempenho_esperado}`, colSpan: 1 }]);
+        });
+
+        // Adicionar tabela do acordo de desempenho ao documento
+        doc.autoTable({
+            head: acordoDesempenhoHead,
+            body: acordoDesempenhoBody,
+            theme: 'grid',
+            startY: doc.autoTable.previous.finalY + 10,
+            styles: { fillColor: [255, 255, 255] },
+            alternateRowStyles: { fillColor: [240, 240, 240] },
+            headStyles: { fillColor: [3, 187, 133], halign: 'center' },
+            didDrawPage: function(data) {
+                // Configurações adicionais podem ser feitas aqui
+            },
+        });
       
         // Salvar o PDF
         doc.save('evaluation-table.pdf');
@@ -232,6 +259,11 @@ function Perfil() {
       formik.setFieldValue('ano', selectedInterval); // Armazena o intervalo completo
       const selectedYear = selectedInterval.split(' - ')[1]; // Obtém o segundo valor do intervalo
       fetchServidoresByAno(selectedYear);
+    };
+
+    const formatDate = (dateString) => {
+      const [year, month, day] = dateString.split('-');
+      return `${day}/${month}/${year}`;
     };
 
   return (
@@ -350,6 +382,38 @@ function Perfil() {
                     {evaluationData.nota_geral ? evaluationData.nota_geral.toFixed(2) : "N/A"}
                   </td>
                 </tr>
+
+                {/* Acordo de Desempenho */}
+                {evaluationData.acordo_desempenho && (
+                  <>
+                    <tr>
+                      <td colSpan="7" style={{ textAlign: "center", fontWeight: "bold" }}>Acordo de Desempenho</td>
+                    </tr>
+                    <tr>
+                      <td colSpan="7" style={{ textAlign: "left", fontWeight: "normal", backgroundColor: "#f8f8f8", border: "1px solid #ccc" }}>
+                        <div><strong>Avaliador:</strong> {evaluationData.acordo_desempenho.nome_avaliador}</div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colSpan="7" style={{ textAlign: "left", fontWeight: "normal", backgroundColor: "#f8f8f8", border: "1px solid #ccc" }}>
+                        <div><strong>Período de Início:</strong> {formatDate(evaluationData.acordo_desempenho.periodo_inicio)}</div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colSpan="7" style={{ textAlign: "left", fontWeight: "normal", backgroundColor: "#f8f8f8", border: "1px solid #ccc" }}>
+                        <div><strong>Período de Fim:</strong> {formatDate(evaluationData.acordo_desempenho.periodo_fim)}</div>
+                      </td>
+                    </tr>
+                    {evaluationData.acordo_desempenho.atividades.map((atividade, index) => (
+                      <tr key={`atividade_${index}`}>
+                        <td colSpan="7" style={{ textAlign: "left", fontWeight: "normal", backgroundColor: "#ffffff", border: "1px solid #ccc" }}>
+                          <div><strong>Descrição da Atividade:</strong> {atividade.descricao_atividade}</div>
+                          <div><strong>Desempenho Esperado:</strong> {atividade.desempenho_esperado}</div>
+                        </td>
+                      </tr>
+                    ))}
+                  </>
+                )}
               </tbody>
             </table>
             <button className={styles.botao_baixar} onClick={downloadPdfDocumentWithText}>Baixar PDF</button>
