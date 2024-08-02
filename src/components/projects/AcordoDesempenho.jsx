@@ -32,6 +32,7 @@ const useStyles = makeStyles((theme) => ({
   container: {
     padding: 0,
     maxWidth: 'none',
+    marginLeft: -50
   },
 }));
 
@@ -182,30 +183,32 @@ function AcordoDesempenho() {
 
         {avaliado2.length > 0 ? (
           <div className={styles.div_form_control}>
-            <label htmlFor="avaliado">Servidor:</label>
-            <select
-              className={styles.select_servidor}
-              id="avaliado"
-              name="avaliado"
-              onChange={(e) => {
-                formik.handleChange(e);
-                const selectedId = e.target.value;
-                const selected = avaliado2.find(servidor => servidor.id.toString() === selectedId);
-                setSelectedServidor(selected);
-              }}
-              value={formik.values.avaliado}
-            >
-              <option value="">Selecione um servidor</option>
-              {avaliado2.sort((a, b) => a.nome.localeCompare(b.nome)).map((user) => (
-                <option key={user.id} value={user.id}>
-                  {user.nome}
-                </option>
-              ))}
-            </select>
+            <div className={styles.servidor_select}>
+              <label htmlFor="avaliado">Servidor:</label>
+              <select
+                className={styles.select_servidor}
+                id="avaliado"
+                name="avaliado"
+                onChange={(e) => {
+                  formik.handleChange(e);
+                  const selectedId = e.target.value;
+                  const selected = avaliado2.find(servidor => servidor.id.toString() === selectedId);
+                  setSelectedServidor(selected);
+                }}
+                value={formik.values.avaliado}
+              >
+                <option value="">Selecione um servidor</option>
+                {avaliado2.sort((a, b) => a.nome.localeCompare(b.nome)).map((user) => (
+                  <option key={user.id} value={user.id}>
+                    {user.nome}
+                  </option>
+                ))}
+              </select>
 
-            {formik.touched.avaliado && formik.errors.avaliado ? (
-              <div className={styles.error}>{formik.errors.avaliado}</div>
-            ) : null}
+              {formik.touched.avaliado && formik.errors.avaliado ? (
+                <div className={styles.error}>{formik.errors.avaliado}</div>
+              ) : null}
+            </div>
 
             <div className={styles.periodocontainer}>
               <div className={styles.periodoitem}>
@@ -226,7 +229,7 @@ function AcordoDesempenho() {
               <div className={styles.periodoitem}>
                 <label htmlFor="periodo_fim">Fim do Período:</label>
                 <DatePicker
-                  className={styles.date_picker}
+                  className={styles.date_picker1}
                   id="periodo_fim"
                   name="periodo_fim"
                   selected={periodoFim}
