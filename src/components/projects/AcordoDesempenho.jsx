@@ -13,8 +13,33 @@ import { useState, useEffect } from 'react'
 import { useSearchParams, useLocation } from "react-router-dom";
 import axios from '../../axiosConfig';
 
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import Container from '@mui/material/Container';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+import { makeStyles } from '@mui/styles';
+
+const useStyles = makeStyles((theme) => ({
+  accordionDetails: {
+    padding: 0,
+  },
+  container: {
+    padding: 0,
+    maxWidth: 'none',
+  },
+}));
+
 
 function AcordoDesempenho() {
+  
+  const classes = useStyles();
+
   useEffect(() => {
     const access_token = localStorage.getItem('access_token');
     if (access_token) {
@@ -133,6 +158,21 @@ function AcordoDesempenho() {
   const currentYear = new Date().getFullYear();
   const lastYear = currentYear - 1;
 
+
+
+  const handleAddAtividade = () => {
+    const atividades = [...formik.values.atividades];
+    atividades.push({ descricao_atividade: '', desempenho_esperado: '' });
+    formik.setFieldValue('atividades', atividades);
+  };
+
+  const handleRemoveAtividade = (index) => {
+    const atividades = [...formik.values.atividades];
+    atividades.splice(index, 1);
+    formik.setFieldValue('atividades', atividades);
+  };
+
+
   return (
     <div className={styles.avaliacao_container}>
       <form className={styles.form_control} onSubmit={formik.handleSubmit}>
@@ -203,62 +243,57 @@ function AcordoDesempenho() {
               </div>
             </div>
 
+            <Container className={classes.container}>
             {formik.values.atividades.map((atividade, index) => (
-              <div key={index} className={styles.form_control}>
-                <label htmlFor={`descricao_atividade_${index}`}>Descrição da atividade:</label>
-                <input
-                  type="text"
-                  id={`descricao_atividade_${index}`}
-                  name={`atividades[${index}].descricao_atividade`}
-                  value={atividade.descricao_atividade}
-                  onChange={formik.handleChange}
-                />
-                {formik.touched.atividades && formik.errors.atividades && formik.errors.atividades[index] && (
-                  <div className={styles.error}>{formik.errors.atividades[index].descricao_atividade}</div>
-                )}
-
-                <label htmlFor={`desempenho_esperado_${index}`}>Desempenho esperado:</label>
-                <textarea
-                  type="text"
-                  id={styles.meuInput}
-                  name={`atividades[${index}].desempenho_esperado`}
-                  value={atividade.desempenho_esperado}
-                  onChange={formik.handleChange}
-                />
-                {formik.touched.atividades && formik.errors.atividades && formik.errors.atividades[index] && (
-                  <div className={styles.error}>{formik.errors.atividades[index].desempenho_esperado}</div>
-                )}
-
-                {/* Botão para remover a atividade */}
-                {index > 0 && (
-                  <button
-                    type="button"
-                    id={styles.botao_remover}
-                    onClick={() => {
-                      const atividades = [...formik.values.atividades];
-                      atividades.splice(index, 1);
-                      formik.setFieldValue("atividades", atividades);
-                    }}
-                  >
-                    Remover Atividade
-                  </button>
-                )}
-              </div>
+              <Accordion key={index} defaultExpanded={index === 0}>
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls={`panel${index}-content`}
+                  id={`panel${index}-header`}
+                >
+                  <Typography>
+                    {index === 0 ? 'Atividade 1' : `Atividade ${index + 1}`}
+                    {index === formik.values.atividades.length - 1 && formik.values.atividades.length < 3 && (
+                      <Button variant="text" onClick={handleAddAtividade}>
+                        + Adicionar Atividade
+                      </Button>
+                    )}
+                  </Typography>
+                </AccordionSummary>
+                <AccordionDetails className={classes.accordionDetails}>
+                  <div>
+                    <TextField
+                      label="Descrição da atividade"
+                      name={`atividades[${index}].descricao_atividade`}
+                      value={atividade.descricao_atividade}
+                      onChange={formik.handleChange}
+                      error={formik.touched.atividades && Boolean(formik.errors.atividades?.[index]?.descricao_atividade)}
+                      helperText={formik.touched.atividades && formik.errors.atividades?.[index]?.descricao_atividade}
+                      fullWidth
+                      margin="normal"
+                    />
+                    <TextField
+                      label="Desempenho esperado"
+                      name={`atividades[${index}].desempenho_esperado`}
+                      value={atividade.desempenho_esperado}
+                      onChange={formik.handleChange}
+                      error={formik.touched.atividades && Boolean(formik.errors.atividades?.[index]?.desempenho_esperado)}
+                      helperText={formik.touched.atividades && formik.errors.atividades?.[index]?.desempenho_esperado}
+                      fullWidth
+                      margin="normal"
+                      multiline
+                    />
+                    {index > 0 && (
+                      <Button variant="contained" color="secondary" onClick={() => handleRemoveAtividade(index)}>
+                        Remover Atividade
+                      </Button>
+                    )}
+                  </div>
+                </AccordionDetails>
+              </Accordion>
             ))}
-
-            {formik.values.atividades.length < 3 && (
-              <button
-                type="button"
-                id={styles.botao_adicionar}
-                onClick={() => {
-                  const atividades = [...formik.values.atividades];
-                  atividades.push({ descricao_atividade: "", desempenho_esperado: "" });
-                  formik.setFieldValue("atividades", atividades);
-                }}
-              >
-                Adicionar Atividade
-              </button>
-            )}
+          </Container>
+            
           </div>
         ) : (
           <h1 className={styles.h1_sem_servidor}>Você não tem mais nenhum acordo de desempenho a ser feito</h1>

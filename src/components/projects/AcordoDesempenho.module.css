@@ -158,4 +158,8 @@
     justify-content: center;
     flex-wrap: wrap;
   }
+
+  .accordion_margin{
+    margin-left: 0px;
+  }
   
