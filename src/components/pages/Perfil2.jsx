@@ -15,82 +15,12 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import 'jspdf-autotable';
 
-function EvaluationRow({evalu}) {
-  return (
-    <tr>
-      <td>{evalu.nome_avaliador}</td>
-      <td>{evalu.coop}</td>
-      <td>{evalu.iniciativa}</td>
-      <td>{evalu.pontualidade}</td>
-      <td>{evalu.eficiencia}</td>
-      <td>{evalu.responsabilidade}</td>
-      <td>{evalu.media}</td>
-    </tr>
-  );
-}
-
 function Perfil() {
 
     const { authenticated, setAuthenticated } = useContext(AuthContext);
-    const [usuarios2, setUsuarios2] = useState([]);
-    const [usuarios3, setUsuarios3] = useState([]);
-    const [submitted, setSubmitted] = useState(false);
     const [userId, setUserId] = useState(null); // Define the state for the user ID
-    const [nome, setNome] = useState(''); // Define the state for the selected server's name
-    const [ano, setAno] = useState(new Date().getFullYear()); // Define the state for the selected year
     const [evaluationData, setEvaluationData] = useState(null);
-
-    const [gestor, setGestor] = useState(false);
-    const [chefia, setChefia] = useState(false);
-    const [inAvaliacao, setInAvaliacao] = useState(false);
-
-    useEffect(() => {
-      const accessToken = localStorage.getItem('access_token');
-      if (accessToken) {
-          axios.interceptors.request.use((config) => {
-              config.headers.Authorization = `Bearer ${accessToken}`;
-              return config;
-          });
-
-          // Decode the token and set user roles
-          const decodedToken = jwt_decode(accessToken);
-
-          setGestor(decodedToken.is_gestor);
-          setChefia(decodedToken.is_chefia);
-          setInAvaliacao(decodedToken.in_avaliacao);
-      }
-  }, []);
-
-    const [loading, setLoading] = useState(true);
-
-/* ------------------ get servidores ----------------*/
-
-  const fetchServidoresByAno = async (ano) => {
-    try {
-      const response = await axios.get(`${API_BASE_URL}/servidores_avaliacao_lotacao/`, { params: { ano } });
-      setUsuarios2(response.data);
-    } catch (error) {
-      console.error("Houve um erro ao buscar os servidores:", error);
-    }
-  };
-
-  const fetchFilteredServidores = async (ano) => {
-    try {
-        const response = await axios.get(`${API_BASE_URL}/servidores_avaliacao_lotacao2/`, { params: { ano } });
-        setUsuarios3(response.data); // Corrigido para armazenar os dados em usuarios3
-    } catch (error) {
-        console.error("Houve um erro ao buscar os servidores filtrados:", error);
-    }
-};
-
-  
-  /* ------------------ handle select ----------------*/
-
-  function handleSelectChange(event) {
-    // Update the state with the selected server's name
-    setNome(event.target.value);
-  }
-
+    const [resultados, setResultados] = useState([]);
 
 /* ------------------ pegando id do access token ----------------*/
     useEffect(() => {
@@ -111,7 +41,7 @@ function Perfil() {
       
 
 
-      const downloadPdfDocumentWithText = () => {
+      const downloadPdfDocumentWithText = (evaluationData) => {
         const doc = new jsPDF();
 
         // Adicionar imagem (logo da empresa)
@@ -131,9 +61,12 @@ function Perfil() {
 
         // Adicionar imagem com proporção correta e centralizada
         doc.addImage(base64Logo, 'PNG', centerX, 10, desiredWidth, desiredHeight);
-      
+
+        console.log("entrou no download")
+        console.log(evaluationData)
         // Adicionar frases
         const ano = evaluationData.ano
+
         doc.setFontSize(12);
         doc.text(`Avaliação referente ao período ${ano-1} - ${ano}`, 105, 40, { align: 'center' });
         
@@ -240,33 +173,73 @@ function Perfil() {
         // Salvar o PDF
         doc.save('evaluation-table.pdf');
       };
+
+  const handleDownloadPdf = async (matricula) => {
+    try {
+      const ano = formik.values.ano.split(' - ')[1]; // Obtém o segundo valor do intervalo
+      const response = await axios.get(`${API_BASE_URL}/servidor/${matricula}/${ano}`);
+      const evaluationData = response.data;
+    
+      downloadPdfDocumentWithText(evaluationData);
+    } catch (error) {
+      console.error('Erro ao baixar o PDF:', error);
+    }
+  };
       
 /* -------- Formik --------- */
 
-    const formik = useFormik({
-      initialValues: {
-        servidor: '',
-        ano: '', // Armazena o intervalo completo
-      },
-      validationSchema: Yup.object({
-        servidor: Yup.string().required('Required'),
-        ano: Yup.string().required('Required'), // Agora é string para suportar o intervalo completo
-      }),
-      onSubmit: async (values, { setSubmitting }) => {
-        console.log('Form submitted', values);
-        try {
-          const matricula = values.servidor;
-          const ano = values.ano.split(' - ')[1]; // Obtém o segundo valor do intervalo
-          const response = await axios.get(`${API_BASE_URL}/servidor/${matricula}/${ano}`);
-          // Assuming you want to store the fetched data in a state
-          setEvaluationData(response.data);
-        } catch (error) {
-          console.error('Houve um erro ao buscar os dados:', error);
-        } finally {
-          setSubmitting(false);
-        }
-      },
-    }); 
+  const formik = useFormik({
+    initialValues: {
+      ano: '',
+      nome: ''
+    },
+    validationSchema: Yup.object({
+      ano: Yup.string().required('Ano é obrigatório'),
+      nome: Yup.string(),
+    }),
+    onSubmit: async (values, { setSubmitting }) => {
+      try {
+        const ano = values.ano.split(' - ')[1]; // Obtém o segundo valor do intervalo
+        const response = await axios.get(`${API_BASE_URL}/avaliacoes_acordo/`, {
+          params: {
+            ano: ano,
+            nome: values.nome
+          }
+        });
+        setResultados(response.data);
+      } catch (error) {
+        console.error('Houve um erro ao buscar os servidores:', error);
+      } finally {
+        setSubmitting(false);
+      }
+    },
+  });
+
+  const formik2 = useFormik({
+    initialValues: {
+      ano: '',
+      nome: ''
+    },
+    validationSchema: Yup.object({
+      ano: Yup.string().required('Ano é obrigatório'),
+      nome: Yup.string(),
+    }),
+    onSubmit: async (values, { setSubmitting }) => {
+      try {
+        const response = await axios.get(`${API_BASE_URL}/avaliacoes_acordo/`, {
+          params: {
+            ano: values.ano,
+            nome: values.nome
+          }
+        });
+        setResultados(response.data);
+      } catch (error) {
+        console.error('Houve um erro ao buscar os servidores:', error);
+      } finally {
+        setSubmitting(false);
+      }
+    },
+  });
 
     const intervalOptions = [
       '2023 - 2024', 
@@ -278,14 +251,7 @@ function Perfil() {
 
     const handleSelectChange2 = (e) => {
       const selectedInterval = e.target.value;
-      formik.setFieldValue('ano', selectedInterval); // Armazena o intervalo completo
-      const selectedYear = selectedInterval.split(' - ')[1]; // Obtém o segundo valor do intervalo
-  
-      if (inAvaliacao && !gestor && !chefia) {
-        fetchFilteredServidores(selectedYear);
-      } else {
-        fetchServidoresByAno(selectedYear);
-      }
+      formik.setFieldValue('ano', selectedInterval);
     };
 
     const formatDate = (dateString) => {
@@ -297,158 +263,63 @@ function Perfil() {
     <div className={styles.avaliacao_container1}>
       <div className={styles.avaliacao_container}>
         <h1>Resumo das avaliações de sua lotação</h1>
-        <form className={styles.form_servidor} onSubmit={formik.handleSubmit}>
-        
-            <select
-              className={styles.selectservidor}
-              name="ano"
-              onChange={handleSelectChange2}
-              value={formik.values.ano} // Agora é o intervalo completo
-            >
-              <option value="" disabled>Selecione um ano</option>
-              {intervalOptions.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-
-            <select
-              className={styles.selectservidor2}
-              name="servidor"
-              onChange={(e) => formik.setFieldValue('servidor', e.target.value)}
-              value={formik.values.servidor}
-              style={{ display: formik.values.ano ? '' : 'none'}}
-            >
-              <option value="" disabled>Selecione um servidor</option>
-              {(inAvaliacao && !gestor && !chefia ? usuarios3 : usuarios2).map((usuario, index) => (
-                  <option key={index} value={usuario.matricula}>
-                    {usuario.avaliado}
+        <form className={styles.form_control} onSubmit={formik.handleSubmit}>
+          <div className={styles.formik_pesquisa}>
+          
+              <select
+                className={styles.selectservidor}
+                name="ano"
+                onChange={handleSelectChange2}
+                value={formik.values.ano} // Agora é o intervalo completo
+              >
+                <option value="" disabled>Selecione um ano</option>
+                {intervalOptions.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
                   </option>
-              ))}
-            </select>
+                ))}
+              </select>
+            
+            <input
+              type="text"
+              className={styles.selectservidor3}
+              name="nome"
+              placeholder="Digite o nome do servidor"
+              onChange={formik.handleChange}
+              value={formik.values.nome}
+            />
 
-            <button className={styles.botaoservidor} type="submit">Pesquisar</button>
+          </div>
+          <button className={styles.botaoservidor2} type="submit" disabled={formik.isSubmitting}>
+            Pesquisar
+          </button>
         </form>
       </div>
 
-        <div className={styles.tableContainer}>
-          {evaluationData && (
-            <>
-            <table className={styles.evaluationTable} id="evaluationTable">
+        <div className={styles.tableContainer2}>
+          {resultados.length > 0 && (
+            <table>
               <thead>
                 <tr>
-                  <th>Avaliador</th>
-                  <th>Cooperação</th>
-                  <th>Iniciativa</th>
-                  <th>Pontualidade</th>
-                  <th>Eficiência</th>
-                  <th>Responsabilidade</th>
-                  <th>Média</th>
+                  <th>Nome</th>
+                  <th>Ações</th>
                 </tr>
               </thead>
               <tbody>
-                {/* Autoavaliação */}
-                <tr>
-                  <td colSpan="7" style={{textAlign: "center", fontWeight: "bold"}}>Autoavaliação</td>
-                </tr>
-                {evaluationData.auto_avaliacoes.length > 0 ? (
-                  evaluationData.auto_avaliacoes.map((evalu, index) => (
-                    <EvaluationRow key={`auto_${index}`} evalu={evalu} />
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="7" style={{textAlign: "center", backgroundColor: "#efefef", fontWeight: "normal"}}>Essa avaliação ainda não foi feita</td>
+                {resultados.map((servidor, index) => (
+                  <tr key={index}>
+                    <td>{servidor.avaliado}</td>
+                    <td>
+                      <button onClick={() => handleDownloadPdf(servidor.avaliado_matricula)}>
+                        Baixar PDF
+                      </button>
+                    </td>
                   </tr>
-                )}
-
-                {/* Avaliação da Chefia */}
-                <tr>
-                  <td colSpan="7" style={{textAlign: "center", fontWeight: "bold"}}>Avaliação da Chefia</td>
-                </tr>
-                {evaluationData.avaliacao_da_chefia.length > 0 ? (
-                  evaluationData.avaliacao_da_chefia.map((evalu, index) => (
-                    <EvaluationRow key={`chefia_${index}`} evalu={evalu} />
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="7" style={{textAlign: "center", backgroundColor: "#efefef", fontWeight: "normal"}}>Essa avaliação ainda não foi feita</td>
-                  </tr>
-                )}
-
-                {/* Avaliação da Equipe */}
-                <tr>
-                  <td colSpan="7" style={{textAlign: "center", fontWeight: "bold"}}>Avaliação da Equipe</td>
-                </tr>
-                {evaluationData.avaliacao_da_equipe.length > 0 ? (
-                  evaluationData.avaliacao_da_equipe.map((evalu, index) => (
-                    <EvaluationRow key={`equipe_${index}`} evalu={evalu} />
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="7" style={{textAlign: "center", backgroundColor: "#efefef", fontWeight: "normal"}}>Essa avaliação ainda não foi feita</td>
-                  </tr>
-                )}
-
-                {/* Assiduidade - Sempre será parte da avaliação da chefia, mas mostramos condicionalmente */}
-                <tr>
-                  <td colSpan="7" style={{textAlign: "center", fontWeight: "bold"}}>Assiduidade</td>
-                </tr>
-                <tr>
-                  <td colSpan="7" style={{textAlign: "center",  backgroundColor: "#ededed", fontWeight: "normal"}}>
-                    {evaluationData.avaliacao_da_chefia.length > 0 ? evaluationData.avaliacao_da_chefia[0].assiduidade : "Essa avaliação ainda não foi feita"}
-                  </td>
-                </tr>
-
-                {/* Nota geral */}
-                <tr>
-                  <td colSpan="7" style={{textAlign: "center", fontWeight: "bold"}}>Nota Final</td>
-                </tr>
-                <tr>
-                  <td colSpan="7" style={{textAlign: "center", fontWeight: "normal", backgroundColor: "#e0e0e0", border: "1px solid #ccc"}}>
-                    {evaluationData.nota_geral ? evaluationData.nota_geral.toFixed(2) : "N/A"}
-                  </td>
-                </tr>
-
-                {/* Acordo de Desempenho */}
-                {evaluationData.acordo_desempenho && (
-                  <>
-                    <tr>
-                      <td colSpan="7" style={{ textAlign: "center", fontWeight: "bold" }}>Acordo de Desempenho</td>
-                    </tr>
-                    <tr>
-                      <td colSpan="7" style={{ textAlign: "left", fontWeight: "normal", backgroundColor: "#f8f8f8", border: "1px solid #ccc" }}>
-                        <div><strong>Avaliador:</strong> {evaluationData.acordo_desempenho.nome_avaliador}</div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td colSpan="7" style={{ textAlign: "left", fontWeight: "normal", backgroundColor: "#f8f8f8", border: "1px solid #ccc" }}>
-                        <div><strong>Período de Início:</strong> {formatDate(evaluationData.acordo_desempenho.periodo_inicio)}</div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td colSpan="7" style={{ textAlign: "left", fontWeight: "normal", backgroundColor: "#f8f8f8", border: "1px solid #ccc" }}>
-                        <div><strong>Período de Fim:</strong> {formatDate(evaluationData.acordo_desempenho.periodo_fim)}</div>
-                      </td>
-                    </tr>
-                    {evaluationData.acordo_desempenho.atividades.map((atividade, index) => (
-                      <tr key={`atividade_${index}`}>
-                        <td colSpan="7" style={{ textAlign: "left", fontWeight: "normal", backgroundColor: "#ffffff", border: "1px solid #ccc" }}>
-                          <div><strong>Descrição da Atividade:</strong> {atividade.descricao_atividade}</div>
-                          <div><strong>Desempenho Esperado:</strong> {atividade.desempenho_esperado}</div>
-                        </td>
-                      </tr>
-                    ))}
-                  </>
-                )}
+                ))}
               </tbody>
             </table>
-            <button className={styles.botao_baixar} onClick={downloadPdfDocumentWithText}>Baixar PDF</button>
-            </>
           )}
         </div>
-        
-
     </div>
   );
 }

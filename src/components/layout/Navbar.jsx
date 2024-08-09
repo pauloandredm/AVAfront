@@ -59,11 +59,6 @@ function Navbar() {
   }, [authenticated, navigate]); // Observa alterações no estado authenticated
 
 
-  
-
-  
-
-
   return (
 
     <div className={styles.navbar}>
@@ -90,8 +85,12 @@ function Navbar() {
 
               {chefia && <li className={styles.item}><Link to="/acordo-desempenho">Acordo de Desempenho</Link></li>}
 
-              {gestor || chefia || admin ? (
-                <li className={styles.item}><Link to="/perfil">Resumo avaliação</Link></li>
+              {(gestor || chefia || inAvaliacao) && !admin ? (
+                  <li className={styles.item}><Link to="/perfil">Resumo avaliação</Link></li>
+              ) : null}
+
+              {admin ? (
+                <li className={styles.item}><Link to="/perfil-admin">Resumo avaliação</Link></li>
               ) : null}
 
               {gestor || chefia ? ( 

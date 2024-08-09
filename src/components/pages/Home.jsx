@@ -68,25 +68,38 @@ function Home() {
   });
 
   return (
-    <div className={styles.home}>
-      <h1 className={styles.title}>Pendente</h1>
-      <ul className={styles.list}>
-        {pendingItems.map((item, index) => (
-          <li key={index} className={styles.pendingItem}>
-            {item.type === 'avaliacao' ? (
-              <Link to={`/avaliacao?servidor=${encodeURIComponent(item.servidorNome)}`}>{item.text}</Link>
-            ) : (
-              <Link to={`/acordo-desempenho?servidorMatricula=${encodeURIComponent(item.servidorMatricula)}`}>{item.text}</Link>
-            )}
-          </li>
-        ))}
-      </ul>
-      <h1 className={styles.title}>Concluído</h1>
-      <ul className={styles.list}>
-        {completedItems.map((item, index) => (
-          <li key={index} className={styles.completedItem}>{item}</li>
-        ))}
-      </ul>
+    <div> 
+      {pendingItems.length > 0 ? (
+        <>
+          <div className={styles.home}>
+            <h1 className={styles.title}>Pendente</h1>
+            <ul className={styles.list}>
+              {pendingItems.map((item, index) => (
+                <li key={index} className={styles.pendingItem}>
+                  {item.type === 'avaliacao' ? (
+                    <Link to={`/avaliacao?servidor=${encodeURIComponent(item.servidorNome)}`}>{item.text}</Link>
+                  ) : (
+                    <Link to={`/acordo-desempenho?servidorMatricula=${encodeURIComponent(item.servidorMatricula)}`}>{item.text}</Link>
+                  )}
+                </li>
+              ))}
+            </ul>
+            <h1 className={styles.title}>Concluído</h1>
+            <ul className={styles.list}>
+              {completedItems.map((item, index) => (
+                <li key={index} className={styles.completedItem}>{item}</li>
+              ))}
+            </ul>
+          </div>
+        </>
+      ) : (
+        <>
+          <div className={styles.overlay}>
+            {/* <h1>Avaliação de Desempenho</h1> */}
+          </div>
+          <img src={avaliacao} alt="Avaliacao" className={styles.background_image} />
+        </>
+      )}
     </div>
   );
 }

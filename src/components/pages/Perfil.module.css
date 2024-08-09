@@ -27,6 +27,14 @@
   width: 100%;
 }
 
+
+.form_control{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
 .selectservidor{
   padding: 9px;
   margin-right: 10px;
@@ -43,6 +51,14 @@
   text-align: center;
 }
 
+.selectservidor3{
+  padding: 6px;
+  margin-right: 10px;
+  border-radius: 5px;
+  width: 75%;
+  text-align: center;
+}
+
 .botaoservidor{
   padding: 5px;
   border-radius: 4px;
@@ -51,6 +67,17 @@
   justify-content: center;
   align-items: center;
   margin-top: 10px;
+}
+
+.botaoservidor2{
+  padding: 5px;
+  border-radius: 4px;
+  width: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .tableContainer {
@@ -102,4 +129,57 @@
     background-color: #e8e8e8;
   }
 
+  .formik_pesquisa{
+    width: 100%;
+  }
   
+
+  .tableContainer2 {
+    width: 100%;
+    max-width: 1100px;
+    overflow-x: auto;
+    margin: 20px 0;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .tableContainer2 table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 350px;
+  }
+  
+  .tableContainer2 th, 
+  .tableContainer2 td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .tableContainer2 th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .tableContainer2 tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  .tableContainer2 tbody tr:hover {
+    background-color: #f1f1f1;
+  }
+  
+  .tableContainer2 button {
+    padding: 8px 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .tableContainer2 button:hover {
+    background-color: #0056b3;
+  }
