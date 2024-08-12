@@ -21,8 +21,10 @@ function Navbar() {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
     setAuthenticated(false);
-    navigate('/');
+    navigate('/', { replace: true }); // Redireciona para a homepage
+    window.location.reload(); // Força a atualização da página
   };
+  
 
   useEffect(() => {
     const access_token2 = localStorage.getItem("access_token");
