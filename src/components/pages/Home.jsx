@@ -69,7 +69,7 @@ function Home() {
 
   return (
     <div> 
-      {pendingItems.length > 0 ? (
+      {authenticated ? (
         <>
           <div className={styles.home}>
             <h1 className={styles.title}>Pendente</h1>

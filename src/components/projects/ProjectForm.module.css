@@ -75,6 +75,7 @@
 .tooltip {
   position: relative;
   display: inline-block;
+  z-index: 1001;
 }
 
 /* Tooltip text */
