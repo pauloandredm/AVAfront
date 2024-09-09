@@ -28,6 +28,9 @@ import { makeStyles } from '@mui/styles';
 const useStyles = makeStyles((theme) => ({
   accordionDetails: {
     padding: 0,
+    marginLeft: 20,
+    marginRight: 20,
+    marginBottom: 20
   },
   container: {
     padding: 0,
@@ -80,9 +83,9 @@ function AcordoDesempenho() {
         if (!selectedServidor) {
           return;
         }
-
+  
         const serializedData = {
-          avaliado: values.avaliado,
+          avaliado: selectedServidor.nome,
           avaliado_matricula: selectedServidor.matricula,
           chefia_imediata: selectedServidor.chefia,
           funcao_confianca: selectedServidor.funcao_confianca,
@@ -93,10 +96,12 @@ function AcordoDesempenho() {
             desempenho_esperado: atividade.desempenho_esperado,
           })),
         };
-
+  
         await axios.post(`${API_BASE_URL}/acordo_desempenho/`, serializedData);
-
+  
         resetForm();
+        setPeriodoInicio(null); // Reseta o estado do período de início
+        setPeriodoFim(null);    // Reseta o estado do período de fim
       } catch (error) {
         console.log(error);
       } finally {
@@ -105,44 +110,44 @@ function AcordoDesempenho() {
       }
     },
   });
-
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log("Fetching data...");
         const response = await axios.get(`${API_BASE_URL}/acordo_desempenho/`);
-        console.log("Response data:", response.data);
         setAvaliado2(response.data);
-
+  
         const servidorMatricula = searchParams.get('servidorMatricula');
-        console.log("Servidor matricula from URL:", servidorMatricula);
         if (servidorMatricula) {
           const selected = response.data.find(servidor => servidor.matricula === servidorMatricula);
-          console.log("Selected servidor:", selected);
           if (selected) {
             setSelectedServidor(selected);
-            formik.setFieldValue('avaliado', selected.id, false);
+            formik.setFieldValue('avaliado', selected.matricula, false); // Define o campo com a matrícula
           }
         }
       } catch (error) {
         console.log(error);
       }
     };
-
+  
     fetchData();
   }, [searchParams]);
-
+  
   const handleChangeServidor = (e) => {
     formik.handleChange(e);
-    const selectedId = e.target.value;
-    const selected = avaliado2.find(servidor => servidor.id.toString() === selectedId);
-    setSelectedServidor(selected);
+    const selectedMatricula = e.target.value;
+    const selected = avaliado2.find(servidor => servidor.matricula === selectedMatricula);
+    if (selected) {
+      setSelectedServidor(selected);
+      formik.setFieldValue('avaliado', selected.matricula, false); // Atualiza o campo 'avaliado' com a matrícula
+    } else {
+      setSelectedServidor(null);
+    }
   };
-
+  
   useEffect(() => {
     if (selectedServidor) {
-      console.log("Setting field value for 'avaliado' to:", selectedServidor.nome);
-      formik.setFieldValue('avaliado', selectedServidor.nome);
+      formik.setFieldValue('avaliado', selectedServidor.matricula || '', false); // Define o campo com a matrícula
     }
   }, [selectedServidor]);
 
@@ -155,11 +160,9 @@ function AcordoDesempenho() {
     formik.setFieldValue('periodo_inicio', date);
     formik.setFieldValue('periodo_fim', newPeriodoFim);
   };
-
+  
   const currentYear = new Date().getFullYear();
   const lastYear = currentYear - 1;
-
-
 
   const handleAddAtividade = () => {
     const atividades = [...formik.values.atividades];
@@ -172,15 +175,14 @@ function AcordoDesempenho() {
     atividades.splice(index, 1);
     formik.setFieldValue('atividades', atividades);
   };
-
-
+  
   return (
     <div className={styles.avaliacao_container}>
       <form className={styles.form_control} onSubmit={formik.handleSubmit}>
         <h1>Acordo de Desempenho</h1>
         <p className={styles.p_data}>Acordo de desempenho referente aos últimos 12 meses ({lastYear} - {currentYear})</p>
         <p>Planeje as Atividade dos servidores</p>
-
+  
         {avaliado2.length > 0 ? (
           <div className={styles.div_form_control}>
             <div className={styles.servidor_select}>
@@ -189,22 +191,17 @@ function AcordoDesempenho() {
                 className={styles.select_servidor}
                 id="avaliado"
                 name="avaliado"
-                onChange={(e) => {
-                  formik.handleChange(e);
-                  const selectedId = e.target.value;
-                  const selected = avaliado2.find(servidor => servidor.id.toString() === selectedId);
-                  setSelectedServidor(selected);
-                }}
+                onChange={handleChangeServidor}
                 value={formik.values.avaliado}
               >
                 <option value="">Selecione um servidor</option>
                 {avaliado2.sort((a, b) => a.nome.localeCompare(b.nome)).map((user) => (
-                  <option key={user.id} value={user.id}>
+                  <option key={user.matricula} value={user.matricula}>
                     {user.nome}
                   </option>
                 ))}
               </select>
-
+  
               {formik.touched.avaliado && formik.errors.avaliado ? (
                 <div className={styles.error}>{formik.errors.avaliado}</div>
               ) : null}
@@ -256,11 +253,7 @@ function AcordoDesempenho() {
                 >
                   <Typography>
                     {index === 0 ? 'Atividade 1' : `Atividade ${index + 1}`}
-                    {index === formik.values.atividades.length - 1 && formik.values.atividades.length < 3 && (
-                      <Button variant="text" onClick={handleAddAtividade}>
-                        + Adicionar Atividade
-                      </Button>
-                    )}
+                    
                   </Typography>
                 </AccordionSummary>
                 <AccordionDetails className={classes.accordionDetails}>
@@ -286,6 +279,11 @@ function AcordoDesempenho() {
                       margin="normal"
                       multiline
                     />
+                    {index === formik.values.atividades.length - 1 && formik.values.atividades.length < 3 && (
+                      <Button variant="text" onClick={handleAddAtividade}>
+                        + Adicionar Atividade
+                      </Button>
+                    )}
                     {index > 0 && (
                       <Button variant="contained" color="secondary" onClick={() => handleRemoveAtividade(index)}>
                         Remover Atividade
@@ -296,7 +294,7 @@ function AcordoDesempenho() {
               </Accordion>
             ))}
           </Container>
-            
+  
           </div>
         ) : (
           <h1 className={styles.h1_sem_servidor}>Você não tem mais nenhum acordo de desempenho a ser feito</h1>

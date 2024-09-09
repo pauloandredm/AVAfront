@@ -217,47 +217,41 @@ useEffect(() => {
         <div className={styles.avaliacao_container}>
 
             <h2>Servidores com Grupo:</h2>
-                <div className={styles.table_container}>
-                    <table className={styles.table1}>
-                        <thead>
-                            <tr>
-                                <th>Grupo</th>
-                                <th>Servidores</th>
-                                <th>Excluir</th>
-                            </tr>
-                        </thead>
-                        <tbody className={styles.tbody}>
-                            {Object.keys(groupedUsuarios).map((groupId) => {
-                                const grupo = grupolist.find((g) => g.id == groupId);  // Encontre o objeto de grupo correspondente
-                                return (
-                                    <tr className={styles.tr_servidores} key={groupId}>
-                                        <td>{grupo ? grupo.nome : 'Nome Desconhecido'}</td>
-                                        <td>
-                                            <ul>
-                                                {groupedUsuarios[groupId].map((usuario) => (
-                                                    <li key={usuario.id}>
-                                                        {usuario.servidor}
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        </td>
-                                        <td id={styles.td_delete}>
+            <div className={styles.table_container}>
+                <table className={styles.table1}>
+                    <thead>
+                        <tr>
+                            <th>Grupo</th>
+                            <th>Servidores</th>
+                        </tr>
+                    </thead>
+                    <tbody className={styles.tbody}>
+                        {Object.keys(groupedUsuarios).map((groupId) => {
+                            const grupo = grupolist.find((g) => g.id == groupId);  // Encontre o objeto de grupo correspondente
+                            return (
+                                <tr className={styles.tr_servidores} key={groupId}>
+                                    <td>{grupo ? grupo.nome : 'Nome Desconhecido'}</td>
+                                    <td>
+                                        <ul>
                                             {groupedUsuarios[groupId].map((usuario) => (
-                                                <button
-                                                    key={usuario.id}
-                                                    onClick={() => handleDelete(usuario.id)}
-                                                    className={styles.deleteButton}
-                                                >
-                                                    X
-                                                </button>
+                                                <li key={usuario.id} className={styles.servidorItem}>
+                                                    {usuario.servidor}
+                                                    <button
+                                                        onClick={() => handleDelete(usuario.id)}
+                                                        className={styles.deleteButton}
+                                                    >
+                                                        Excluir
+                                                    </button>
+                                                </li>
                                             ))}
-                                        </td>
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                    </table>
-                </div>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            );
+                        })}
+                    </tbody>
+                </table>
+            </div>
 
                 <h2 className={styles.h2}>Servidores sem Grupo:</h2>
                 <table className={styles.table}>

@@ -29,12 +29,12 @@ function Footer() {
 
         <li style={{ color: 'white', textDecoration: 'none', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center' }}>
             <FiPhoneCall className={styles.itens} />
-            (84) 9 8807-4270
+            (84) 3132-0184
         </li>
 
         <li style={{ color: 'white', textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
             <HiOutlineMail className={styles.itens} />
-            assecom.alrn@gmail.com
+            cdho@al.rn.leg.br
         </li>
 
         <li style={{ color: 'white', textDecoration: 'none', display: 'flex', alignItems: 'center' }}>

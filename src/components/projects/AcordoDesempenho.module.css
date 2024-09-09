@@ -39,11 +39,17 @@
   }
 
   .select_servidor{
-    width: 80%;
-    max-width: 630px;
+    display: block;
+    width: 100%;
+    max-width: 752px;
     padding: 0.7em;
     border-radius: 6px;
     border: 1px solid black;
+  }
+
+  .servidor_select{
+    display: block;
+    margin-left: 24px;
   }
   
   .avaliacao_container h1 {
@@ -69,12 +75,6 @@
     margin-bottom: 2em;
     width: auto;
   }
-
-  .servidor_select{
-    display: flex;
-    flex-direction: column;
-    margin-left: 24px;
-  }
   
   .form_control label {
     margin-bottom: 0.6em;
@@ -95,7 +95,8 @@
   }
 
   .date_picker{
-    /* max-width: 180px; */
+    display: flex;
+    flex-wrap: wrap;
     width: auto;
   }
 

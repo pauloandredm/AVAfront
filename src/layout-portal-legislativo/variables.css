@@ -1,0 +1,88 @@
+:root {
+  /* Sizes */
+  --container-width: 75rem;
+  --small-container-width: 64rem;
+  --menu-mobile-width: 16.25rem;
+  --aside-width: 80px;
+
+  /* Spacing */
+  --smaller-spacing: .5rem;
+  --small-spacing  : .75rem;
+  --base-spacing   : 1rem;
+  --medium-spacing : 1.5rem;
+  --large-spacing  : 2rem;
+  --larger-spacing : 3rem;
+
+  /* Font size */
+  --smaller-font-size: 0.750rem;
+  --small-font-size  : 0.875rem;
+  --base-font-size   : 1rem;
+  --medium-font-size : 1.125rem;
+  --large-font-size  : 1.5rem;
+  --larger-font-size : 2rem;
+
+  /* Font weight */
+  --font-weight-regular  : 400;
+  --font-weight-medium   : 500;
+  --font-weight-semi-bold: 600;
+  --font-weight-bold     : 700;
+  --font-weight-black    : 900;
+
+  /* Z-index */
+  --bottom-z-index: 10;
+  --base-z-index  : 20;
+  --top-z-index   : 30;
+
+  /* Colors */
+  --black: #272727;
+  --medium-black: #444;
+  --light-black: #555;
+  --red  : #E74C3C;
+  --light-blue: #21A1E2;
+  --blue: #1A73E8;
+  --yellow: #fdbc30;
+  --green: #2aad4b;
+
+  /* Input */
+  --input-border-color: #E4E4E4;
+  --input-box-shadow  : #8BAACE;
+
+  /* Box Shadow */
+  --base-box-shadow: 0 12px 25px 0 rgba(54, 53, 55, .05);
+  --action-box-shadow: 0 2px 6px 0 rgba(54, 53, 55, .05);
+  --brand-box-shadow: 0 1px 1px 0 rgba(66, 133, 244, 0.45), 0 1px 3px 1px rgba(66, 133, 244, 0.3);
+
+  /* Border radius */
+  --base-border-radius: 4px;
+
+  /* Transition */
+  --base-transition: all 200ms ease-in-out;
+
+  /* Header */
+  --header-height-small   : 50px;
+  --header-height         : 70px;
+  --header-color          : #a2d8ff;
+  --header-color-action   : white;
+  --header-bg-color       : #0a3d62;
+  --header-bg-action-color: #012E4A;
+  --submenu-bg-hover-color: #004A76;
+
+  /* Data table */
+  --data-table-border-top      : 1px solid #B0CADB;
+  --data-table-background      : #F3F3F3;
+  --data-table-background-hover: #E6F5FE;
+
+  /* Media queries */
+  @custom-media --large-viewport-min (max-width: 80.063em);           /* > 1281px */
+  @custom-media --large-viewport-max (max-width: 80em);               /* < 1280px */
+  @custom-media --container-viewport-min (min-width: 75.063em);       /* > 1201px */
+  @custom-media --container-viewport-max (max-width: 75em);           /* < 1200px */
+  @custom-media --medium-viewport-min (min-width: 64.063em);          /* > 1025px */
+  @custom-media --medium-viewport-max (max-width: 64em);              /* < 1024px */
+  @custom-media --mobile-base-viewport-min (min-width: 52.563em);     /* > 841px */
+  @custom-media --mobile-base-viewport-max (max-width: 52.500em);     /* < 840px */
+  @custom-media --small-viewport-min (min-width: 40.063em);           /* > 641px */
+  @custom-media --small-viewport-max (max-width: 40em);               /* < 640px */
+  @custom-media --smaller-viewport-min (min-width: 27.563em);         /* > 441px */
+  @custom-media --smaller-viewport-max (max-width: 27.5em);           /* < 440px */
+}

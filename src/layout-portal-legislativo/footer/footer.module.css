@@ -1,0 +1,78 @@
+@import '../variables.css';
+
+.wrapper {
+  display: block;
+  padding-bottom: var(--large-spacing);
+  padding-top: var(--large-spacing);
+  background-color: #163C70;
+
+  & a {
+    display: inline-block;
+  }
+}
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: var(--container-width);
+  margin: 0 auto;
+  overflow-x: auto;
+
+  @media (--container-viewport-max) {
+    max-width: 100%;
+    margin-left: var(--base-spacing);
+    margin-right: var(--base-spacing);
+  }
+
+  @media (--mobile-base-viewport-max) {
+    flex-direction: column;
+  }
+}
+
+.logoImage {
+  display: block;
+  max-width: 240px;
+  height: auto;
+
+  @media (--mobile-base-viewport-max) {
+    max-width: 200px;
+  }
+}
+
+.info {
+  display: block;
+  margin-top: var(--smaller-spacing);
+  margin-bottom: 0;
+  font-size: 12px;
+  color: white;
+
+  & a {
+    color: inherit;
+  }
+}
+
+.devInfo {
+  color: white;
+  text-align: right;
+
+  & span {
+    display: block;
+    margin-bottom: 12px;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    color: #a0a0a0;
+  }
+
+  & p {
+    margin-bottom: 6px;
+    margin-top: 0;
+    font-size: 12px;
+  }
+
+  @media (--mobile-base-viewport-max) {
+    margin-top: var(--medium-spacing);
+    text-align: center;
+  }
+}
