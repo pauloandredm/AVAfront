@@ -107,29 +107,31 @@ function AcordoDesempenho() {
       } finally {
         setSubmitting(false);
         setSubmitted(true);
+        setShowMessage(true);
+        fetchData();
       }
     },
   });
   
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(`${API_BASE_URL}/acordo_desempenho/`);
-        setAvaliado2(response.data);
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/acordo_desempenho/`);
+      setAvaliado2(response.data);
   
-        const servidorMatricula = searchParams.get('servidorMatricula');
-        if (servidorMatricula) {
-          const selected = response.data.find(servidor => servidor.matricula === servidorMatricula);
-          if (selected) {
-            setSelectedServidor(selected);
-            formik.setFieldValue('avaliado', selected.matricula, false); // Define o campo com a matrícula
-          }
+      const servidorMatricula = searchParams.get('servidorMatricula');
+      if (servidorMatricula) {
+        const selected = response.data.find(servidor => servidor.matricula === servidorMatricula);
+        if (selected) {
+          setSelectedServidor(selected);
+          formik.setFieldValue('avaliado', selected.matricula, false); // Define o campo com a matrícula
         }
-      } catch (error) {
-        console.log(error);
       }
-    };
+    } catch (error) {
+      console.log(error);
+    }
+  };
   
+  useEffect(() => {
     fetchData();
   }, [searchParams]);
   
@@ -175,6 +177,21 @@ function AcordoDesempenho() {
     atividades.splice(index, 1);
     formik.setFieldValue('atividades', atividades);
   };
+
+  const [showMessage, setShowMessage] = useState('');
+
+  useEffect(() => {
+    let timer;
+    if (showMessage) {
+      timer = setTimeout(() => {
+        setShowMessage(false);
+        setShowMessage('');
+      }, 4000);
+    }
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [showMessage]);
   
   return (
     <div className={styles.avaliacao_container}>
@@ -182,6 +199,8 @@ function AcordoDesempenho() {
         <h1>Acordo de Desempenho</h1>
         <p className={styles.p_data}>Acordo de desempenho referente aos últimos 12 meses ({lastYear} - {currentYear})</p>
         <p>Planeje as Atividade dos servidores</p>
+
+        {showMessage && <div className={styles.success}>Acordo de Desempenho realizado com sucesso!</div>}
   
         {avaliado2.length > 0 ? (
           <div className={styles.div_form_control}>
