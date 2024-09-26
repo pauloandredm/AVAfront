@@ -143,32 +143,34 @@ function Perfil() {
           },
         });
 
-        // Adicionar tabela do acordo de desempenho
-        const acordoDesempenhoHead = [['Acordo de Desempenho']];
-        const acordoDesempenhoBody = [
-            [{ content: `Avaliador: ${evaluationData.acordo_desempenho.nome_avaliador}`, colSpan: 1 }],
-            [{ content: `Período de Início: ${formatDate(evaluationData.acordo_desempenho.periodo_inicio)}`, colSpan: 1 }],
-            [{ content: `Período de Fim: ${formatDate(evaluationData.acordo_desempenho.periodo_fim)}`, colSpan: 1 }]
-        ];
-
-        evaluationData.acordo_desempenho.atividades.forEach((atividade, index) => {
-            acordoDesempenhoBody.push([{ content: `Descrição da Atividade: ${atividade.descricao_atividade}`, colSpan: 1 }]);
-            acordoDesempenhoBody.push([{ content: `Desempenho Esperado: ${atividade.desempenho_esperado}`, colSpan: 1 }]);
-        });
-
-        // Adicionar tabela do acordo de desempenho ao documento
-        doc.autoTable({
-            head: acordoDesempenhoHead,
-            body: acordoDesempenhoBody,
-            theme: 'grid',
-            startY: doc.autoTable.previous.finalY + 10,
-            styles: { fillColor: [255, 255, 255] },
-            alternateRowStyles: { fillColor: [240, 240, 240] },
-            headStyles: { fillColor: [3, 187, 133], halign: 'center' },
-            didDrawPage: function(data) {
-                // Configurações adicionais podem ser feitas aqui
-            },
-        });
+        if (evaluationData.acordo_desempenho) {
+          // Adicionar tabela do acordo de desempenho
+          const acordoDesempenhoHead = [['Acordo de Desempenho']];
+          const acordoDesempenhoBody = [
+              [{ content: `Avaliador: ${evaluationData.acordo_desempenho.nome_avaliador || 'N/A'}`, colSpan: 1 }],
+              [{ content: `Período de Início: ${formatDate(evaluationData.acordo_desempenho.periodo_inicio) || 'N/A'}`, colSpan: 1 }],
+              [{ content: `Período de Fim: ${formatDate(evaluationData.acordo_desempenho.periodo_fim) || 'N/A'}`, colSpan: 1 }]
+          ];
+  
+          evaluationData.acordo_desempenho.atividades.forEach((atividade, index) => {
+              acordoDesempenhoBody.push([{ content: `Descrição da Atividade: ${atividade.descricao_atividade}`, colSpan: 1 }]);
+              acordoDesempenhoBody.push([{ content: `Desempenho Esperado: ${atividade.desempenho_esperado}`, colSpan: 1 }]);
+          });
+  
+          // Adicionar tabela do acordo de desempenho ao documento
+          doc.autoTable({
+              head: acordoDesempenhoHead,
+              body: acordoDesempenhoBody,
+              theme: 'grid',
+              startY: doc.autoTable.previous.finalY + 10,
+              styles: { fillColor: [255, 255, 255] },
+              alternateRowStyles: { fillColor: [240, 240, 240] },
+              headStyles: { fillColor: [3, 187, 133], halign: 'center' },
+              didDrawPage: function(data) {
+                  // Configurações adicionais podem ser feitas aqui
+              },
+          });
+        }
       
         // Salvar o PDF
         doc.save('evaluation-table.pdf');
